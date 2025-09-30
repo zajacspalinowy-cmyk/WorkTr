@@ -1,0 +1,223 @@
+{% extends "base.html" %}
+{% block title %}Kanban - Tablica projektów{% endblock %}
+
+{% block content %}
+<style>
+/* Full width for Kanban board */
+.container {
+  max-width: 98vw !important;
+  padding-left: var(--space-lg);
+  padding-right: var(--space-lg);
+}
+
+@media (min-width: 1600px) {
+  .container {
+    max-width: 1800px !important;
+  }
+}
+</style>
+
+<div class="page-header">
+  <div class="page-header-content">
+    <div class="page-title-section">
+      <svg class="page-icon" aria-hidden="true">
+        <use href="#i-kanban"/>
+      </svg>
+      <h1 class="page-title">Tablica Kanban</h1>
+    </div>
+    <p class="page-subtitle">Zarządzaj statusami projektów poprzez przeciąganie kart</p>
+  </div>
+</div>
+
+<div id="kanban-board"
+     hx-get="{% url 'kanban:board' %}"
+     hx-trigger="revealed, every 30s"
+     hx-swap="outerHTML">
+  {% include "kanban/_board_inner.html" %}
+</div>
+
+<style>
+/* Kanban Board Styles */
+.page-header {
+  margin-bottom: var(--space-2xl);
+  max-width: none;
+}
+
+.page-header-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.page-title-section {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.page-icon {
+  width: 2rem;
+  height: 2rem;
+  color: var(--color-primary);
+}
+
+.page-title {
+  margin: 0;
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.page-subtitle {
+  margin: 0;
+  font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
+}
+
+.kanban-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: var(--space-md);
+  padding-bottom: var(--space-2xl);
+}
+
+@media (max-width: 1400px) {
+  .kanban-grid {
+    gap: var(--space-sm);
+  }
+}
+
+@media (max-width: 1200px) {
+  .kanban-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .kanban-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .kanban-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.kanban-col {
+  display: flex;
+  flex-direction: column;
+  min-height: 400px;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.col-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-md) var(--space-lg);
+  background: linear-gradient(to bottom, var(--color-bg-secondary), var(--color-bg));
+  border-bottom: 2px solid var(--color-border);
+}
+
+.col-header h3 {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin: 0;
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.5rem;
+  height: 1.5rem;
+  padding: 0 0.5rem;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  color: var(--color-text-secondary);
+}
+
+.kanban-list {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  padding: var(--space-lg);
+  overflow-y: auto;
+  min-height: 200px;
+}
+
+.kanban-list:empty::after,
+.kanban-list .empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-2xl);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  text-align: center;
+}
+
+.kanban-list .empty {
+  font-style: italic;
+}
+
+/* Status-specific colors */
+.kanban-col:has(#col-BACKLOG) .col-header {
+  border-bottom-color: #94a3b8;
+}
+
+.kanban-col:has(#col-IN_PROGRESS) .col-header {
+  border-bottom-color: var(--color-primary);
+}
+
+.kanban-col:has(#col-BLOCKED) .col-header {
+  border-bottom-color: var(--color-error);
+}
+
+.kanban-col:has(#col-REVIEW) .col-header {
+  border-bottom-color: var(--color-warning);
+}
+
+.kanban-col:has(#col-DONE) .col-header {
+  border-bottom-color: var(--color-success);
+}
+
+.kanban-col:has(#col-CANCELLED) .col-header {
+  border-bottom-color: #64748b;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .kanban-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .kanban-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .page-title {
+    font-size: 1.5rem;
+  }
+
+  .kanban-col {
+    min-height: 300px;
+  }
+}
+</style>
+{% endblock %}

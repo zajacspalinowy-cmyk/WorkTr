@@ -1,0 +1,532 @@
+{% extends "base.html" %}
+{% block title %}Nowy projekt - WorkTrack{% endblock %}
+
+{% block content %}
+<div class="form-container">
+
+  <!-- Header -->
+  <div class="form-header">
+    <div class="form-header-content">
+      <div class="form-icon-wrapper">
+        <svg class="form-icon" aria-hidden="true">
+          <use href="#i-plus-circle"/>
+        </svg>
+      </div>
+      <div>
+        <h1 class="form-title">Dodaj nowy projekt</h1>
+        <p class="form-subtitle">Wypełnij formularz aby utworzyć nowy projekt w systemie</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Form Card -->
+  <div class="form-card">
+    <form method="post">
+      {% csrf_token %}
+
+      {% if form.non_field_errors %}
+        <div class="error-alert">
+          <svg class="alert-icon" aria-hidden="true">
+            <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/>
+            <line x1="12" y1="8" x2="12" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <line x1="12" y1="16" x2="12.01" y2="16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <div class="alert-content">
+            {{ form.non_field_errors }}
+          </div>
+        </div>
+      {% endif %}
+
+      <!-- Form Sections -->
+      <div class="form-sections">
+
+        <!-- Section: Podstawowe informacje -->
+        <div class="form-section">
+          <div class="section-header">
+            <h2 class="section-title">Podstawowe informacje</h2>
+            <p class="section-description">Dane identyfikacyjne projektu</p>
+          </div>
+
+          <div class="form-grid">
+            <!-- Nr projektu -->
+            <div class="form-field {% if form.number.errors %}has-error{% endif %}">
+              <label for="{{ form.number.id_for_label }}" class="field-label">
+                <span>Numer projektu</span>
+                <span class="field-required">*</span>
+              </label>
+              {{ form.number }}
+              {% if form.number.errors %}
+                <div class="field-error">
+                  {{ form.number.errors }}
+                </div>
+              {% endif %}
+              <p class="field-help">Unikalny identyfikator projektu</p>
+            </div>
+
+            <!-- D-nr -->
+            <div class="form-field {% if form.d_number.errors %}has-error{% endif %}">
+              <label for="{{ form.d_number.id_for_label }}" class="field-label">
+                <span>D-numer</span>
+              </label>
+              {{ form.d_number }}
+              {% if form.d_number.errors %}
+                <div class="field-error">
+                  {{ form.d_number.errors }}
+                </div>
+              {% endif %}
+            </div>
+
+            <!-- Nazwa -->
+            <div class="form-field field-wide {% if form.name.errors %}has-error{% endif %}">
+              <label for="{{ form.name.id_for_label }}" class="field-label">
+                <span>Nazwa projektu</span>
+                <span class="field-required">*</span>
+              </label>
+              {{ form.name }}
+              {% if form.name.errors %}
+                <div class="field-error">
+                  {{ form.name.errors }}
+                </div>
+              {% endif %}
+            </div>
+
+            <!-- Zlecający -->
+            <div class="form-field field-wide {% if form.client_name.errors %}has-error{% endif %}">
+              <label for="{{ form.client_name.id_for_label }}" class="field-label">
+                <span>Zlecający</span>
+                <span class="field-required">*</span>
+              </label>
+              {{ form.client_name }}
+              {% if form.client_name.errors %}
+                <div class="field-error">
+                  {{ form.client_name.errors }}
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        <!-- Section: Lokalizacja i urządzenia -->
+        <div class="form-section">
+          <div class="section-header">
+            <h2 class="section-title">Lokalizacja i urządzenia</h2>
+            <p class="section-description">Miejsce realizacji i sprzęt</p>
+          </div>
+
+          <div class="form-grid">
+            <!-- Lokalizacja z Quick Add -->
+            <div class="form-field {% if form.location.errors %}has-error{% endif %}">
+              <label for="{{ form.location.id_for_label }}" class="field-label">
+                <span>Lokalizacja</span>
+              </label>
+
+              <div id="location-field">
+                {{ form.location }}
+              </div>
+
+              {% if form.location.errors %}
+                <div class="field-error">
+                  {{ form.location.errors }}
+                </div>
+              {% endif %}
+
+              <div class="field-actions">
+                <a class="field-link"
+                   hx-get="{% url 'projects:location_quick_add' %}"
+                   hx-target="#location-quick"
+                   hx-swap="innerHTML">
+                  <svg class="link-icon" aria-hidden="true">
+                    <use href="#i-plus-circle"/>
+                  </svg>
+                  <span>Dodaj nową lokalizację</span>
+                </a>
+              </div>
+
+              <!-- Quick Add Container -->
+              <div id="location-quick" class="quick-add-container"></div>
+            </div>
+
+            <!-- Urządzenia -->
+            <div class="form-field {% if form.devices.errors %}has-error{% endif %}">
+              <label for="{{ form.devices.id_for_label }}" class="field-label">
+                <span>Urządzenia</span>
+              </label>
+              {{ form.devices }}
+              {% if form.devices.errors %}
+                <div class="field-error">
+                  {{ form.devices.errors }}
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        <!-- Section: Terminy -->
+        <div class="form-section">
+          <div class="section-header">
+            <h2 class="section-title">Terminy</h2>
+            <p class="section-description">Daty rozpoczęcia i zakończenia</p>
+          </div>
+
+          <div class="form-grid">
+            <!-- Data przyjęcia -->
+            <div class="form-field {% if form.date_received.errors %}has-error{% endif %}">
+              <label for="{{ form.date_received.id_for_label }}" class="field-label">
+                <span>Data przyjęcia</span>
+                <span class="field-required">*</span>
+              </label>
+              {{ form.date_received }}
+              {% if form.date_received.errors %}
+                <div class="field-error">
+                  {{ form.date_received.errors }}
+                </div>
+              {% endif %}
+            </div>
+
+            <!-- Data zakończenia -->
+            <div class="form-field {% if form.date_due.errors %}has-error{% endif %}">
+              <label for="{{ form.date_due.id_for_label }}" class="field-label">
+                <span>Data zakończenia</span>
+              </label>
+              {{ form.date_due }}
+              {% if form.date_due.errors %}
+                <div class="field-error">
+                  {{ form.date_due.errors }}
+                </div>
+              {% endif %}
+              <p class="field-help">Planowany termin ukończenia</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section: Status i opis -->
+        <div class="form-section">
+          <div class="section-header">
+            <h2 class="section-title">Status i szczegóły</h2>
+            <p class="section-description">Dodatkowe informacje o projekcie</p>
+          </div>
+
+          <div class="form-grid">
+            <!-- Status -->
+            <div class="form-field {% if form.status.errors %}has-error{% endif %}">
+              <label for="{{ form.status.id_for_label }}" class="field-label">
+                <span>Status projektu</span>
+              </label>
+              {{ form.status }}
+              {% if form.status.errors %}
+                <div class="field-error">
+                  {{ form.status.errors }}
+                </div>
+              {% endif %}
+            </div>
+
+            <!-- Opis -->
+            <div class="form-field field-full {% if form.description.errors %}has-error{% endif %}">
+              <label for="{{ form.description.id_for_label }}" class="field-label">
+                <span>Opis projektu</span>
+              </label>
+              {{ form.description }}
+              {% if form.description.errors %}
+                <div class="field-error">
+                  {{ form.description.errors }}
+                </div>
+              {% endif %}
+              <p class="field-help">Szczegółowy opis projektu, uwagi i informacje dodatkowe</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Form Actions -->
+      <div class="form-actions">
+        <a class="btn btn-secondary" href="{% url 'projects:list' %}">
+          <svg class="ico" aria-hidden="true">
+            <path d="M19 12H5M12 19l-7-7 7-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span>Anuluj</span>
+        </a>
+        <button type="submit" class="btn btn-primary">
+          <svg class="ico" aria-hidden="true">
+            <use href="#i-approve"/>
+          </svg>
+          <span>Zapisz projekt</span>
+        </button>
+      </div>
+    </form>
+  </div>
+
+</div>
+
+<style>
+/* Form Container */
+.form-container {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+/* Form Header */
+.form-header {
+  margin-bottom: var(--space-2xl);
+}
+
+.form-header-content {
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+}
+
+.form-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 4rem;
+  height: 4rem;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
+  border-radius: var(--radius-lg);
+  flex-shrink: 0;
+}
+
+.form-icon {
+  width: 2rem;
+  height: 2rem;
+  color: white;
+}
+
+.form-title {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.form-subtitle {
+  margin: 0;
+  font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
+}
+
+/* Form Card */
+.form-card {
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-2xl);
+}
+
+/* Error Alert */
+.error-alert {
+  display: flex;
+  gap: var(--space-md);
+  padding: var(--space-lg);
+  margin-bottom: var(--space-xl);
+  background: rgb(239 68 68 / 0.1);
+  border: 1px solid var(--color-error);
+  border-radius: var(--radius-lg);
+  color: var(--color-error);
+}
+
+.alert-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  flex-shrink: 0;
+}
+
+.alert-content {
+  flex: 1;
+}
+
+/* Form Sections */
+.form-sections {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xl);
+}
+
+.form-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.section-header {
+  padding-bottom: var(--space-md);
+  border-bottom: 2px solid var(--color-border);
+}
+
+.section-title {
+  margin: 0;
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.section-description {
+  margin: 0.25rem 0 0 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+/* Form Grid */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-xl);
+}
+
+/* Form Field */
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.form-field.field-wide {
+  grid-column: span 2;
+}
+
+.form-field.field-full {
+  grid-column: 1 / -1;
+}
+
+.field-label {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.field-required {
+  color: var(--color-error);
+}
+
+.form-field input[type="text"],
+.form-field input[type="date"],
+.form-field select,
+.form-field textarea {
+  padding: 0.75rem var(--space-md);
+  font-size: var(--font-size-base);
+  color: var(--color-text);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-base);
+}
+
+.form-field input[type="text"]:focus,
+.form-field input[type="date"]:focus,
+.form-field select:focus,
+.form-field textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgb(37 99 235 / 0.1);
+}
+
+.form-field textarea {
+  min-height: 120px;
+  resize: vertical;
+  font-family: inherit;
+}
+
+.form-field.has-error input,
+.form-field.has-error select,
+.form-field.has-error textarea {
+  border-color: var(--color-error);
+}
+
+.field-error {
+  font-size: var(--font-size-sm);
+  color: var(--color-error);
+}
+
+.field-help {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+/* Field Actions */
+.field-actions {
+  margin-top: var(--space-sm);
+}
+
+.field-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-primary);
+  transition: all var(--transition-fast);
+}
+
+.field-link:hover {
+  color: var(--color-primary-dark);
+  gap: var(--space-md);
+}
+
+.link-icon {
+  width: 1rem;
+  height: 1rem;
+}
+
+/* Quick Add Container */
+.quick-add-container {
+  margin-top: var(--space-md);
+}
+
+/* Form Actions */
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-md);
+  padding-top: var(--space-2xl);
+  margin-top: var(--space-2xl);
+  border-top: 2px solid var(--color-border);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .form-header-content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .form-icon-wrapper {
+    width: 3rem;
+    height: 3rem;
+  }
+
+  .form-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  .form-title {
+    font-size: 1.5rem;
+  }
+
+  .form-card {
+    padding: var(--space-xl);
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-field.field-wide {
+    grid-column: span 1;
+  }
+
+  .form-actions {
+    flex-direction: column-reverse;
+  }
+
+  .form-actions .btn {
+    width: 100%;
+  }
+}
+</style>
+{% endblock %}

@@ -1,0 +1,414 @@
+{% extends "base.html" %}
+{% block title %}Akceptacja godzin - WorkTrack{% endblock %}
+
+{% block content %}
+<div class="review-container">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="page-header-content">
+      <div class="page-title-section">
+        <svg class="page-icon" aria-hidden="true">
+          <use href="#i-checklist"/>
+        </svg>
+        <div>
+          <h1 class="page-title">Akceptacja godzin</h1>
+          <p class="page-subtitle">Wpisy oczekujące na zatwierdzenie</p>
+        </div>
+      </div>
+      <div class="page-stats">
+        <div class="stats-badge">
+          <svg class="stats-icon" aria-hidden="true">
+            <use href="#i-clock"/>
+          </svg>
+          <div class="stats-content">
+            <div class="stats-value">{{ entries|length }}</div>
+            <div class="stats-label">Do akceptacji</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Entries Card -->
+  <div class="entries-card">
+    {% if entries %}
+      <div class="table-wrapper">
+        <table class="review-table">
+          <thead>
+            <tr>
+              <th>Technik</th>
+              <th>Projekt</th>
+              <th>Data</th>
+              <th>Godziny</th>
+              <th>Notatka</th>
+              <th class="th-actions">Akcje</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for t in entries %}
+              <tr class="entry-row" id="entry-{{ t.id }}">
+                <td class="td-person">
+                  <div class="person-cell">
+                    <svg class="person-icon" aria-hidden="true">
+                      <use href="#i-user-circle"/>
+                    </svg>
+                    <span>{{ t.technician }}</span>
+                  </div>
+                </td>
+                <td class="td-project">
+                  <div class="project-cell">
+                    <span class="project-number">{{ t.project.number }}</span>
+                    <span class="project-name">{{ t.project.name }}</span>
+                  </div>
+                </td>
+                <td class="td-date">{{ t.date|date:"d.m.Y" }}</td>
+                <td class="td-hours">
+                  <span class="hours-badge">{{ t.hours }}h</span>
+                </td>
+                <td class="td-note">
+                  {% if t.note %}
+                    <span class="note-text">{{ t.note }}</span>
+                  {% else %}
+                    <span class="note-empty">—</span>
+                  {% endif %}
+                </td>
+                <td class="td-actions">
+                  <div class="action-buttons">
+                    <a href="{% url 'timesheets:approve' t.id %}"
+                       class="btn-action btn-approve"
+                       title="Zatwierdź">
+                      <svg aria-hidden="true">
+                        <use href="#i-approve"/>
+                      </svg>
+                      <span>Zatwierdź</span>
+                    </a>
+                    <a href="{% url 'timesheets:reject' t.id %}"
+                       class="btn-action btn-reject"
+                       title="Odrzuć">
+                      <svg aria-hidden="true">
+                        <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                      </svg>
+                      <span>Odrzuć</span>
+                    </a>
+                  </div>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <!-- Empty State -->
+      <div class="empty-state">
+        <div class="empty-icon-wrapper">
+          <svg class="empty-icon" aria-hidden="true">
+            <use href="#i-approve"/>
+          </svg>
+        </div>
+        <h3 class="empty-title">Wszystko zaakceptowane!</h3>
+        <p class="empty-description">
+          Brak wpisów godzin oczekujących na akceptację. Sprawdź ponownie później.
+        </p>
+      </div>
+    {% endif %}
+  </div>
+
+</div>
+
+<style>
+/* Review Container */
+.review-container {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Page Stats */
+.page-stats {
+  display: flex;
+  gap: var(--space-lg);
+}
+
+.stats-badge {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.stats-icon {
+  width: 2rem;
+  height: 2rem;
+  color: var(--color-primary);
+}
+
+.stats-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.stats-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-text);
+  line-height: 1;
+}
+
+.stats-label {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+/* Entries Card */
+.entries-card {
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+/* Review Table */
+.review-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-size-sm);
+}
+
+.review-table thead {
+  background: linear-gradient(to bottom, var(--color-bg-secondary), var(--color-bg));
+  border-bottom: 2px solid var(--color-border);
+}
+
+.review-table th {
+  padding: var(--space-md) var(--space-lg);
+  text-align: left;
+  font-weight: 600;
+  color: var(--color-text);
+  white-space: nowrap;
+}
+
+.th-actions {
+  text-align: center;
+  min-width: 200px;
+}
+
+.entry-row {
+  border-bottom: 1px solid var(--color-border);
+  transition: background var(--transition-fast);
+}
+
+.entry-row:hover {
+  background: var(--color-bg-secondary);
+}
+
+.review-table td {
+  padding: var(--space-md) var(--space-lg);
+  color: var(--color-text-secondary);
+  vertical-align: middle;
+}
+
+/* Person Cell */
+.person-cell {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.person-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+.person-cell span {
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+/* Project Cell */
+.project-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.project-number {
+  font-family: 'Courier New', monospace;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.project-name {
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+}
+
+/* Date Cell */
+.td-date {
+  font-family: 'Courier New', monospace;
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+/* Hours Cell */
+.hours-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.375rem 0.75rem;
+  font-weight: 600;
+  background: rgb(37 99 235 / 0.1);
+  color: var(--color-primary);
+  border-radius: var(--radius-full);
+}
+
+/* Note Cell */
+.note-text {
+  display: block;
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--color-text);
+}
+
+.note-empty {
+  color: var(--color-text-muted);
+}
+
+/* Action Buttons */
+.td-actions {
+  text-align: center;
+}
+
+.action-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+}
+
+.btn-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.5rem var(--space-md);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  border-radius: var(--radius-md);
+  border: 1px solid;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.btn-action svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.btn-approve {
+  background: rgb(16 185 129 / 0.1);
+  color: var(--color-success);
+  border-color: rgb(16 185 129 / 0.3);
+}
+
+.btn-approve:hover {
+  background: var(--color-success);
+  color: white;
+  border-color: var(--color-success);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-reject {
+  background: rgb(239 68 68 / 0.1);
+  color: var(--color-error);
+  border-color: rgb(239 68 68 / 0.3);
+}
+
+.btn-reject:hover {
+  background: var(--color-error);
+  color: white;
+  border-color: var(--color-error);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Empty State */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-2xl) var(--space-xl);
+  text-align: center;
+  min-height: 400px;
+}
+
+.empty-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 5rem;
+  height: 5rem;
+  margin-bottom: var(--space-lg);
+  background: linear-gradient(135deg, var(--color-success), rgb(5 150 105));
+  border-radius: 50%;
+}
+
+.empty-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  color: white;
+}
+
+.empty-title {
+  margin: 0 0 var(--space-md) 0;
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.empty-description {
+  margin: 0;
+  font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
+  max-width: 400px;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .action-buttons {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 768px) {
+  .page-header-content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .stats-badge {
+    width: 100%;
+  }
+
+  .table-wrapper {
+    overflow-x: auto;
+  }
+
+  .btn-action span {
+    display: none;
+  }
+
+  .btn-action {
+    padding: 0.5rem;
+  }
+}
+</style>
+{% endblock %}

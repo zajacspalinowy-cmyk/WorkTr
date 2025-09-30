@@ -1,0 +1,27 @@
+<!-- Stary target karty nadpisujemy pustką - karta znika ze starej kolumny -->
+<div hidden></div>
+
+<!-- OOB: dodaj nową kartę NA POCZĄTKU właściwej kolumny -->
+<div id="col-{{ project.status }}" hx-swap-oob="afterbegin">
+  {% include "kanban/_project_card.html" with project=project status_choices=status_choices moved=1 %}
+</div>
+
+{% if old_status != new_status %}
+  <!-- OOB: podmień liczniki w dwóch kolumnach -->
+  <span id="count-{{ old_status }}" class="count" hx-swap-oob="outerHTML">{{ count_old }}</span>
+  <span id="count-{{ new_status }}" class="count" hx-swap-oob="outerHTML">{{ count_new }}</span>
+
+  <!-- OOB: ukryj "Brak projektów" w nowej kolumnie (teraz ma co najmniej 1 kartę) -->
+  <div id="empty-{{ new_status }}" style="display:none" hx-swap-oob="outerHTML"></div>
+
+  <!-- OOB: pokaż/ukryj "Brak projektów" w starej kolumnie w zależności od licznika -->
+  <div id="empty-{{ old_status }}" {% if count_old > 0 %}style="display:none"{% endif %} class="empty" hx-swap-oob="outerHTML">
+    {% if old_status == "BACKLOG" %}Brak projektów w backlogu
+    {% elif old_status == "IN_PROGRESS" %}Brak projektów w realizacji
+    {% elif old_status == "BLOCKED" %}Brak zablokowanych projektów
+    {% elif old_status == "REVIEW" %}Brak projektów do weryfikacji
+    {% elif old_status == "DONE" %}Brak zakończonych projektów
+    {% elif old_status == "CANCELLED" %}Brak anulowanych projektów
+    {% endif %}
+  </div>
+{% endif %}

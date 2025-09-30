@@ -1,0 +1,702 @@
+{% extends "base.html" %}
+{% block title %}{{ p.number }} - {{ p.name }}{% endblock %}
+
+{% block content %}
+<div class="detail-container">
+
+  <!-- Header -->
+  <div class="detail-header">
+    <div class="header-back">
+      <a href="{% url 'projects:list' %}" class="back-link">
+        <svg aria-hidden="true">
+          <path d="M19 12H5M12 19l-7-7 7-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span>Wróć do listy</span>
+      </a>
+    </div>
+
+    <div class="header-content">
+      <div class="header-title-section">
+        <div class="project-badge">
+          <svg class="badge-icon" aria-hidden="true">
+            <use href="#i-folder"/>
+          </svg>
+          <span class="project-number">{{ p.number }}</span>
+        </div>
+        <div>
+          <h1 class="project-title">{{ p.name }}</h1>
+          <div class="project-meta">
+            <span class="meta-item">
+              <svg class="meta-icon" aria-hidden="true">
+                <use href="#i-user-circle"/>
+              </svg>
+              <strong>Zlecający:</strong> {{ p.client_name }}
+            </span>
+            {% if p.location %}
+              <span class="meta-separator">•</span>
+              <span class="meta-item">
+                <svg class="meta-icon" aria-hidden="true">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" fill="none" stroke="currentColor" stroke-width="2"/>
+                  <circle cx="12" cy="10" r="3" fill="none" stroke="currentColor" stroke-width="2"/>
+                </svg>
+                <strong>Lokalizacja:</strong> {{ p.location }}
+              </span>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <div class="header-status">
+        <span class="status-badge-large status-{{ p.status }}">
+          {{ p.get_status_display }}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Info Cards -->
+  <div class="info-grid">
+    <!-- Dates Card -->
+    <div class="info-card">
+      <div class="info-card-header">
+        <svg class="info-icon" aria-hidden="true">
+          <use href="#i-clock"/>
+        </svg>
+        <h2 class="info-title">Terminy</h2>
+      </div>
+      <div class="info-card-body">
+        <div class="info-row">
+          <span class="info-label">Data przyjęcia:</span>
+          <span class="info-value">{{ p.date_received|date:"d.m.Y" }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Termin zakończenia:</span>
+          <span class="info-value">{{ p.date_due|date:"d.m.Y"|default:"—" }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Devices Card -->
+    {% if p.devices %}
+      <div class="info-card">
+        <div class="info-card-header">
+          <svg class="info-icon" aria-hidden="true">
+            <rect x="2" y="3" width="20" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
+            <line x1="8" y1="21" x2="16" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <line x1="12" y1="17" x2="12" y2="21" stroke="currentColor" stroke-width="2"/>
+          </svg>
+          <h2 class="info-title">Urządzenia</h2>
+        </div>
+        <div class="info-card-body">
+          <p class="devices-text">{{ p.devices }}</p>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="stats-grid-detail">
+    <div class="stat-card-detail">
+      <div class="stat-icon-wrapper stat-primary">
+        <svg aria-hidden="true">
+          <use href="#i-clock"/>
+        </svg>
+      </div>
+      <div class="stat-content">
+        <div class="stat-value-detail">{{ hours_prev }}</div>
+        <div class="stat-label-detail">Godzin (rok poprzedni)</div>
+      </div>
+    </div>
+
+    <div class="stat-card-detail">
+      <div class="stat-icon-wrapper stat-success">
+        <svg aria-hidden="true">
+          <use href="#i-clock"/>
+        </svg>
+      </div>
+      <div class="stat-content">
+        <div class="stat-value-detail">{{ hours_curr }}</div>
+        <div class="stat-label-detail">Godzin (bieżący rok)</div>
+      </div>
+    </div>
+
+    <div class="stat-card-detail">
+      <div class="stat-icon-wrapper stat-cash">
+        <svg aria-hidden="true">
+          <use href="#i-cash"/>
+        </svg>
+      </div>
+      <div class="stat-content">
+        <div class="stat-value-detail">{{ cost_sum }} <span class="stat-unit">zł</span></div>
+        <div class="stat-label-detail">Koszty zatwierdzone</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Timesheets Section -->
+  <div class="section-card">
+    <div class="section-header">
+      <div class="section-title-wrapper">
+        <svg class="section-icon" aria-hidden="true">
+          <use href="#i-checklist"/>
+        </svg>
+        <h2 class="section-title">Wpisy godzin</h2>
+      </div>
+      <a href="{% url 'timesheets:new_bulk' %}" class="btn btn-sm btn-primary">
+        <svg class="ico" aria-hidden="true">
+          <use href="#i-plus-circle"/>
+        </svg>
+        <span>Dodaj wpis</span>
+      </a>
+    </div>
+
+    <div class="section-body">
+      <div class="table-wrapper">
+        <table class="detail-table">
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Technik</th>
+              <th>Godziny</th>
+              <th>Notatka</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for t in times %}
+              <tr>
+                <td class="td-date">{{ t.date|date:"d.m.Y" }}</td>
+                <td class="td-person">{{ t.technician }}</td>
+                <td class="td-hours">{{ t.hours }}h</td>
+                <td class="td-note">{{ t.note|default:"—" }}</td>
+                <td class="td-status">
+                  <span class="status-pill status-{{ t.state }}">
+                    {{ t.get_state_display }}
+                  </span>
+                </td>
+              </tr>
+            {% empty %}
+              <tr>
+                <td colspan="5" class="empty-table">
+                  <div class="empty-table-content">
+                    <svg class="empty-icon" aria-hidden="true">
+                      <use href="#i-clock"/>
+                    </svg>
+                    <p>Brak wpisów godzin dla tego projektu</p>
+                  </div>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Costs Section -->
+  <div class="section-card">
+    <div class="section-header">
+      <div class="section-title-wrapper">
+        <svg class="section-icon" aria-hidden="true">
+          <use href="#i-cash"/>
+        </svg>
+        <h2 class="section-title">Koszty</h2>
+      </div>
+      <a href="{% url 'costs:new' %}" class="btn btn-sm btn-primary">
+        <svg class="ico" aria-hidden="true">
+          <use href="#i-plus-circle"/>
+        </svg>
+        <span>Zgłoś koszt</span>
+      </a>
+    </div>
+
+    <div class="section-body">
+      <div class="table-wrapper">
+        <table class="detail-table">
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Pozycja</th>
+              <th>Ilość</th>
+              <th>Cena netto</th>
+              <th>Suma</th>
+              <th>Status</th>
+              <th>Zgłosił</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for r in costs %}
+              <tr>
+                <td class="td-date">{{ r.created_at|date:"d.m.Y H:i" }}</td>
+                <td class="td-item">{{ r.item.name }}</td>
+                <td class="td-qty">{{ r.qty }}</td>
+                <td class="td-price">{{ r.net_price }} zł</td>
+                <td class="td-sum"><strong>{{ r.net_sum }} zł</strong></td>
+                <td class="td-status">
+                  <span class="status-pill status-{{ r.state }}">
+                    {{ r.get_state_display }}
+                  </span>
+                </td>
+                <td class="td-person">{{ r.created_by }}</td>
+              </tr>
+            {% empty %}
+              <tr>
+                <td colspan="7" class="empty-table">
+                  <div class="empty-table-content">
+                    <svg class="empty-icon" aria-hidden="true">
+                      <use href="#i-cash"/>
+                    </svg>
+                    <p>Brak kosztów dla tego projektu</p>
+                  </div>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<style>
+/* Detail Container */
+.detail-container {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Header */
+.detail-header {
+  margin-bottom: var(--space-2xl);
+}
+
+.header-back {
+  margin-bottom: var(--space-md);
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  transition: all var(--transition-fast);
+}
+
+.back-link:hover {
+  color: var(--color-primary);
+  gap: var(--space-md);
+}
+
+.back-link svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.header-content {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-xl);
+  flex-wrap: wrap;
+}
+
+.header-title-section {
+  display: flex;
+  gap: var(--space-lg);
+  flex: 1;
+}
+
+.project-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
+  border-radius: var(--radius-lg);
+  color: white;
+  flex-shrink: 0;
+}
+
+.badge-icon {
+  width: 2rem;
+  height: 2rem;
+}
+
+.project-number {
+  font-family: 'Courier New', monospace;
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+}
+
+.project-title {
+  margin: 0 0 var(--space-sm) 0;
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.project-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.meta-icon {
+  width: 1rem;
+  height: 1rem;
+  color: var(--color-text-muted);
+}
+
+.meta-separator {
+  color: var(--color-border);
+}
+
+.header-status {
+  flex-shrink: 0;
+}
+
+.status-badge-large {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.625rem var(--space-lg);
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  border-radius: var(--radius-lg);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Info Grid */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--space-xl);
+  margin-bottom: var(--space-2xl);
+}
+
+.info-card {
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.info-card-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-lg);
+  background: var(--color-bg-secondary);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.info-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: var(--color-primary);
+}
+
+.info-title {
+  margin: 0;
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.info-card-body {
+  padding: var(--space-lg);
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-md) 0;
+}
+
+.info-row:not(:last-child) {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.info-label {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.info-value {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.devices-text {
+  margin: 0;
+  font-size: var(--font-size-base);
+  color: var(--color-text);
+  line-height: 1.6;
+}
+
+/* Stats Grid Detail */
+.stats-grid-detail {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--space-xl);
+  margin-bottom: var(--space-2xl);
+}
+
+.stat-card-detail {
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+  padding: var(--space-lg);
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  transition: all var(--transition-base);
+}
+
+.stat-card-detail:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.stat-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: var(--radius-md);
+  flex-shrink: 0;
+}
+
+.stat-icon-wrapper svg {
+  width: 2rem;
+  height: 2rem;
+}
+
+.stat-primary {
+  background: rgb(37 99 235 / 0.1);
+  color: var(--color-primary);
+}
+
+.stat-success {
+  background: rgb(16 185 129 / 0.1);
+  color: var(--color-success);
+}
+
+.stat-cash {
+  background: rgb(245 158 11 / 0.1);
+  color: var(--color-warning);
+}
+
+.stat-content {
+  flex: 1;
+}
+
+.stat-value-detail {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--color-text);
+  line-height: 1;
+  margin-bottom: 0.25rem;
+}
+
+.stat-unit {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+.stat-label-detail {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+/* Section Card */
+.section-card {
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--space-2xl);
+  overflow: hidden;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-lg) var(--space-xl);
+  background: linear-gradient(to bottom, var(--color-bg-secondary), var(--color-bg));
+  border-bottom: 2px solid var(--color-border);
+}
+
+.section-title-wrapper {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.section-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: var(--color-primary);
+}
+
+.section-title {
+  margin: 0;
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.btn-sm {
+  padding: 0.5rem var(--space-md);
+  font-size: var(--font-size-sm);
+}
+
+.section-body {
+  padding: 0;
+}
+
+/* Detail Table */
+.detail-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-size-sm);
+}
+
+.detail-table thead {
+  background: var(--color-bg-secondary);
+  border-bottom: 2px solid var(--color-border);
+}
+
+.detail-table th {
+  padding: var(--space-md) var(--space-lg);
+  text-align: left;
+  font-weight: 600;
+  color: var(--color-text);
+  white-space: nowrap;
+}
+
+.detail-table tbody tr {
+  border-bottom: 1px solid var(--color-border);
+  transition: background var(--transition-fast);
+}
+
+.detail-table tbody tr:hover {
+  background: var(--color-bg-secondary);
+}
+
+.detail-table td {
+  padding: var(--space-md) var(--space-lg);
+  color: var(--color-text-secondary);
+}
+
+.td-date {
+  font-family: 'Courier New', monospace;
+}
+
+.td-hours,
+.td-qty {
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.td-person {
+  color: var(--color-text);
+}
+
+/* Status Pills */
+.status-pill {
+  display: inline-flex;
+  padding: 0.25rem 0.625rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  border-radius: var(--radius-full);
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+.status-PENDING {
+  background: rgb(245 158 11 / 0.15);
+  color: var(--color-warning);
+}
+
+.status-APPROVED {
+  background: rgb(16 185 129 / 0.15);
+  color: var(--color-success);
+}
+
+.status-REJECTED {
+  background: rgb(239 68 68 / 0.15);
+  color: var(--color-error);
+}
+
+/* Empty Table */
+.empty-table {
+  padding: var(--space-2xl) !important;
+}
+
+.empty-table-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+  color: var(--color-text-muted);
+}
+
+.empty-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  opacity: 0.5;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .project-title {
+    font-size: 1.5rem;
+  }
+
+  .header-title-section {
+    flex-direction: column;
+  }
+
+  .project-meta {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .meta-separator {
+    display: none;
+  }
+
+  .stats-grid-detail {
+    grid-template-columns: 1fr;
+  }
+
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-md);
+  }
+
+  .table-wrapper {
+    overflow-x: auto;
+  }
+}
+</style>
+{% endblock %}

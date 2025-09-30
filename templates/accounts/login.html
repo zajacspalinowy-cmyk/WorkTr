@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Logowanie{% endblock %}
+
+{% block content %}
+<div class="auth-card">
+  <h2>Zaloguj się</h2>
+
+  {% if form.non_field_errors %}
+    <div class="error">{{ form.non_field_errors }}</div>
+  {% endif %}
+
+  <form method="post" action="{% url 'accounts:login' %}">
+    {% csrf_token %}
+    <input type="hidden" name="next" value="{{ next }}">
+
+    <div class="form-row">
+      <label for="id_username">Login</label>
+      <input id="id_username" name="username" type="text" required autofocus>
+      {% if form.username.errors %}<div class="error">{{ form.username.errors }}</div>{% endif %}
+    </div>
+
+    <div class="form-row">
+      <label for="id_password">Hasło</label>
+      <input id="id_password" name="password" type="password" required>
+      {% if form.password.errors %}<div class="error">{{ form.password.errors }}</div>{% endif %}
+    </div>
+
+    <button type="submit">Zaloguj</button>
+  </form>
+</div>
+{% endblock %}

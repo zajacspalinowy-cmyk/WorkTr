@@ -1,0 +1,23 @@
+# requirements.txt
+
+# Framework
+Django==5.1.1
+
+# Obsługa HTMX w Django
+django-htmx==1.17.3
+
+# Baza danych (na start SQLite jest wbudowane w Pythona)
+# docelowo PostgreSQL
+psycopg2-binary==2.9.9
+
+# Eksport PDF (ładny rendering HTML/CSS)
+WeasyPrint==62.3
+
+# Eksport do Excela
+openpyxl==3.1.5
+
+# Opcjonalnie pandas (łatwiejsze pivoty i zestawienia)
+pandas==2.2.3
+
+# Wygodne API (jeśli będziesz chciał dodać)
+djangorestframework==3.15.2

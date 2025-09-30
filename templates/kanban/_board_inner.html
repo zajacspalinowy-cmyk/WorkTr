@@ -1,0 +1,120 @@
+<div class="kanban-grid">
+  <!-- BACKLOG -->
+  <section class="kanban-col">
+    <header class="col-header">
+      <h3>
+        <svg class="status-icon" aria-hidden="true" style="width: 1.25rem; height: 1.25rem; color: #94a3b8;">
+          <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/>
+        </svg>
+        Backlog
+        <span id="count-BACKLOG" class="count">{{ backlog|length }}</span>
+      </h3>
+    </header>
+    <div class="kanban-list" id="col-BACKLOG">
+      {% for project in backlog %}
+        {% include "kanban/_project_card.html" with project=project %}
+      {% endfor %}
+      <div class="empty" {% if backlog %}style="display:none"{% endif %} id="empty-BACKLOG">Brak projektów w backlogu</div>
+    </div>
+  </section>
+
+  <!-- W TOKU -->
+  <section class="kanban-col">
+    <header class="col-header">
+      <h3>
+        <svg class="status-icon" aria-hidden="true" style="width: 1.25rem; height: 1.25rem; color: var(--color-primary);">
+          <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/>
+          <path d="M12 6v6l4 2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        W toku
+        <span id="count-IN_PROGRESS" class="count">{{ in_progress|length }}</span>
+      </h3>
+    </header>
+    <div class="kanban-list" id="col-IN_PROGRESS">
+      {% for project in in_progress %}
+        {% include "kanban/_project_card.html" with project=project %}
+      {% endfor %}
+      <div class="empty" {% if in_progress %}style="display:none"{% endif %} id="empty-IN_PROGRESS">Brak projektów w realizacji</div>
+    </div>
+  </section>
+
+  <!-- ZABLOKOWANY -->
+  <section class="kanban-col">
+    <header class="col-header">
+      <h3>
+        <svg class="status-icon" aria-hidden="true" style="width: 1.25rem; height: 1.25rem; color: var(--color-error);">
+          <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/>
+          <path d="M15 9l-6 6M9 9l6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        Zablokowany
+        <span id="count-BLOCKED" class="count">{{ blocked|length }}</span>
+      </h3>
+    </header>
+    <div class="kanban-list" id="col-BLOCKED">
+      {% for project in blocked %}
+        {% include "kanban/_project_card.html" with project=project %}
+      {% endfor %}
+      <div class="empty" {% if blocked %}style="display:none"{% endif %} id="empty-BLOCKED">Brak zablokowanych projektów</div>
+    </div>
+  </section>
+
+  <!-- DO WERYFIKACJI -->
+  <section class="kanban-col">
+    <header class="col-header">
+      <h3>
+        <svg class="status-icon" aria-hidden="true" style="width: 1.25rem; height: 1.25rem; color: var(--color-warning);">
+          <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/>
+          <path d="M12 16h.01M12 8v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        Do weryfikacji
+        <span id="count-REVIEW" class="count">{{ review|length }}</span>
+      </h3>
+    </header>
+    <div class="kanban-list" id="col-REVIEW">
+      {% for project in review %}
+        {% include "kanban/_project_card.html" with project=project %}
+      {% endfor %}
+      <div class="empty" {% if review %}style="display:none"{% endif %} id="empty-REVIEW">Brak projektów do weryfikacji</div>
+    </div>
+  </section>
+
+  <!-- ZAKOŃCZONY -->
+  <section class="kanban-col">
+    <header class="col-header">
+      <h3>
+        <svg class="status-icon" aria-hidden="true" style="width: 1.25rem; height: 1.25rem; color: var(--color-success);">
+          <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/>
+          <path d="M9 12l2 2 4-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Zakończony
+        <span id="count-DONE" class="count">{{ done|length }}</span>
+      </h3>
+    </header>
+    <div class="kanban-list" id="col-DONE">
+      {% for project in done %}
+        {% include "kanban/_project_card.html" with project=project %}
+      {% endfor %}
+      <div class="empty" {% if done %}style="display:none"{% endif %} id="empty-DONE">Brak zakończonych projektów</div>
+    </div>
+  </section>
+
+  <!-- ANULOWANY -->
+  <section class="kanban-col">
+    <header class="col-header">
+      <h3>
+        <svg class="status-icon" aria-hidden="true" style="width: 1.25rem; height: 1.25rem; color: #64748b;">
+          <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/>
+          <line x1="8" y1="12" x2="16" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        Anulowany
+        <span id="count-CANCELLED" class="count">{{ cancelled|length }}</span>
+      </h3>
+    </header>
+    <div class="kanban-list" id="col-CANCELLED">
+      {% for project in cancelled %}
+        {% include "kanban/_project_card.html" with project=project %}
+      {% endfor %}
+      <div class="empty" {% if cancelled %}style="display:none"{% endif %} id="empty-CANCELLED">Brak anulowanych projektów</div>
+    </div>
+  </section>
+</div>

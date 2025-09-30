@@ -1,0 +1,480 @@
+{% extends "base.html" %}
+{% block title %}Zgłoś koszt - WorkTrack{% endblock %}
+
+{% block content %}
+<div class="cost-form-container">
+
+  <!-- Header -->
+  <div class="form-header">
+    <div class="form-header-content">
+      <div class="form-icon-wrapper">
+        <svg class="form-icon" aria-hidden="true">
+          <use href="#i-cash"/>
+        </svg>
+      </div>
+      <div>
+        <h1 class="form-title">Zgłoś koszt</h1>
+        <p class="form-subtitle">Dodaj wydatek związany z realizacją projektu (części, usługi, materiały)</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Info Banner -->
+  <div class="info-banner">
+    <svg class="info-icon" aria-hidden="true">
+      <use href="#i-info"/>
+    </svg>
+    <div class="info-content">
+      <strong>Informacja:</strong> Wszystkie zgłoszone koszty wymagają zatwierdzenia przez przełożonego. Po zaakceptowaniu zostaną uwzględnione w rozliczeniu projektu.
+    </div>
+  </div>
+
+  <!-- Form Card -->
+  <div class="form-card">
+    <form method="post" class="cost-form">
+      {% csrf_token %}
+
+      <div class="form-sections">
+
+        <!-- Section: Projekt -->
+        <div class="form-section">
+          <div class="section-header">
+            <h2 class="section-title">Wybierz projekt</h2>
+            <p class="section-description">Projekt, do którego ma być przypisany koszt</p>
+          </div>
+
+          <div class="form-field">
+            <label for="project-select" class="field-label">
+              <svg class="label-icon" aria-hidden="true">
+                <use href="#i-folder"/>
+              </svg>
+              <span>Projekt</span>
+              <span class="field-required">*</span>
+            </label>
+            <select id="project-select"
+                    name="project"
+                    required
+                    class="form-select">
+              <option value="">Wybierz projekt...</option>
+              {% for p in projects %}
+                <option value="{{ p.id }}">{{ p.number }} – {{ p.name }}</option>
+              {% endfor %}
+            </select>
+            <p class="field-help">Wybierz projekt z listy aktywnych projektów</p>
+          </div>
+        </div>
+
+        <!-- Section: Pozycja -->
+        <div class="form-section">
+          <div class="section-header">
+            <h2 class="section-title">Pozycja kosztowa</h2>
+            <p class="section-description">Określ typ i nazwę wydatku</p>
+          </div>
+
+          <div class="form-grid-2">
+            <!-- Kategoria -->
+            <div class="form-field">
+              <label for="category-select" class="field-label">
+                <svg class="label-icon" aria-hidden="true">
+                  <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <span>Kategoria</span>
+              </label>
+              <select id="category-select"
+                      name="category"
+                      class="form-select">
+                <option value="inne">Inne</option>
+                <option value="część">Część</option>
+                <option value="materiał">Materiał eksploatacyjny</option>
+                <option value="roboczogodzina">Roboczogodzina</option>
+                <option value="usługa">Usługa zewnętrzna</option>
+                <option value="transport">Transport</option>
+              </select>
+              <p class="field-help">Wybierz typ wydatku</p>
+            </div>
+
+            <!-- Jednostka -->
+            <div class="form-field">
+              <label for="unit-input" class="field-label">
+                <svg class="label-icon" aria-hidden="true">
+                  <rect x="3" y="3" width="18" height="18" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
+                  <path d="M9 9h6M9 15h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <span>Jednostka</span>
+                <span class="field-required">*</span>
+              </label>
+              <input type="text"
+                     id="unit-input"
+                     name="unit"
+                     placeholder="szt., m, kg, godz., litr..."
+                     required
+                     class="form-input"
+                     oninput="updateUnitDisplay()">
+              <p class="field-help">Jednostka miary (np. szt., metr, kg)</p>
+            </div>
+          </div>
+
+          <!-- Nazwa pozycji (pełna szerokość) -->
+          <div class="form-field">
+            <label for="item-name-input" class="field-label">
+              <svg class="label-icon" aria-hidden="true">
+                <rect x="2" y="3" width="20" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
+                <path d="M8 3v4M16 3v4M2 10h20" stroke="currentColor" stroke-width="2"/>
+              </svg>
+              <span>Nazwa pozycji</span>
+              <span class="field-required">*</span>
+            </label>
+            <input type="text"
+                   id="item-name-input"
+                   name="item_name"
+                   placeholder="np. Czujnik temperatury XYZ-123, Olej hydrauliczny 5L..."
+                   required
+                   class="form-input">
+            <p class="field-help">Pełna nazwa pozycji kosztowej</p>
+          </div>
+        </div>
+
+        <!-- Section: Ilość i cena -->
+        <div class="form-section">
+          <div class="section-header">
+            <h2 class="section-title">Szczegóły finansowe</h2>
+            <p class="section-description">Ilość i cena jednostkowa</p>
+          </div>
+
+          <div class="form-grid-2">
+            <!-- Ilość -->
+            <div class="form-field">
+              <label for="qty-input" class="field-label">
+                <svg class="label-icon" aria-hidden="true">
+                  <rect x="3" y="3" width="18" height="18" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
+                  <path d="M9 9h6M9 15h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <span>Ilość</span>
+                <span class="field-required">*</span>
+              </label>
+              <div class="input-with-unit">
+                <input type="number"
+                       id="qty-input"
+                       name="qty"
+                       min="0"
+                       step="0.01"
+                       value="1"
+                       required
+                       class="form-input"
+                       oninput="calculateSum()">
+                <span id="unit-display" class="input-unit">szt.</span>
+              </div>
+              <p class="field-help">Liczba sztuk/metrów/godzin itp.</p>
+            </div>
+
+            <!-- Cena netto -->
+            <div class="form-field">
+              <label for="price-input" class="field-label">
+                <svg class="label-icon" aria-hidden="true">
+                  <use href="#i-cash"/>
+                </svg>
+                <span>Cena netto (za jednostkę)</span>
+                <span class="field-required">*</span>
+              </label>
+              <div class="input-with-unit">
+                <input type="number"
+                       id="price-input"
+                       name="net_price"
+                       min="0"
+                       step="0.01"
+                       required
+                       class="form-input"
+                       oninput="calculateSum()">
+                <span class="input-unit">zł</span>
+              </div>
+              <p class="field-help">Cena netto za jedną jednostkę</p>
+            </div>
+          </div>
+
+          <!-- Suma (obliczana) -->
+          <div class="sum-display">
+            <div class="sum-label">Wartość całkowita (netto):</div>
+            <div id="total-sum" class="sum-value">0.00 zł</div>
+          </div>
+        </div>
+
+        <!-- Section: Notatka -->
+        <div class="form-section">
+          <div class="section-header">
+            <h2 class="section-title">Notatka (opcjonalnie)</h2>
+            <p class="section-description">Dodatkowe informacje o wydatku</p>
+          </div>
+
+          <div class="form-field">
+            <label for="note-input" class="field-label">
+              <svg class="label-icon" aria-hidden="true">
+                <rect x="3" y="3" width="18" height="18" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
+                <line x1="7" y1="7" x2="17" y2="7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <line x1="7" y1="12" x2="17" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              <span>Opis wydatku</span>
+            </label>
+            <input type="text"
+                   id="note-input"
+                   name="note"
+                   placeholder="np. Czujnik temperatury XYZ-123, faktura VAT nr..."
+                   class="form-input">
+            <p class="field-help">Opcjonalny opis, numer faktury lub inne szczegóły</p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Form Actions -->
+      <div class="form-actions">
+        <a class="btn btn-secondary" href="{% url 'costs:mine' %}">
+          <svg class="ico" aria-hidden="true">
+            <path d="M19 12H5M12 19l-7-7 7-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span>Anuluj</span>
+        </a>
+        <button type="submit" class="btn btn-primary">
+          <svg class="ico" aria-hidden="true">
+            <use href="#i-approve"/>
+          </svg>
+          <span>Wyślij do akceptacji</span>
+        </button>
+      </div>
+    </form>
+  </div>
+
+</div>
+
+<style>
+/* Cost Form Container */
+.cost-form-container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* Info Banner */
+.info-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-md);
+  padding: var(--space-lg);
+  margin-bottom: var(--space-xl);
+  background: rgb(6 182 212 / 0.1);
+  border: 1px solid var(--color-info);
+  border-left: 4px solid var(--color-info);
+  border-radius: var(--radius-lg);
+}
+
+.info-banner .info-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: var(--color-info);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.info-content {
+  flex: 1;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.info-content strong {
+  color: var(--color-text);
+}
+
+/* Field Alert */
+.field-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  margin-top: var(--space-sm);
+  background: rgb(245 158 11 / 0.1);
+  border: 1px solid var(--color-warning);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.alert-icon {
+  width: 1rem;
+  height: 1rem;
+  color: var(--color-warning);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* Form Grid 2 Columns */
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-xl);
+  margin-bottom: var(--space-lg);
+}
+
+/* Label Icon */
+.label-icon {
+  width: 1rem;
+  height: 1rem;
+  color: var(--color-text-muted);
+}
+
+/* Form Select */
+.form-select {
+  width: 100%;
+  padding: 0.75rem var(--space-md);
+  font-size: var(--font-size-base);
+  color: var(--color-text);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-base);
+  cursor: pointer;
+}
+
+.form-select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgb(37 99 235 / 0.1);
+}
+
+.item-select {
+  max-height: 200px;
+}
+
+.item-select option {
+  padding: var(--space-sm);
+}
+
+/* Input with Unit */
+.input-with-unit {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-with-unit input {
+  flex: 1;
+  padding-right: 4rem;
+}
+
+.input-unit {
+  position: absolute;
+  right: var(--space-md);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-muted);
+  pointer-events: none;
+}
+
+/* Sum Display */
+.sum-display {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-lg);
+  background: linear-gradient(135deg, rgb(245 158 11 / 0.1), rgb(245 158 11 / 0.05));
+  border: 2px solid rgb(245 158 11 / 0.3);
+  border-radius: var(--radius-lg);
+  margin-top: var(--space-lg);
+}
+
+.sum-label {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.sum-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  font-family: 'Courier New', monospace;
+  color: var(--color-warning);
+}
+
+/* Form Input */
+.form-input {
+  padding: 0.75rem var(--space-md);
+  font-size: var(--font-size-base);
+  color: var(--color-text);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-base);
+  width: 100%;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgb(37 99 235 / 0.1);
+}
+
+.form-input::placeholder {
+  color: var(--color-text-muted);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .form-header-content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .form-icon-wrapper {
+    width: 3rem;
+    height: 3rem;
+  }
+
+  .form-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  .form-title {
+    font-size: 1.5rem;
+  }
+
+  .form-grid-2 {
+    grid-template-columns: 1fr;
+  }
+
+  .sum-display {
+    flex-direction: column;
+    gap: var(--space-sm);
+    text-align: center;
+  }
+
+  .form-actions {
+    flex-direction: column-reverse;
+  }
+
+  .form-actions .btn {
+    width: 100%;
+  }
+}
+</style>
+
+<script>
+// Update unit display in the qty field when typing
+function updateUnitDisplay() {
+  const unit = document.getElementById('unit-input').value || 'szt.';
+  document.getElementById('unit-display').textContent = unit;
+}
+
+// Calculate total sum
+function calculateSum() {
+  const qty = parseFloat(document.getElementById('qty-input').value) || 0;
+  const price = parseFloat(document.getElementById('price-input').value) || 0;
+  const sum = qty * price;
+
+  document.getElementById('total-sum').textContent = sum.toFixed(2) + ' zł';
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+  calculateSum();
+});
+</script>
+{% endblock %}

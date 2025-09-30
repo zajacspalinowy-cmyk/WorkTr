@@ -1,0 +1,622 @@
+{% extends "base.html" %}
+{% block title %}Projekty - WorkTrack{% endblock %}
+
+{% block content %}
+<div class="projects-container">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="page-header-content">
+      <div class="page-title-section">
+        <svg class="page-icon" aria-hidden="true">
+          <use href="#i-folder"/>
+        </svg>
+        <div>
+          <h1 class="page-title">Projekty</h1>
+          <p class="page-subtitle">Zarządzaj i przeglądaj wszystkie projekty</p>
+        </div>
+      </div>
+      <div class="page-actions">
+        {% if perms.projects.add_project %}
+          <a href="{% url 'projects:create' %}" class="btn btn-primary">
+            <svg class="ico" aria-hidden="true"><use href="#i-plus-circle"/></svg>
+            <span>Nowy projekt</span>
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Filters Card -->
+  <div class="filters-card">
+    <form id="filters"
+          hx-get="{% url 'projects:list' %}"
+          hx-target="#projects-table"
+          hx-push-url="true"
+          hx-indicator="#filter-loading">
+
+      <div class="filters-grid">
+        <!-- Search Input -->
+        <div class="filter-field filter-search">
+          <label for="search-input" class="filter-label">
+            <svg class="filter-icon" aria-hidden="true">
+              <use href="#i-search"/>
+            </svg>
+            Szukaj
+          </label>
+          <input type="text"
+                 id="search-input"
+                 name="q"
+                 placeholder="Nr projektu, nazwa lub klient..."
+                 value="{{ request.GET.q }}"
+                 class="filter-input"
+                 autocomplete="off">
+        </div>
+
+        <!-- Status Filter -->
+        <div class="filter-field">
+          <label for="status-select" class="filter-label">
+            <svg class="filter-icon" aria-hidden="true">
+              <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            Status
+          </label>
+          <select name="status" id="status-select" class="filter-select">
+            <option value="">Wszystkie statusy</option>
+            {% for key, label in status_choices %}
+              <option value="{{ key }}" {% if request.GET.status == key %}selected{% endif %}>
+                {{ label }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Filter Actions -->
+        <div class="filter-actions">
+          <button type="submit" class="btn btn-filter">
+            <svg class="ico" aria-hidden="true">
+              <path d="M3 6h18M7 12h10M10 18h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <span>Filtruj</span>
+          </button>
+
+          <div class="export-dropdown">
+            <button type="button" class="btn btn-outline btn-export">
+              <svg class="ico" aria-hidden="true">
+                <use href="#i-download"/>
+              </svg>
+              <span>Eksport</span>
+              <svg class="chevron-icon" aria-hidden="true">
+                <use href="#i-chevron"/>
+              </svg>
+            </button>
+            <div class="export-menu">
+              <a href="{% url 'exports:projects_table_pdf' %}?{{ request.GET.urlencode }}" class="export-item">
+                <svg class="ico" aria-hidden="true"><use href="#i-pdf"/></svg>
+                <span>Eksportuj PDF</span>
+              </a>
+              <a href="{% url 'exports:projects_table_excel' %}?{{ request.GET.urlencode }}" class="export-item">
+                <svg class="ico" aria-hidden="true"><use href="#i-excel"/></svg>
+                <span>Eksportuj Excel</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Loading Indicator -->
+      <div id="filter-loading" class="filter-loading htmx-indicator">
+        <div class="spinner"></div>
+        <span>Ładowanie...</span>
+      </div>
+    </form>
+  </div>
+
+  <!-- Projects Table -->
+  <div id="projects-table" class="table-card">
+    <div class="table-wrapper">
+      <table class="modern-table">
+        <thead>
+          <tr>
+            <th>Nr projektu</th>
+            <th>D-nr</th>
+            <th>Nazwa</th>
+            <th>Zlecający</th>
+            <th>Lokalizacja</th>
+            <th>Urządzenia</th>
+            <th>Przyjęcie</th>
+            <th>Termin</th>
+            <th>Status</th>
+            <th class="th-actions">Akcje</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for p in page_obj %}
+            <tr class="table-row">
+              <td class="td-number">
+                <span class="project-number">{{ p.number }}</span>
+              </td>
+              <td class="td-dnumber">{{ p.d_number|default:"—" }}</td>
+              <td class="td-name">
+                <strong>{{ p.name }}</strong>
+              </td>
+              <td class="td-client">{{ p.client_name }}</td>
+              <td class="td-location">{{ p.location|default:"—" }}</td>
+              <td class="td-devices">{{ p.devices|default:"—" }}</td>
+              <td class="td-date">{{ p.date_received|date:"Y-m-d" }}</td>
+              <td class="td-date">{{ p.date_due|date:"Y-m-d"|default:"—" }}</td>
+              <td class="td-status">
+                <span class="status-badge status-{{ p.status }}">
+                  {{ p.get_status_display }}
+                </span>
+              </td>
+              <td class="td-actions">
+                <a href="{% url 'projects:detail' p.pk %}" class="btn-icon" title="Szczegóły">
+                  <svg aria-hidden="true">
+                    <circle cx="12" cy="12" r="1" fill="currentColor"/>
+                    <circle cx="12" cy="5" r="1" fill="currentColor"/>
+                    <circle cx="12" cy="19" r="1" fill="currentColor"/>
+                  </svg>
+                </a>
+              </td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="10" class="empty-state">
+                <div class="empty-content">
+                  <svg class="empty-icon" aria-hidden="true">
+                    <use href="#i-folder"/>
+                  </svg>
+                  <p class="empty-title">Brak projektów</p>
+                  <p class="empty-description">Nie znaleziono projektów spełniających kryteria wyszukiwania.</p>
+                </div>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    {% if page_obj.paginator.num_pages > 1 %}
+      <div class="pagination-wrapper" hx-target="#projects-table" hx-swap="outerHTML">
+        <div class="pagination">
+          {% if page_obj.has_previous %}
+            <a href="#"
+               hx-get="?page={{ page_obj.previous_page_number }}&{{ request.GET.urlencode }}"
+               class="pagination-btn pagination-prev"
+               title="Poprzednia strona">
+              <svg aria-hidden="true">
+                <path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <span>Poprzednia</span>
+            </a>
+          {% endif %}
+
+          <div class="pagination-info">
+            <span class="pagination-text">
+              Strona <strong>{{ page_obj.number }}</strong> z <strong>{{ page_obj.paginator.num_pages }}</strong>
+            </span>
+          </div>
+
+          {% if page_obj.has_next %}
+            <a href="#"
+               hx-get="?page={{ page_obj.next_page_number }}&{{ request.GET.urlencode }}"
+               class="pagination-btn pagination-next"
+               title="Następna strona">
+              <span>Następna</span>
+              <svg aria-hidden="true">
+                <path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </a>
+          {% endif %}
+        </div>
+      </div>
+    {% endif %}
+  </div>
+
+</div>
+
+<style>
+/* Projects Container */
+.projects-container {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Filters Card */
+.filters-card {
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  margin-bottom: var(--space-xl);
+}
+
+.filters-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr auto;
+  gap: var(--space-lg);
+  align-items: end;
+}
+
+.filter-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.filter-label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+.filter-icon {
+  width: 1rem;
+  height: 1rem;
+  color: var(--color-text-muted);
+}
+
+.filter-input,
+.filter-select {
+  padding: 0.625rem var(--space-md);
+  font-size: var(--font-size-base);
+  color: var(--color-text);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-base);
+}
+
+.filter-input:focus,
+.filter-select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgb(37 99 235 / 0.1);
+}
+
+.filter-actions {
+  display: flex;
+  gap: var(--space-md);
+}
+
+.btn-filter {
+  background: var(--color-primary);
+  color: white;
+}
+
+.btn-export {
+  position: relative;
+}
+
+.export-dropdown {
+  position: relative;
+}
+
+.export-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 200px;
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xl);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px);
+  transition: all var(--transition-base);
+  z-index: 100;
+}
+
+.export-dropdown:hover .export-menu,
+.export-dropdown:focus-within .export-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.export-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: 0.75rem var(--space-md);
+  color: var(--color-text);
+  transition: all var(--transition-fast);
+}
+
+.export-item:hover {
+  background: var(--color-bg-secondary);
+  color: var(--color-primary);
+}
+
+.chevron-icon {
+  width: 1rem;
+  height: 1rem;
+  margin-left: -4px;
+}
+
+/* Loading */
+.filter-loading {
+  display: none;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  margin-top: var(--space-md);
+  font-size: var(--font-size-sm);
+  color: var(--color-primary);
+}
+
+.htmx-request .filter-loading {
+  display: flex;
+}
+
+/* Table Card */
+.table-card {
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+}
+
+.modern-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-size-sm);
+}
+
+.modern-table thead {
+  background: linear-gradient(to bottom, var(--color-bg-secondary), var(--color-bg));
+  border-bottom: 2px solid var(--color-border);
+}
+
+.modern-table th {
+  padding: var(--space-md) var(--space-lg);
+  text-align: left;
+  font-weight: 600;
+  color: var(--color-text);
+  white-space: nowrap;
+}
+
+.th-actions {
+  text-align: center;
+}
+
+.modern-table tbody tr {
+  border-bottom: 1px solid var(--color-border);
+  transition: background var(--transition-fast);
+}
+
+.modern-table tbody tr:hover {
+  background: var(--color-bg-secondary);
+}
+
+.modern-table td {
+  padding: var(--space-md) var(--space-lg);
+  color: var(--color-text-secondary);
+}
+
+.td-number .project-number {
+  font-family: 'Courier New', monospace;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.td-name strong {
+  color: var(--color-text);
+}
+
+.td-actions {
+  text-align: center;
+}
+
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  color: var(--color-text-muted);
+  background: none;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.btn-icon:hover {
+  color: var(--color-primary);
+  background: var(--color-bg-secondary);
+}
+
+.btn-icon svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+/* Status Badges */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: var(--radius-full);
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+.status-BACKLOG {
+  background: rgb(148 163 184 / 0.15);
+  color: #475569;
+}
+
+.status-IN_PROGRESS {
+  background: rgb(37 99 235 / 0.15);
+  color: var(--color-primary);
+}
+
+.status-BLOCKED {
+  background: rgb(239 68 68 / 0.15);
+  color: var(--color-error);
+}
+
+.status-REVIEW {
+  background: rgb(245 158 11 / 0.15);
+  color: var(--color-warning);
+}
+
+.status-DONE {
+  background: rgb(16 185 129 / 0.15);
+  color: var(--color-success);
+}
+
+.status-CANCELLED {
+  background: rgb(100 116 139 / 0.15);
+  color: #64748b;
+}
+
+/* Empty State */
+.empty-state {
+  padding: var(--space-2xl) !important;
+}
+
+.empty-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+  text-align: center;
+}
+
+.empty-icon {
+  width: 3rem;
+  height: 3rem;
+  color: var(--color-text-muted);
+  opacity: 0.5;
+}
+
+.empty-title {
+  margin: 0;
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.empty-description {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+/* Pagination */
+.pagination-wrapper {
+  padding: var(--space-lg);
+  border-top: 1px solid var(--color-border);
+  background: var(--color-bg-secondary);
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+}
+
+.pagination-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: 0.5rem var(--space-md);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-primary);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+}
+
+.pagination-btn:hover {
+  background: var(--color-primary);
+  color: white;
+  border-color: var(--color-primary);
+}
+
+.pagination-btn svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.pagination-info {
+  flex: 1;
+  text-align: center;
+}
+
+.pagination-text {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.pagination-text strong {
+  color: var(--color-text);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .filters-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .filter-actions {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 640px) {
+  .filters-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .page-header-content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .filter-actions {
+    width: 100%;
+  }
+
+  .filter-actions .btn {
+    flex: 1;
+  }
+
+  .pagination {
+    flex-direction: column;
+  }
+
+  .pagination-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+</style>
+
+<script>
+// Export dropdown
+document.querySelectorAll('.btn-export').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    e.preventDefault();
+  });
+});
+</script>
+{% endblock %}

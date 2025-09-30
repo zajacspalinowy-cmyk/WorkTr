@@ -1,0 +1,124 @@
+<!-- OOB: podmień cały kontener z selectem, zaznaczając nową lokalizację -->
+<div id="location-field" hx-swap-oob="outerHTML">
+  <div id="location-field">
+    {{ form.location }}
+  </div>
+</div>
+
+<!-- OOB: wyczyść przestrzeń mini-formularza i pokaż krótki komunikat -->
+<div id="location-quick" hx-swap-oob="innerHTML">
+  <div class="success-message">
+    <div class="success-icon-wrapper">
+      <svg class="success-icon" aria-hidden="true">
+        <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/>
+        <path d="M9 12l2 2 4-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="success-content">
+      <h4 class="success-title">Lokalizacja dodana!</h4>
+      <p class="success-text">
+        Utworzono lokalizację:
+        <strong>{{ loc.name }}</strong>{% if loc.sub_location %} – {{ loc.sub_location }}{% endif %}
+      </p>
+    </div>
+    <button type="button"
+            class="success-close"
+            onclick="this.parentElement.remove()"
+            aria-label="Zamknij">
+      <svg aria-hidden="true">
+        <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<style>
+/* Success Message */
+.success-message {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-md);
+  margin-top: var(--space-md);
+  padding: var(--space-lg);
+  background: rgb(16 185 129 / 0.1);
+  border: 1px solid var(--color-success);
+  border-radius: var(--radius-lg);
+  animation: slideInSuccess 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideInSuccess {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.success-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  background: var(--color-success);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.success-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: white;
+}
+
+.success-content {
+  flex: 1;
+}
+
+.success-title {
+  margin: 0 0 0.25rem 0;
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--color-success);
+}
+
+.success-text {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.success-text strong {
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+.success-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: var(--radius-sm);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.success-close:hover {
+  background: rgb(16 185 129 / 0.15);
+  color: var(--color-success);
+}
+
+.success-close svg {
+  width: 1rem;
+  height: 1rem;
+}
+</style>

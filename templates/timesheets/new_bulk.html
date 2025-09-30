@@ -1,0 +1,396 @@
+{% extends "base.html" %}
+{% block title %}Zgłoś godziny - WorkTrack{% endblock %}
+
+{% block content %}
+<div class="timesheet-container">
+
+  <!-- Header -->
+  <div class="form-header">
+    <div class="form-header-content">
+      <div class="form-icon-wrapper">
+        <svg class="form-icon" aria-hidden="true">
+          <use href="#i-edit"/>
+        </svg>
+      </div>
+      <div>
+        <h1 class="form-title">Zgłoś godziny</h1>
+        <p class="form-subtitle">Wpisz przepracowane godziny dla jednego lub wielu projektów</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Info Banner -->
+  <div class="info-banner">
+    <svg class="info-icon" aria-hidden="true">
+      <use href="#i-info"/>
+    </svg>
+    <div class="info-content">
+      <strong>Wskazówka:</strong> Możesz zaznaczyć wiele projektów jednocześnie, używając Ctrl (Windows) lub Cmd (Mac) podczas klikania.
+    </div>
+  </div>
+
+  <!-- Form Card -->
+  <div class="form-card">
+    <form method="post" class="timesheet-form">
+      {% csrf_token %}
+
+      <div class="form-sections">
+
+        <!-- Section: Data i godziny -->
+        <div class="form-section">
+          <div class="section-header">
+            <h2 class="section-title">Data i czas pracy</h2>
+            <p class="section-description">Podstawowe informacje o wpisywanym czasie</p>
+          </div>
+
+          <div class="form-grid-2">
+            <!-- Data -->
+            <div class="form-field">
+              <label for="date-input" class="field-label">
+                <svg class="label-icon" aria-hidden="true">
+                  <rect x="3" y="4" width="18" height="18" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
+                  <line x1="16" y1="2" x2="16" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                  <line x1="8" y1="2" x2="8" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                  <line x1="3" y1="10" x2="21" y2="10" stroke="currentColor" stroke-width="2"/>
+                </svg>
+                <span>Data pracy</span>
+                <span class="field-required">*</span>
+              </label>
+              <input type="date"
+                     id="date-input"
+                     name="date"
+                     required
+                     value="{{ today|date:'Y-m-d' }}"
+                     class="form-input">
+              <p class="field-help">Wybierz dzień, w którym wykonano pracę</p>
+            </div>
+
+            <!-- Godziny -->
+            <div class="form-field">
+              <label for="hours-input" class="field-label">
+                <svg class="label-icon" aria-hidden="true">
+                  <use href="#i-clock"/>
+                </svg>
+                <span>Liczba godzin</span>
+                <span class="field-required">*</span>
+              </label>
+              <div class="input-with-unit">
+                <input type="number"
+                       id="hours-input"
+                       name="hours"
+                       step="0.25"
+                       min="0"
+                       max="24"
+                       required
+                       placeholder="8.0"
+                       class="form-input">
+                <span class="input-unit">godz.</span>
+              </div>
+              <p class="field-help">Możesz wpisać ułamki, np. 7.5 lub 8.25</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section: Projekty -->
+        <div class="form-section">
+          <div class="section-header">
+            <h2 class="section-title">Wybierz projekty</h2>
+            <p class="section-description">Zaznacz jeden lub więcej projektów, nad którymi pracowałeś</p>
+          </div>
+
+          <div class="projects-field">
+            <label for="projects-select" class="field-label">
+              <svg class="label-icon" aria-hidden="true">
+                <use href="#i-folder"/>
+              </svg>
+              <span>Projekty</span>
+              <span class="field-required">*</span>
+            </label>
+
+            <div class="projects-select-wrapper">
+              <select name="projects"
+                      id="projects-select"
+                      multiple
+                      size="10"
+                      required
+                      class="projects-select">
+                {% for p in projects %}
+                  <option value="{{ p.id }}" class="project-option">
+                    <span class="opt-number">{{ p.number }}</span> – {{ p.name }}
+                  </option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="field-help-box">
+              <svg class="help-icon" aria-hidden="true">
+                <use href="#i-info"/>
+              </svg>
+              <p class="field-help">
+                Aby zaznaczyć wiele projektów, przytrzymaj <kbd>Ctrl</kbd> (Windows) lub <kbd>Cmd</kbd> (Mac) i klikaj kolejne pozycje
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section: Notatka -->
+        <div class="form-section">
+          <div class="section-header">
+            <h2 class="section-title">Notatka (opcjonalnie)</h2>
+            <p class="section-description">Dodatkowe informacje o wykonanej pracy</p>
+          </div>
+
+          <div class="form-field">
+            <label for="note-input" class="field-label">
+              <svg class="label-icon" aria-hidden="true">
+                <rect x="3" y="3" width="18" height="18" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
+                <line x1="7" y1="7" x2="17" y2="7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <line x1="7" y1="12" x2="17" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <line x1="7" y1="17" x2="13" y2="17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              <span>Opis wykonanej pracy</span>
+            </label>
+            <input type="text"
+                   id="note-input"
+                   name="note"
+                   placeholder="np. Instalacja czujników, konfiguracja systemu..."
+                   class="form-input">
+            <p class="field-help">Opcjonalny opis działań wykonanych w ramach projektu</p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Form Actions -->
+      <div class="form-actions">
+        <a class="btn btn-secondary" href="{% url 'timesheets:my_entries' %}">
+          <svg class="ico" aria-hidden="true">
+            <path d="M19 12H5M12 19l-7-7 7-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span>Anuluj</span>
+        </a>
+        <button type="submit" class="btn btn-primary">
+          <svg class="ico" aria-hidden="true">
+            <use href="#i-approve"/>
+          </svg>
+          <span>Wyślij wpisy</span>
+        </button>
+      </div>
+    </form>
+  </div>
+
+</div>
+
+<style>
+/* Timesheet Container */
+.timesheet-container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* Info Banner */
+.info-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-md);
+  padding: var(--space-lg);
+  margin-bottom: var(--space-xl);
+  background: rgb(6 182 212 / 0.1);
+  border: 1px solid var(--color-info);
+  border-left: 4px solid var(--color-info);
+  border-radius: var(--radius-lg);
+}
+
+.info-banner .info-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: var(--color-info);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.info-content {
+  flex: 1;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.info-content strong {
+  color: var(--color-text);
+}
+
+/* Form Grid 2 Columns */
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-xl);
+}
+
+/* Label Icon */
+.label-icon {
+  width: 1rem;
+  height: 1rem;
+  color: var(--color-text-muted);
+}
+
+/* Input with Unit */
+.input-with-unit {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-with-unit input {
+  flex: 1;
+  padding-right: 4rem;
+}
+
+.input-unit {
+  position: absolute;
+  right: var(--space-md);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-muted);
+  pointer-events: none;
+}
+
+/* Projects Field */
+.projects-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.projects-select-wrapper {
+  position: relative;
+}
+
+.projects-select {
+  width: 100%;
+  padding: var(--space-md);
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+  background: var(--color-bg);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  transition: all var(--transition-base);
+  min-height: 300px;
+}
+
+.projects-select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgb(37 99 235 / 0.1);
+}
+
+.projects-select option {
+  padding: var(--space-md);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.projects-select option:hover {
+  background: var(--color-bg-secondary);
+}
+
+.projects-select option:checked {
+  background: linear-gradient(to right, var(--color-primary), var(--color-primary-light));
+  color: white;
+  font-weight: 600;
+}
+
+/* Field Help Box */
+.field-help-box {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-md);
+}
+
+.help-icon {
+  width: 1rem;
+  height: 1rem;
+  color: var(--color-primary);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.field-help-box .field-help {
+  margin: 0;
+}
+
+kbd {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  font-family: 'Courier New', monospace;
+  color: var(--color-text);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 1px 0 var(--color-border);
+}
+
+/* Form Input */
+.form-input {
+  padding: 0.75rem var(--space-md);
+  font-size: var(--font-size-base);
+  color: var(--color-text);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-base);
+  width: 100%;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgb(37 99 235 / 0.1);
+}
+
+.form-input::placeholder {
+  color: var(--color-text-muted);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .form-header-content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .form-icon-wrapper {
+    width: 3rem;
+    height: 3rem;
+  }
+
+  .form-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  .form-title {
+    font-size: 1.5rem;
+  }
+
+  .form-grid-2 {
+    grid-template-columns: 1fr;
+  }
+
+  .projects-select {
+    min-height: 250px;
+  }
+
+  .form-actions {
+    flex-direction: column-reverse;
+  }
+
+  .form-actions .btn {
+    width: 100%;
+  }
+}
+</style>
+{% endblock %}

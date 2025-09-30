@@ -1,0 +1,48 @@
+{% load static %}
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <title>Tabela projektów</title>
+  <style>
+    @page { size: A4 landscape; margin: 12mm; }
+    body { font-family: DejaVu Sans, Arial, sans-serif; font-size: 12px; }
+    h1 { font-size: 18px; margin: 0 0 10px; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { border: 1px solid #999; padding: 6px 8px; vertical-align: top; }
+    th { background: #eee; }
+    .muted { color:#666; }
+  </style>
+</head>
+<body>
+  <h1>Projekty – zestawienie</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>Nr</th><th>D-nr</th><th>Nazwa</th><th>Zlecający</th>
+        <th>Lokalizacja</th><th>Urządzenia</th><th>Przyjęcie</th><th>Termin</th><th>Status</th>
+        <th>Godziny (poprzedni rok)</th><th>Godziny (bieżący YTD)</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for p in projects %}
+      <tr>
+        <td>{{ p.number }}</td>
+        <td>{{ p.d_number }}</td>
+        <td>{{ p.name }}</td>
+        <td>{{ p.client_name }}</td>
+        <td>{{ p.location|default:"" }}</td>
+        <td>{{ p.devices }}</td>
+        <td>{{ p.date_received }}</td>
+        <td>{{ p.date_due|default:"–" }}</td>
+        <td>{{ p.get_status_display }}</td>
+        <td>{{ p.prev_year_hours|default:0 }}</td>
+        <td>{{ p.current_year_hours|default:0 }}</td>
+      </tr>
+      {% empty %}
+      <tr><td class="muted" colspan="11">Brak danych.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</body>
+</html>

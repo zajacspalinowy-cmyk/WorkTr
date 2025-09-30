@@ -1,0 +1,649 @@
+{% extends "base.html" %}
+{% block title %}Dashboard - WorkTrack{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+
+  <!-- Header Section -->
+  <div class="dashboard-header">
+    <div class="header-content">
+      <div class="header-title-section">
+        <svg class="header-icon" aria-hidden="true">
+          <use href="#i-dashboard"/>
+        </svg>
+        <div>
+          <h1 class="dashboard-title">Dashboard</h1>
+          <p class="dashboard-subtitle">Przegląd kluczowych metryk i statystyk</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <a href="{% url 'kanban:board' %}" class="btn btn-outline">
+          <svg class="ico" aria-hidden="true"><use href="#i-kanban"/></svg>
+          <span>Kanban</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats Cards Grid -->
+  <div class="stats-grid">
+
+    <!-- Card: Godziny bieżący rok -->
+    <div class="stat-card stat-card-primary">
+      <div class="stat-card-header">
+        <div class="stat-icon stat-icon-primary">
+          <svg aria-hidden="true">
+            <use href="#i-clock"/>
+          </svg>
+        </div>
+        <div class="stat-trend">
+          <span class="trend-badge trend-up">{{ year }}</span>
+        </div>
+      </div>
+      <div class="stat-card-body">
+        <div class="stat-value">{{ hours_curr }}</div>
+        <div class="stat-label">Godzin zatwierdzonych</div>
+      </div>
+      <div class="stat-card-footer">
+        <a href="{% url 'timesheets:my_entries' %}" class="stat-link">
+          Zobacz szczegóły
+          <svg class="arrow-icon" aria-hidden="true">
+            <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+
+    <!-- Card: Godziny poprzedni rok -->
+    <div class="stat-card stat-card-secondary">
+      <div class="stat-card-header">
+        <div class="stat-icon stat-icon-secondary">
+          <svg aria-hidden="true">
+            <use href="#i-clock"/>
+          </svg>
+        </div>
+        <div class="stat-trend">
+          <span class="trend-badge trend-neutral">{{ prev }}</span>
+        </div>
+      </div>
+      <div class="stat-card-body">
+        <div class="stat-value">{{ hours_prev }}</div>
+        <div class="stat-label">Godzin (rok poprzedni)</div>
+      </div>
+      <div class="stat-card-footer">
+        <span class="stat-meta">Dla porównania</span>
+      </div>
+    </div>
+
+    <!-- Card: Koszty -->
+    <div class="stat-card stat-card-success">
+      <div class="stat-card-header">
+        <div class="stat-icon stat-icon-success">
+          <svg aria-hidden="true">
+            <use href="#i-cash"/>
+          </svg>
+        </div>
+        <div class="stat-trend">
+          <span class="trend-badge trend-success">Zatwierdzone</span>
+        </div>
+      </div>
+      <div class="stat-card-body">
+        <div class="stat-value">{{ cost_total }} <span class="stat-currency">zł</span></div>
+        <div class="stat-label">Całkowite koszty</div>
+      </div>
+      <div class="stat-card-footer">
+        <a href="{% url 'costs:mine' %}" class="stat-link">
+          Zarządzaj kosztami
+          <svg class="arrow-icon" aria-hidden="true">
+            <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+
+    <!-- Card: Statusy projektów -->
+    <div class="stat-card stat-card-info">
+      <div class="stat-card-header">
+        <div class="stat-icon stat-icon-info">
+          <svg aria-hidden="true">
+            <use href="#i-folder"/>
+          </svg>
+        </div>
+        <div class="stat-trend">
+          <span class="trend-badge trend-info">Projekty</span>
+        </div>
+      </div>
+      <div class="stat-card-body">
+        <div class="status-list">
+          {% for status, count in status_counts.items %}
+            <div class="status-item">
+              <span class="status-dot status-{{ status }}"></span>
+              <span class="status-name">{{ status }}</span>
+              <span class="status-count">{{ count }}</span>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="stat-card-footer">
+        <a href="{% url 'projects:list' %}" class="stat-link">
+          Zobacz wszystkie
+          <svg class="arrow-icon" aria-hidden="true">
+            <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Monthly Hours Chart -->
+  <div class="chart-section">
+    <div class="chart-header">
+      <div class="chart-title-section">
+        <h2 class="chart-title">Godziny per miesiąc</h2>
+        <p class="chart-subtitle">Rozkład godzin zatwierdzonych w {{ year }} roku</p>
+      </div>
+      <div class="chart-legend">
+        <span class="legend-item">
+          <span class="legend-dot" style="background: var(--color-primary);"></span>
+          {{ year }}
+        </span>
+      </div>
+    </div>
+
+    <div class="chart-container">
+      <div class="chart-grid">
+        {% for month_hours in monthly %}
+          <div class="chart-bar-wrapper">
+            <div class="chart-bar" style="height: {% if month_hours > 0 %}{{ month_hours|floatformat:0 }}%{% else %}2%{% endif %}">
+              <span class="bar-value">{{ month_hours|floatformat:0 }}</span>
+            </div>
+            <span class="bar-label">{{ months|slice:forloop.counter0|first }}</span>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Table Fallback -->
+    <details class="chart-data-toggle">
+      <summary>Pokaż dane tabelaryczne</summary>
+      <div class="data-table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              {% for m in months %}
+                <th>{{ m }}</th>
+              {% endfor %}
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              {% for v in monthly %}
+                <td>{{ v|floatformat:1 }}</td>
+              {% endfor %}
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </details>
+  </div>
+
+</div>
+
+<style>
+/* Dashboard Container */
+.dashboard-container {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Header Section */
+.dashboard-header {
+  margin-bottom: var(--space-2xl);
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-lg);
+  flex-wrap: wrap;
+}
+
+.header-title-section {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.header-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+.dashboard-title {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.dashboard-subtitle {
+  margin: 0;
+  font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
+}
+
+.header-actions {
+  display: flex;
+  gap: var(--space-md);
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--color-primary);
+  border: 1px solid var(--color-border);
+}
+
+.btn-outline:hover {
+  background: var(--color-bg-secondary);
+  border-color: var(--color-primary);
+}
+
+/* Stats Grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--space-xl);
+  margin-bottom: var(--space-2xl);
+}
+
+/* Stat Cards */
+.stat-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: all var(--transition-base);
+}
+
+.stat-card:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+.stat-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-lg);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.stat-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: var(--radius-md);
+}
+
+.stat-icon svg {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.stat-icon-primary {
+  background: rgb(37 99 235 / 0.1);
+  color: var(--color-primary);
+}
+
+.stat-icon-secondary {
+  background: rgb(100 116 139 / 0.1);
+  color: #64748b;
+}
+
+.stat-icon-success {
+  background: rgb(16 185 129 / 0.1);
+  color: var(--color-success);
+}
+
+.stat-icon-info {
+  background: rgb(6 182 212 / 0.1);
+  color: var(--color-info);
+}
+
+.stat-card-body {
+  flex: 1;
+  padding: var(--space-lg);
+}
+
+.stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: var(--space-sm);
+}
+
+.stat-currency {
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+.stat-label {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+.stat-card-footer {
+  padding: var(--space-md) var(--space-lg);
+  background: var(--color-bg-secondary);
+  border-top: 1px solid var(--color-border);
+}
+
+.stat-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-primary);
+  transition: gap var(--transition-fast);
+}
+
+.stat-link:hover {
+  gap: var(--space-md);
+}
+
+.arrow-icon {
+  width: 1rem;
+  height: 1rem;
+  transition: transform var(--transition-fast);
+}
+
+.stat-link:hover .arrow-icon {
+  transform: translateX(2px);
+}
+
+.stat-meta {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+/* Trend Badges */
+.trend-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.625rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: var(--radius-full);
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+.trend-up {
+  background: rgb(37 99 235 / 0.1);
+  color: var(--color-primary);
+}
+
+.trend-neutral {
+  background: rgb(148 163 184 / 0.1);
+  color: #64748b;
+}
+
+.trend-success {
+  background: rgb(16 185 129 / 0.1);
+  color: var(--color-success);
+}
+
+.trend-info {
+  background: rgb(6 182 212 / 0.1);
+  color: var(--color-info);
+}
+
+/* Status List */
+.status-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.status-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  font-size: var(--font-size-sm);
+}
+
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.status-BACKLOG { background: #94a3b8; }
+.status-IN_PROGRESS { background: var(--color-primary); }
+.status-BLOCKED { background: var(--color-error); }
+.status-REVIEW { background: var(--color-warning); }
+.status-DONE { background: var(--color-success); }
+.status-CANCELLED { background: #64748b; }
+
+.status-name {
+  flex: 1;
+  color: var(--color-text-secondary);
+}
+
+.status-count {
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+/* Chart Section */
+.chart-section {
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  margin-bottom: var(--space-2xl);
+}
+
+.chart-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-xl);
+  flex-wrap: wrap;
+  gap: var(--space-md);
+}
+
+.chart-title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.chart-subtitle {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.chart-legend {
+  display: flex;
+  gap: var(--space-lg);
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+/* Bar Chart */
+.chart-container {
+  padding: var(--space-lg) 0;
+}
+
+.chart-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: var(--space-md);
+  align-items: flex-end;
+  height: 300px;
+  border-bottom: 2px solid var(--color-border);
+  padding: var(--space-lg) 0;
+}
+
+.chart-bar-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+  height: 100%;
+  justify-content: flex-end;
+}
+
+.chart-bar {
+  position: relative;
+  width: 100%;
+  min-height: 2%;
+  background: linear-gradient(to top, var(--color-primary), var(--color-primary-light));
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  transition: all var(--transition-base);
+  cursor: pointer;
+}
+
+.chart-bar:hover {
+  background: var(--color-primary-dark);
+  transform: scaleY(1.02);
+}
+
+.bar-value {
+  position: absolute;
+  top: -24px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text);
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+
+.chart-bar:hover .bar-value {
+  opacity: 1;
+}
+
+.bar-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+}
+
+/* Data Table Toggle */
+.chart-data-toggle {
+  margin-top: var(--space-xl);
+  padding-top: var(--space-xl);
+  border-top: 1px solid var(--color-border);
+}
+
+.chart-data-toggle summary {
+  cursor: pointer;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-primary);
+  list-style: none;
+  user-select: none;
+}
+
+.chart-data-toggle summary::-webkit-details-marker {
+  display: none;
+}
+
+.chart-data-toggle summary:hover {
+  text-decoration: underline;
+}
+
+.data-table-wrapper {
+  margin-top: var(--space-lg);
+  overflow-x: auto;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-size-sm);
+}
+
+.data-table th,
+.data-table td {
+  padding: var(--space-md);
+  text-align: center;
+  border: 1px solid var(--color-border);
+}
+
+.data-table th {
+  background: var(--color-bg-secondary);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.data-table td {
+  color: var(--color-text-secondary);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .stats-grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+
+  .chart-grid {
+    gap: var(--space-sm);
+  }
+}
+
+@media (max-width: 640px) {
+  .dashboard-title {
+    font-size: 1.5rem;
+  }
+
+  .header-content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .chart-grid {
+    height: 200px;
+    gap: var(--space-xs);
+  }
+
+  .bar-label {
+    font-size: 0.625rem;
+  }
+}
+</style>
+{% endblock %}

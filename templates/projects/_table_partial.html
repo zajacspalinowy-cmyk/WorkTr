@@ -1,0 +1,100 @@
+<div id="projects-table" class="table-card">
+  <div class="table-wrapper">
+    <table class="modern-table">
+      <thead>
+        <tr>
+          <th>Nr projektu</th>
+          <th>D-nr</th>
+          <th>Nazwa</th>
+          <th>Zlecający</th>
+          <th>Lokalizacja</th>
+          <th>Urządzenia</th>
+          <th>Przyjęcie</th>
+          <th>Termin</th>
+          <th>Status</th>
+          <th class="th-actions">Akcje</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in page_obj %}
+          <tr class="table-row">
+            <td class="td-number">
+              <span class="project-number">{{ p.number }}</span>
+            </td>
+            <td class="td-dnumber">{{ p.d_number|default:"—" }}</td>
+            <td class="td-name">
+              <strong>{{ p.name }}</strong>
+            </td>
+            <td class="td-client">{{ p.client_name }}</td>
+            <td class="td-location">{{ p.location|default:"—" }}</td>
+            <td class="td-devices">{{ p.devices|default:"—" }}</td>
+            <td class="td-date">{{ p.date_received|date:"Y-m-d" }}</td>
+            <td class="td-date">{{ p.date_due|date:"Y-m-d"|default:"—" }}</td>
+            <td class="td-status">
+              <span class="status-badge status-{{ p.status }}">
+                {{ p.get_status_display }}
+              </span>
+            </td>
+            <td class="td-actions">
+              <a href="{% url 'projects:detail' p.pk %}" class="btn-icon" title="Szczegóły">
+                <svg aria-hidden="true">
+                  <circle cx="12" cy="12" r="1" fill="currentColor"/>
+                  <circle cx="12" cy="5" r="1" fill="currentColor"/>
+                  <circle cx="12" cy="19" r="1" fill="currentColor"/>
+                </svg>
+              </a>
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="10" class="empty-state">
+              <div class="empty-content">
+                <svg class="empty-icon" aria-hidden="true">
+                  <use href="#i-folder"/>
+                </svg>
+                <p class="empty-title">Brak projektów</p>
+                <p class="empty-description">Nie znaleziono projektów spełniających kryteria wyszukiwania.</p>
+              </div>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% if page_obj.paginator.num_pages > 1 %}
+    <div class="pagination-wrapper" hx-target="#projects-table" hx-swap="outerHTML">
+      <div class="pagination">
+        {% if page_obj.has_previous %}
+          <a href="#"
+             hx-get="?page={{ page_obj.previous_page_number }}&{{ request.GET.urlencode }}"
+             class="pagination-btn pagination-prev"
+             title="Poprzednia strona">
+            <svg aria-hidden="true">
+              <path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span>Poprzednia</span>
+          </a>
+        {% endif %}
+
+        <div class="pagination-info">
+          <span class="pagination-text">
+            Strona <strong>{{ page_obj.number }}</strong> z <strong>{{ page_obj.paginator.num_pages }}</strong>
+          </span>
+        </div>
+
+        {% if page_obj.has_next %}
+          <a href="#"
+             hx-get="?page={{ page_obj.next_page_number }}&{{ request.GET.urlencode }}"
+             class="pagination-btn pagination-next"
+             title="Następna strona">
+            <span>Następna</span>
+            <svg aria-hidden="true">
+              <path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  {% endif %}
+</div>

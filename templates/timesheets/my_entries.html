@@ -1,0 +1,465 @@
+{% extends "base.html" %}
+{% block title %}Moje godziny - WorkTrack{% endblock %}
+
+{% block content %}
+<div class="entries-container">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="page-header-content">
+      <div class="page-title-section">
+        <svg class="page-icon" aria-hidden="true">
+          <use href="#i-user-circle"/>
+        </svg>
+        <div>
+          <h1 class="page-title">Moje wpisy godzin</h1>
+          <p class="page-subtitle">Historia wszystkich zgłoszonych godzin pracy</p>
+        </div>
+      </div>
+      <div class="page-actions">
+        <a href="{% url 'timesheets:new_bulk' %}" class="btn btn-primary">
+          <svg class="ico" aria-hidden="true">
+            <use href="#i-plus-circle"/>
+          </svg>
+          <span>Zgłoś godziny</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats Summary -->
+  <div class="stats-summary">
+    <div class="summary-card">
+      <div class="summary-icon summary-total">
+        <svg aria-hidden="true">
+          <use href="#i-clock"/>
+        </svg>
+      </div>
+      <div class="summary-content">
+        <div class="summary-value">{{ entries|length }}</div>
+        <div class="summary-label">Wszystkich wpisów</div>
+      </div>
+    </div>
+
+    <div class="summary-card">
+      <div class="summary-icon summary-pending">
+        <svg aria-hidden="true">
+          <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/>
+          <path d="M12 6v6l4 2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="summary-content">
+        <div class="summary-value">{{ pending_count|default:0 }}</div>
+        <div class="summary-label">Oczekujących</div>
+      </div>
+    </div>
+
+    <div class="summary-card">
+      <div class="summary-icon summary-approved">
+        <svg aria-hidden="true">
+          <use href="#i-approve"/>
+        </svg>
+      </div>
+      <div class="summary-content">
+        <div class="summary-value">{{ approved_count|default:0 }}</div>
+        <div class="summary-label">Zatwierdzonych</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Entries Table Card -->
+  <div class="entries-table-card">
+    {% if entries %}
+      <div class="table-wrapper">
+        <table class="entries-table">
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Projekt</th>
+              <th>Godziny</th>
+              <th>Notatka</th>
+              <th>Status</th>
+              <th>Zgłoszono</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for t in entries %}
+              <tr class="entry-row">
+                <td class="td-date">
+                  <div class="date-cell">
+                    <svg class="date-icon" aria-hidden="true">
+                      <rect x="3" y="4" width="18" height="18" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
+                      <line x1="3" y1="10" x2="21" y2="10" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                    <span>{{ t.date|date:"d.m.Y" }}</span>
+                  </div>
+                </td>
+                <td class="td-project">
+                  <div class="project-cell">
+                    <span class="project-number">{{ t.project.number }}</span>
+                    <span class="project-name">{{ t.project.name }}</span>
+                  </div>
+                </td>
+                <td class="td-hours">
+                  <span class="hours-badge">{{ t.hours }}h</span>
+                </td>
+                <td class="td-note">
+                  {% if t.note %}
+                    <span class="note-text" title="{{ t.note }}">{{ t.note }}</span>
+                  {% else %}
+                    <span class="note-empty">—</span>
+                  {% endif %}
+                </td>
+                <td class="td-status">
+                  <span class="status-badge status-{{ t.state }}">
+                    {% if t.state == "PENDING" %}
+                      <svg class="status-icon" aria-hidden="true">
+                        <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/>
+                        <path d="M12 6v6l4 2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                      </svg>
+                    {% elif t.state == "APPROVED" %}
+                      <svg class="status-icon" aria-hidden="true">
+                        <use href="#i-approve"/>
+                      </svg>
+                    {% elif t.state == "REJECTED" %}
+                      <svg class="status-icon" aria-hidden="true">
+                        <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                      </svg>
+                    {% endif %}
+                    <span>{{ t.get_state_display }}</span>
+                  </span>
+                </td>
+                <td class="td-created">
+                  <span class="created-time">{{ t.created_at|date:"d.m.Y H:i" }}</span>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <!-- Empty State -->
+      <div class="empty-state">
+        <div class="empty-icon-wrapper">
+          <svg class="empty-icon" aria-hidden="true">
+            <use href="#i-clock"/>
+          </svg>
+        </div>
+        <h3 class="empty-title">Brak wpisów godzin</h3>
+        <p class="empty-description">
+          Nie masz jeszcze żadnych zgłoszonych godzin. Zacznij od dodania pierwszego wpisu.
+        </p>
+        <a href="{% url 'timesheets:new_bulk' %}" class="btn btn-primary">
+          <svg class="ico" aria-hidden="true">
+            <use href="#i-plus-circle"/>
+          </svg>
+          <span>Zgłoś pierwsze godziny</span>
+        </a>
+      </div>
+    {% endif %}
+  </div>
+
+</div>
+
+<style>
+/* Entries Container */
+.entries-container {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Stats Summary */
+.stats-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--space-xl);
+  margin-bottom: var(--space-2xl);
+}
+
+.summary-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+  padding: var(--space-lg);
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  transition: all var(--transition-base);
+}
+
+.summary-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.summary-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: var(--radius-md);
+  flex-shrink: 0;
+}
+
+.summary-icon svg {
+  width: 2rem;
+  height: 2rem;
+}
+
+.summary-total {
+  background: rgb(37 99 235 / 0.1);
+  color: var(--color-primary);
+}
+
+.summary-pending {
+  background: rgb(245 158 11 / 0.1);
+  color: var(--color-warning);
+}
+
+.summary-approved {
+  background: rgb(16 185 129 / 0.1);
+  color: var(--color-success);
+}
+
+.summary-content {
+  flex: 1;
+}
+
+.summary-value {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: var(--color-text);
+  line-height: 1;
+  margin-bottom: 0.375rem;
+}
+
+.summary-label {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+/* Entries Table Card */
+.entries-table-card {
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+/* Entries Table */
+.entries-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-size-sm);
+}
+
+.entries-table thead {
+  background: linear-gradient(to bottom, var(--color-bg-secondary), var(--color-bg));
+  border-bottom: 2px solid var(--color-border);
+}
+
+.entries-table th {
+  padding: var(--space-md) var(--space-lg);
+  text-align: left;
+  font-weight: 600;
+  color: var(--color-text);
+  white-space: nowrap;
+}
+
+.entry-row {
+  border-bottom: 1px solid var(--color-border);
+  transition: background var(--transition-fast);
+}
+
+.entry-row:hover {
+  background: var(--color-bg-secondary);
+}
+
+.entries-table td {
+  padding: var(--space-md) var(--space-lg);
+  color: var(--color-text-secondary);
+  vertical-align: middle;
+}
+
+/* Date Cell */
+.date-cell {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.date-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--color-text-muted);
+}
+
+.date-cell span {
+  font-family: 'Courier New', monospace;
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+/* Project Cell */
+.project-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.project-number {
+  font-family: 'Courier New', monospace;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.project-name {
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+}
+
+/* Hours Badge */
+.hours-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.375rem 0.75rem;
+  font-weight: 600;
+  background: rgb(37 99 235 / 0.1);
+  color: var(--color-primary);
+  border-radius: var(--radius-full);
+}
+
+/* Note Cell */
+.note-text {
+  display: block;
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--color-text);
+}
+
+.note-empty {
+  color: var(--color-text-muted);
+}
+
+/* Status Badge */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: var(--radius-full);
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+.status-icon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.status-PENDING {
+  background: rgb(245 158 11 / 0.15);
+  color: var(--color-warning);
+}
+
+.status-APPROVED {
+  background: rgb(16 185 129 / 0.15);
+  color: var(--color-success);
+}
+
+.status-REJECTED {
+  background: rgb(239 68 68 / 0.15);
+  color: var(--color-error);
+}
+
+/* Created Time */
+.created-time {
+  font-size: 0.75rem;
+  font-family: 'Courier New', monospace;
+  color: var(--color-text-muted);
+}
+
+/* Empty State */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-2xl) var(--space-xl);
+  text-align: center;
+  min-height: 400px;
+}
+
+.empty-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 5rem;
+  height: 5rem;
+  margin-bottom: var(--space-lg);
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
+  border-radius: 50%;
+}
+
+.empty-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  color: white;
+}
+
+.empty-title {
+  margin: 0 0 var(--space-md) 0;
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.empty-description {
+  margin: 0 0 var(--space-xl) 0;
+  font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
+  max-width: 400px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .page-header-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-md);
+  }
+
+  .page-actions {
+    width: 100%;
+  }
+
+  .page-actions .btn {
+    width: 100%;
+  }
+
+  .stats-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .table-wrapper {
+    overflow-x: auto;
+  }
+
+  .note-text {
+    max-width: 150px;
+  }
+}
+</style>
+
+<!-- Template filter workaround for counting by status -->
+<script>
+// Note: The filter_by_status is not available in Django by default
+// You may need to create a custom template filter or handle this in the view
+</script>
+{% endblock %}

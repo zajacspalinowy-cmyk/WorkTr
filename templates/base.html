@@ -1,0 +1,406 @@
+<!doctype html>
+{% load static %}
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <title>{% block title %}WorkTrack - Nadzór projektów{% endblock %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script defer src="{% static 'vendor/htmx/htmx.min.js' %}"></script>
+  <link rel="stylesheet" href="{% static 'base_style.css' %}">
+</head>
+<body>
+
+<!-- NOWOCZESNY NAVBAR -->
+<nav class="topbar" role="navigation">
+  <!-- Logo + Brand -->
+  <a class="brand" href="{% url 'dashboard:home' %}" title="Strona główna" aria-label="WorkTrack - strona główna">
+    <img src="{% static 'img/worktrack.png' %}" alt="" class="brand-logo">
+    <span class="brand-text">WorkTrack</span>
+  </a>
+
+  <!-- Wyszukiwarka -->
+  <div class="nav-search-wrapper">
+    <form class="nav-search" method="get" action="{% url 'projects:list' %}">
+      <svg class="search-icon" aria-hidden="true"><use href="#i-search"/></svg>
+      <input
+        name="q"
+        type="search"
+        placeholder="Szukaj projektów..."
+        value="{{ request.GET.q|default_if_none:'' }}"
+        aria-label="Wyszukaj projekty"
+        autocomplete="off"
+      >
+    </form>
+  </div>
+
+  <!-- Główne menu nawigacyjne -->
+  <div class="nav-items" role="menubar">
+
+    <!-- Dashboard -->
+    <a href="{% url 'dashboard:home' %}" class="nav-link" role="menuitem" title="Panel główny">
+      <svg class="ico" aria-hidden="true"><use href="#i-dashboard"/></svg>
+      <span>Dashboard</span>
+    </a>
+
+    <!-- Projekty -->
+    <div class="nav-dropdown" role="none">
+      <button class="nav-link dropdown-trigger" aria-haspopup="true" aria-expanded="false" type="button">
+        <svg class="ico" aria-hidden="true"><use href="#i-folder"/></svg>
+        <span>Projekty</span>
+        <svg class="chevron" aria-hidden="true"><use href="#i-chevron"/></svg>
+      </button>
+      <div class="dropdown-menu" role="menu">
+        <a href="{% url 'projects:list' %}" role="menuitem">
+          <svg class="ico" aria-hidden="true"><use href="#i-list"/></svg>
+          <span>Wszystkie projekty</span>
+        </a>
+        {% if perms.projects.add_project %}
+          <a href="{% url 'projects:create' %}" role="menuitem" class="accent">
+            <svg class="ico" aria-hidden="true"><use href="#i-plus-circle"/></svg>
+            <span>Nowy projekt</span>
+          </a>
+        {% endif %}
+        <div class="dropdown-divider"></div>
+        <a href="{% url 'exports:projects_table_excel' %}" role="menuitem">
+          <svg class="ico" aria-hidden="true"><use href="#i-excel"/></svg>
+          <span>Eksportuj do Excel</span>
+        </a>
+        <a href="{% url 'exports:projects_table_pdf' %}" role="menuitem">
+          <svg class="ico" aria-hidden="true"><use href="#i-pdf"/></svg>
+          <span>Eksportuj do PDF</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Kanban -->
+    <a href="{% url 'kanban:board' %}" class="nav-link" role="menuitem" title="Tablica Kanban">
+      <svg class="ico" aria-hidden="true"><use href="#i-kanban"/></svg>
+      <span>Kanban</span>
+    </a>
+
+    <!-- Godziny -->
+    <div class="nav-dropdown" role="none">
+      <button class="nav-link dropdown-trigger" aria-haspopup="true" aria-expanded="false" type="button">
+        <svg class="ico" aria-hidden="true"><use href="#i-clock"/></svg>
+        <span>Godziny</span>
+        <svg class="chevron" aria-hidden="true"><use href="#i-chevron"/></svg>
+      </button>
+      <div class="dropdown-menu" role="menu">
+        <a href="{% url 'timesheets:new_bulk' %}" role="menuitem">
+          <svg class="ico" aria-hidden="true"><use href="#i-edit"/></svg>
+          <span>Wpisz godziny</span>
+        </a>
+        <a href="{% url 'timesheets:review' %}" role="menuitem" class="{% if not nav_counts.timesheets_pending %}muted{% endif %}">
+          <svg class="ico" aria-hidden="true"><use href="#i-checklist"/></svg>
+          <span>Do akceptacji</span>
+          {% if nav_counts.timesheets_pending %}
+            <span class="badge badge-primary">{{ nav_counts.timesheets_pending }}</span>
+          {% endif %}
+        </a>
+        <a href="{% url 'timesheets:my_entries' %}" role="menuitem">
+          <svg class="ico" aria-hidden="true"><use href="#i-user-circle"/></svg>
+          <span>Moje wpisy</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Koszty -->
+    <div class="nav-dropdown" role="none">
+      <button class="nav-link dropdown-trigger" aria-haspopup="true" aria-expanded="false" type="button">
+        <svg class="ico" aria-hidden="true"><use href="#i-cash"/></svg>
+        <span>Koszty</span>
+        <svg class="chevron" aria-hidden="true"><use href="#i-chevron"/></svg>
+      </button>
+      <div class="dropdown-menu" role="menu">
+        <a href="{% url 'costs:new' %}" role="menuitem" class="accent">
+          <svg class="ico" aria-hidden="true"><use href="#i-plus-circle"/></svg>
+          <span>Zgłoś koszt</span>
+        </a>
+        <a href="{% url 'costs:review' %}" role="menuitem" class="{% if not nav_counts.costs_pending %}muted{% endif %}">
+          <svg class="ico" aria-hidden="true"><use href="#i-approve"/></svg>
+          <span>Do akceptacji</span>
+          {% if nav_counts.costs_pending %}
+            <span class="badge badge-warning">{{ nav_counts.costs_pending }}</span>
+          {% endif %}
+        </a>
+        <a href="{% url 'costs:mine' %}" role="menuitem">
+          <svg class="ico" aria-hidden="true"><use href="#i-user-circle"/></svg>
+          <span>Moje koszty</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Prawa strona: User -->
+  <div class="nav-auth">
+    {% if request.user.is_authenticated %}
+      <div class="user-menu">
+        <button class="user-pill" aria-label="Menu użytkownika" type="button">
+          <svg class="ico" aria-hidden="true"><use href="#i-user-circle"/></svg>
+          <span class="user-name">{{ request.user.username }}</span>
+        </button>
+        <div class="user-dropdown">
+          <a href="{% url 'accounts:logout' %}">
+            <svg class="ico" aria-hidden="true"><use href="#i-logout"/></svg>
+            <span>Wyloguj się</span>
+          </a>
+        </div>
+      </div>
+    {% else %}
+      <a class="btn btn-primary" href="{% url 'accounts:login' %}">
+        <svg class="ico" aria-hidden="true"><use href="#i-login"/></svg>
+        <span>Zaloguj</span>
+      </a>
+    {% endif %}
+  </div>
+
+  <!-- Mobile toggle -->
+  <button class="nav-toggle" type="button" aria-label="Otwórz menu" aria-expanded="false">
+    <svg class="ico" aria-hidden="true"><use href="#i-menu"/></svg>
+  </button>
+</nav>
+
+<!-- Flash messages -->
+{% if messages %}
+  <div class="flash-container" role="alert" aria-live="polite">
+    {% for m in messages %}
+      <div class="flash flash-{{ m.tags }}">
+        <svg class="flash-icon" aria-hidden="true">
+          <use href="{% if 'success' in m.tags %}#i-approve{% elif 'error' in m.tags %}#i-alert{% else %}#i-info{% endif %}"/>
+        </svg>
+        <span>{{ m }}</span>
+        <button class="flash-close" aria-label="Zamknij" onclick="this.parentElement.remove()">×</button>
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+
+<!-- Main content -->
+<main class="container">
+  {% block content %}{% endblock %}
+</main>
+
+<!-- Footer -->
+<footer class="app-footer">
+  <p>&copy; 2025 WorkTrack. System zarządzania projektami.</p>
+</footer>
+
+<!-- SVG Icons -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+
+  <symbol id="i-dashboard" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="3" y="3" width="7" height="7"/>
+    <rect x="14" y="3" width="7" height="7"/>
+    <rect x="14" y="14" width="7" height="7"/>
+    <rect x="3" y="14" width="7" height="7"/>
+  </symbol>
+
+  <symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="11" cy="11" r="8"/>
+    <path d="m21 21-4.35-4.35"/>
+  </symbol>
+
+  <symbol id="i-folder" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+  </symbol>
+
+  <symbol id="i-list" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="8" y1="6" x2="21" y2="6"/>
+    <line x1="8" y1="12" x2="21" y2="12"/>
+    <line x1="8" y1="18" x2="21" y2="18"/>
+    <line x1="3" y1="6" x2="3.01" y2="6"/>
+    <line x1="3" y1="12" x2="3.01" y2="12"/>
+    <line x1="3" y1="18" x2="3.01" y2="18"/>
+  </symbol>
+
+  <symbol id="i-plus-circle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="10"/>
+    <line x1="12" y1="8" x2="12" y2="16"/>
+    <line x1="8" y1="12" x2="16" y2="12"/>
+  </symbol>
+
+  <symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="10"/>
+    <polyline points="12 6 12 12 16 14"/>
+  </symbol>
+
+  <symbol id="i-edit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+  </symbol>
+
+  <symbol id="i-checklist" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M9 11l3 3L22 4"/>
+    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+  </symbol>
+
+  <symbol id="i-user-circle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="10"/>
+    <circle cx="12" cy="10" r="3"/>
+    <path d="M7 20.662V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662"/>
+  </symbol>
+
+  <symbol id="i-cash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="12" y1="1" x2="12" y2="23"/>
+    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+  </symbol>
+
+  <symbol id="i-approve" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="20 6 9 17 4 12"/>
+  </symbol>
+
+  <symbol id="i-kanban" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="3" y="3" width="7" height="18"/>
+    <rect x="14" y="3" width="7" height="9"/>
+  </symbol>
+
+  <symbol id="i-excel" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+    <polyline points="14 2 14 8 20 8"/>
+    <line x1="8" y1="13" x2="16" y2="13"/>
+    <line x1="8" y1="17" x2="16" y2="17"/>
+  </symbol>
+
+  <symbol id="i-pdf" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+    <polyline points="14 2 14 8 20 8"/>
+  </symbol>
+
+  <symbol id="i-login" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+    <polyline points="10 17 15 12 10 7"/>
+    <line x1="15" y1="12" x2="3" y2="12"/>
+  </symbol>
+
+  <symbol id="i-logout" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21 12 16 7"/>
+    <line x1="21" y1="12" x2="9" y2="12"/>
+  </symbol>
+
+  <symbol id="i-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="3" y1="12" x2="21" y2="12"/>
+    <line x1="3" y1="6" x2="21" y2="6"/>
+    <line x1="3" y1="18" x2="21" y2="18"/>
+  </symbol>
+
+  <symbol id="i-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="6 9 12 15 18 9"/>
+  </symbol>
+
+  <symbol id="i-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="10"/>
+    <line x1="12" y1="16" x2="12" y2="12"/>
+    <line x1="12" y1="8" x2="12.01" y2="8"/>
+  </symbol>
+
+  <symbol id="i-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+    <line x1="12" y1="9" x2="12" y2="13"/>
+    <line x1="12" y1="17" x2="12.01" y2="17"/>
+  </symbol>
+</svg>
+
+<script>
+// Modern dropdown system with better UX
+(function() {
+  const dropdowns = document.querySelectorAll('.nav-dropdown');
+  let activeDropdown = null;
+  let closeTimer = null;
+
+  dropdowns.forEach(dropdown => {
+    const trigger = dropdown.querySelector('.dropdown-trigger');
+    const menu = dropdown.querySelector('.dropdown-menu');
+
+    function open() {
+      if (activeDropdown && activeDropdown !== dropdown) {
+        close(activeDropdown);
+      }
+
+      clearTimeout(closeTimer);
+      dropdown.classList.add('is-open');
+      trigger.setAttribute('aria-expanded', 'true');
+      activeDropdown = dropdown;
+    }
+
+    function close(target = dropdown) {
+      target.classList.remove('is-open');
+      const trig = target.querySelector('.dropdown-trigger');
+      if (trig) trig.setAttribute('aria-expanded', 'false');
+      if (activeDropdown === target) activeDropdown = null;
+    }
+
+    function scheduleClose() {
+      closeTimer = setTimeout(() => close(), 200);
+    }
+
+    // Desktop: hover
+    dropdown.addEventListener('mouseenter', open);
+    dropdown.addEventListener('mouseleave', scheduleClose);
+
+    // Mobile/keyboard: click
+    trigger.addEventListener('click', (e) => {
+      e.preventDefault();
+      dropdown.classList.contains('is-open') ? close() : open();
+    });
+
+    // Close on menu item click
+    menu.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => close());
+    });
+  });
+
+  // User menu
+  const userMenu = document.querySelector('.user-menu');
+  if (userMenu) {
+    const pill = userMenu.querySelector('.user-pill');
+    pill.addEventListener('click', () => {
+      userMenu.classList.toggle('is-open');
+    });
+  }
+
+  // Close all on outside click
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.nav-dropdown') && !e.target.closest('.user-menu')) {
+      dropdowns.forEach(d => d.classList.remove('is-open'));
+      if (userMenu) userMenu.classList.remove('is-open');
+    }
+  });
+
+  // Close on Escape
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      dropdowns.forEach(d => d.classList.remove('is-open'));
+      if (userMenu) userMenu.classList.remove('is-open');
+    }
+  });
+
+  // Mobile navigation toggle
+  const navToggle = document.querySelector('.nav-toggle');
+  if (navToggle) {
+    navToggle.addEventListener('click', () => {
+      document.body.classList.toggle('nav-open');
+      const expanded = document.body.classList.contains('nav-open');
+      navToggle.setAttribute('aria-expanded', expanded);
+    });
+  }
+
+  // Active link highlighting
+  const path = location.pathname.replace(/\/+$/, '');
+  document.querySelectorAll('.nav-link[href], .dropdown-menu a[href]').forEach(link => {
+    const href = link.getAttribute('href') || '';
+    const clean = href.replace(/\/+$/, '');
+    if (clean === path || (clean && path.startsWith(clean) && clean !== '/')) {
+      link.classList.add('is-active');
+      // Also mark parent dropdown as active
+      const parentDropdown = link.closest('.nav-dropdown');
+      if (parentDropdown) {
+        parentDropdown.querySelector('.dropdown-trigger')?.classList.add('is-active');
+      }
+    }
+  });
+})();
+</script>
+
+</body>
+</html>
