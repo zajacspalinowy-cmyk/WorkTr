@@ -1,3 +1,5 @@
+
+{% load i18n %}
 <!-- OOB: podmień cały kontener z selectem, zaznaczając nową lokalizację -->
 <div id="location-field" hx-swap-oob="outerHTML">
   <div id="location-field">
@@ -15,9 +17,9 @@
       </svg>
     </div>
     <div class="success-content">
-      <h4 class="success-title">Lokalizacja dodana!</h4>
+      <h4 class="success-title">{% trans "Lokalizacja dodana!"%}</h4>
       <p class="success-text">
-        Utworzono lokalizację:
+       {% trans " Utworzono lokalizację:"%}
         <strong>{{ loc.name }}</strong>{% if loc.sub_location %} – {{ loc.sub_location }}{% endif %}
       </p>
     </div>

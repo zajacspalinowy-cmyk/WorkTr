@@ -1,4 +1,5 @@
 <div class="quick-form-wrapper">
+  {% load i18n %}
   <form method="post"
         class="quick-form"
         hx-post="{% url 'projects:location_quick_add' %}"
@@ -7,8 +8,8 @@
     {% csrf_token %}
 
     <div class="quick-form-header">
-      <h3 class="quick-title">Dodaj nową lokalizację</h3>
-      <p class="quick-subtitle">Wypełnij pola aby szybko dodać lokalizację</p>
+      <h3 class="quick-title">{% trans "Dodaj nową lokalizację"%}</h3>
+      <p class="quick-subtitle">{% trans "Wypełnij pola aby szybko dodać lokalizację"%}</p>
     </div>
 
     <div class="quick-form-body">
@@ -16,7 +17,7 @@
         <!-- Nazwa -->
         <div class="quick-field {% if form.name.errors %}has-error{% endif %}">
           <label for="{{ form.name.id_for_label }}" class="quick-label">
-            <span>Nazwa</span>
+            <span>{% trans "Nazwa"%}</span>
             <span class="field-required">*</span>
           </label>
           {{ form.name }}
@@ -30,7 +31,7 @@
         <!-- Pod-lokalizacja -->
         <div class="quick-field {% if form.sub_location.errors %}has-error{% endif %}">
           <label for="{{ form.sub_location.id_for_label }}" class="quick-label">
-            <span>Pod-lokalizacja</span>
+            <span>{% trans "Pod-lokalizacja"%}</span>
           </label>
           {{ form.sub_location }}
           {% if form.sub_location.errors %}
@@ -49,13 +50,13 @@
         <svg class="ico" aria-hidden="true">
           <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
         </svg>
-        <span>Anuluj</span>
+        <span>{% trans "Anuluj"%}</span>
       </button>
       <button type="submit" class="btn btn-primary btn-sm">
         <svg class="ico" aria-hidden="true">
           <use href="#i-approve"/>
         </svg>
-        <span>Dodaj lokalizację</span>
+        <span>{% trans "Dodaj lokalizację"%}</span>
       </button>
     </div>
   </form>

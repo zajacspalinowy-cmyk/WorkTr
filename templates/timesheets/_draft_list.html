@@ -1,0 +1,233 @@
+{% load i18n %}
+{% if drafts %}
+  <div class="draft-summary">
+    <svg class="summary-icon" aria-hidden="true">
+      <use href="#i-info"/>
+    </svg>
+    <span>{{ drafts|length }} {% if drafts|length == 1 %}wpis{% else %}wpisów{% endif %}</span>
+    <span class="summary-divider">•</span>
+    <span class="summary-total">{% trans "Suma:"%} <strong>{{ total }} h</strong></span>
+  </div>
+
+  <div class="table-card">
+    <div class="table-wrapper">
+      <table class="modern-table">
+        <thead>
+          <tr>
+            <th style="width: 40px;">
+              <input type="checkbox"
+                     id="sel-all"
+                     aria-label="Zaznacz wszystkie"
+                     onclick="document.querySelectorAll('#draft-list input[name=\'draft_idx\']').forEach(cb=>cb.checked=this.checked);">
+            </th>
+            <th>{% trans "Projekt"%}</th>
+            <th style="width: 120px;">Data</th>
+            <th style="width: 80px;">Godziny</th>
+            <th>{% trans "Notatka"%}</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for item in drafts %}
+          <tr class="table-row">
+            <td>
+              <input type="checkbox"
+                     name="draft_idx"
+                     value="{{ forloop.counter0 }}"
+                     aria-label="Zaznacz wpis {{ forloop.counter }}">
+            </td>
+            <td class="td-name">
+              <svg class="td-icon" aria-hidden="true">
+                <use href="#i-folder"/>
+              </svg>
+              <span>{{ item.project_label }}</span>
+            </td>
+            <td class="td-date">{{ item.date }}</td>
+            <td class="td-hours">
+              <span class="hours-badge">{{ item.hours }} h</span>
+            </td>
+            <td class="td-note">
+              {% if item.note %}
+                <span class="note-text">{{ item.note }}</span>
+              {% else %}
+                <span class="text-muted">—</span>
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% else %}
+  <div class="empty-state-small">
+    <svg class="empty-icon-small" aria-hidden="true">
+      <use href="#i-clock"/>
+    </svg>
+    <p class="empty-text">{% trans "Brak wpisów roboczych"%}</p>
+  </div>
+{% endif %}
+
+<style>
+/* Draft Summary */
+.draft-summary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-md);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.summary-icon {
+  width: 16px;
+  height: 16px;
+  color: var(--color-primary);
+}
+
+.summary-divider {
+  color: var(--color-border);
+}
+
+.summary-total {
+  color: var(--color-text);
+}
+
+.summary-total strong {
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+/* Table */
+.table-card {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--color-bg);
+}
+
+.table-wrapper {
+  overflow-x: auto;
+}
+
+.modern-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.modern-table thead {
+  background: var(--color-bg-secondary);
+}
+
+.modern-table th {
+  padding: var(--space-sm) var(--space-md);
+  text-align: left;
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.modern-table tbody tr {
+  border-bottom: 1px solid var(--color-border);
+  transition: background-color 0.15s ease;
+}
+
+.modern-table tbody tr:hover {
+  background: var(--color-bg-secondary);
+}
+
+.modern-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.modern-table td {
+  padding: var(--space-md);
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+}
+
+.td-name {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-weight: 500;
+}
+
+.td-icon {
+  width: 16px;
+  height: 16px;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+}
+
+.td-date {
+  color: var(--color-text-secondary);
+  font-family: 'SF Mono', Consolas, monospace;
+  font-size: var(--font-size-sm);
+}
+
+.td-hours {
+  font-weight: 600;
+}
+
+.hours-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-xs) var(--space-sm);
+  background: rgba(37, 99, 235, 0.1);
+  color: var(--color-primary);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+}
+
+.td-note {
+  max-width: 300px;
+}
+
+.note-text {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--color-text-secondary);
+}
+
+.text-muted {
+  color: var(--color-text-muted);
+}
+
+/* Checkbox styling */
+.modern-table input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: var(--color-primary);
+}
+
+/* Empty State Small */
+.empty-state-small {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-xl) var(--space-md);
+  text-align: center;
+}
+
+.empty-icon-small {
+  width: 48px;
+  height: 48px;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-md);
+}
+
+.empty-text {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  margin: 0;
+}
+</style>

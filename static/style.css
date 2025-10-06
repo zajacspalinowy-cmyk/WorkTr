@@ -228,3 +228,13 @@ body{font-family:system-ui,Arial,sans-serif;margin:0}
 
 /* Aktywny link */
 .nav-link.active{box-shadow: inset 0 0 0 2px #d8dde6}
+
+
+/* static/style.css – dopisz nisko w pliku: */
+.alert { padding: 8px 10px; border: 1px solid #d6dbe3; background: #edf1f6; color: #111; border-radius: 6px; margin-bottom: 8px; }
+.alert-ok { border-color: #cfe6cf; background: #eaf7ea; }
+.alert-error { border-color: #e2c0c0; background: #faecec; }
+.alert-warning { border-color: #ead9b5; background: #fff6d8; }
+.grid-table { width: 100%; border-collapse: collapse; }
+.grid-table th, .grid-table td { border-bottom: 1px solid #d6dbe3; padding: 6px 8px; }
+.muted { color: #555; }

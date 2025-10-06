@@ -1,0 +1,36 @@
+
+{% load i18n %}
+{% if has_drafts %}
+<div class="draft-actions">
+  <button type="submit" class="btn btn-primary" form="submit-form">
+    <svg class="ico" aria-hidden="true">
+      <use href="#i-approve"/>
+    </svg>
+    <span>{% trans "Wyślij zaznaczone"%}</span>
+  </button>
+
+  <button type="submit"
+          name="submit_all"
+          value="1"
+          form="submit-form"
+          class="btn btn-secondary">
+    <svg class="ico" aria-hidden="true">
+      <use href="#i-approve"/>
+    </svg>
+    <span>{% trans "Wyślij wszystkie"%}</span>
+  </button>
+</div>
+{% else %}
+<div></div>
+{% endif %}
+
+<style>
+.draft-actions {
+  display: flex;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+  margin-top: var(--space-md);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--color-border);
+}
+</style>

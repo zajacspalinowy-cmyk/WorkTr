@@ -1,0 +1,1018 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-10-06 12:25+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && "
+"(n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && "
+"n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
+
+#: .\ProjectControl\settings.py:131
+msgid "Polski"
+msgstr "Polski"
+
+#: .\ProjectControl\settings.py:132
+msgid "Deutsch"
+msgstr "Deutsch"
+
+#: .\projects\models.py:36
+msgid "Zarchiwizowany"
+msgstr "Zarchiwizowany"
+
+#: .\templates\accounts\login.html:2
+msgid "Logowanie"
+msgstr "Logowanie"
+
+#: .\templates\accounts\login.html:6
+msgid "Zaloguj się"
+msgstr "Zaloguj się"
+
+#: .\templates\base.html:7
+msgid "WorkTrack - Nadzór projektów "
+msgstr "WorkTrack - Nadzór projektów "
+
+#: .\templates\base.html:50 .\templates\projects\list.html:16
+msgid "Projekty"
+msgstr "Projekty"
+
+#: .\templates\base.html:56
+msgid "Wszystkie projekty"
+msgstr "Wszystkie projekty"
+
+#: .\templates\base.html:61 .\templates\projects\list.html:24
+msgid "Nowy projekt"
+msgstr "Nowy projekt"
+
+#: .\templates\base.html:67
+msgid "Eksportuj do Excel"
+msgstr "Eksportuj do Excel"
+
+#: .\templates\base.html:71
+msgid "Eksportuj do PDF"
+msgstr "Eksportuj do PDF"
+
+#: .\templates\base.html:86 .\templates\projects\detail.html:161
+#: .\templates\timesheets\_month_grid.html:18
+#: .\templates\timesheets\my_entries.html:73
+#: .\templates\timesheets\review.html:43
+msgid "Godziny"
+msgstr "Godziny"
+
+#: .\templates\base.html:92
+msgid "Wpisz godziny"
+msgstr "Wpisz godziny"
+
+#: .\templates\base.html:103
+msgid "Moje wpisy"
+msgstr "Moje wpisy"
+
+#: .\templates\base.html:112 .\templates\projects\detail.html:204
+msgid "Koszty"
+msgstr "Koszty"
+
+#: .\templates\base.html:118 .\templates\costs\mine.html:25
+#: .\templates\costs\new.html:17 .\templates\projects\detail.html:210
+msgid "Zgłoś koszt"
+msgstr "Zgłoś koszt"
+
+#: .\templates\base.html:129 .\templates\costs\mine.html:16
+msgid "Moje koszty"
+msgstr "Moje koszty"
+
+#: .\templates\base.html:167
+msgid "Wyloguj się"
+msgstr "Wyloguj się"
+
+#: .\templates\base.html:174
+msgid "Zaloguj"
+msgstr "Zaloguj"
+
+#: .\templates\base.html:207
+msgid "2025 WorkTrack. System zarządzania projektami."
+msgstr "2025 WorkTrack. System zarządzania projektami."
+
+#: .\templates\costs\mine.html:3
+#, fuzzy
+#| msgid "Archiwum projektów - WorkTrack"
+msgid "Moje koszty - WorkTrack"
+msgstr "Moje koszty - WorkTrack"
+
+#: .\templates\costs\mine.html:17
+msgid "Historia wszystkich zgłoszonych kosztów projektowych"
+msgstr "Historia wszystkich zgłoszonych kosztów projektowych"
+
+#: .\templates\costs\mine.html:41
+msgid "Wszystkich pozycji"
+msgstr "Wszystkich pozycji"
+
+#: .\templates\costs\mine.html:54
+msgid "Oczekujących"
+msgstr "Oczekujących"
+
+#: .\templates\costs\mine.html:66
+msgid "Zatwierdzonych"
+msgstr "Zatwierdzonych"
+
+#: .\templates\costs\mine.html:78 .\templates\costs\review.html:41
+msgid "Data zgłoszenia"
+msgstr "Data zgłoszenia"
+
+#: .\templates\costs\mine.html:79 .\templates\costs\new.html:52
+#: .\templates\costs\review.html:42 .\templates\dashboard\_year_block.html:71
+#: .\templates\timesheets\_draft_list.html:23
+#: .\templates\timesheets\my_entries.html:71
+#: .\templates\timesheets\new_bulk.html:48
+#: .\templates\timesheets\review.html:41
+msgid "Projekt"
+msgstr "Projekt"
+
+#: .\templates\costs\mine.html:80 .\templates\costs\review.html:43
+#: .\templates\projects\detail.html:220
+msgid "Pozycja"
+msgstr "Pozycja"
+
+#: .\templates\costs\mine.html:81 .\templates\costs\new.html:153
+#: .\templates\costs\review.html:44 .\templates\projects\detail.html:221
+msgid "Ilość"
+msgstr "Ilość"
+
+#: .\templates\costs\mine.html:82 .\templates\costs\review.html:45
+#: .\templates\projects\detail.html:222
+msgid "Cena netto"
+msgstr "Cena netto"
+
+#: .\templates\costs\mine.html:83 .\templates\costs\review.html:46
+#: .\templates\dashboard\_year_block.html:62
+#: .\templates\projects\detail.html:223
+msgid "Suma"
+msgstr "Suma"
+
+#: .\templates\costs\mine.html:84
+#: .\templates\exports\projects_table_pdf.html:24
+#: .\templates\projects\_table_partial.html:15
+#: .\templates\projects\detail.html:163 .\templates\projects\detail.html:224
+#: .\templates\projects\list.html:63 .\templates\projects\list.html:130
+#: .\templates\timesheets\my_entries.html:70
+msgid "Status"
+msgstr "Status"
+
+#: .\templates\costs\mine.html:149
+#, fuzzy
+#| msgid "Brak zarchiwizowanych projektów"
+msgid "Brak zgłoszonych kosztów"
+msgstr "Brak zgłoszonych kosztów"
+
+#: .\templates\costs\mine.html:151
+msgid ""
+"Nie masz jeszcze żadnych zgłoszonych kosztów. Zacznij od dodania pierwszej "
+"pozycji."
+msgstr ""
+"Nie masz jeszcze żadnych zgłoszonych kosztów. Zacznij od dodania pierwszej "
+"pozycji."
+
+#: .\templates\costs\mine.html:157
+msgid "Zgłoś pierwszy koszt"
+msgstr "Zgłoś pierwszy koszt"
+
+#: .\templates\costs\new.html:3
+msgid "Zgłoś koszt - WorkTrack"
+msgstr "Zgłoś koszt - WorkTrack"
+
+#: .\templates\costs\new.html:18
+msgid ""
+"Dodaj wydatek związany z realizacją projektu (części, usługi, materiały)"
+msgstr ""
+"Dodaj wydatek związany z realizacją projektu (części, usługi, materiały)"
+
+#: .\templates\costs\new.html:29
+msgid "Informacja:"
+msgstr "Informacja:"
+
+#: .\templates\costs\new.html:29
+msgid ""
+"Wszystkie zgłoszone koszty wymagają zatwierdzenia przez przełożonego. Po "
+"zaakceptowaniu zostaną uwzględnione w rozliczeniu projektu."
+msgstr ""
+"Wszystkie zgłoszone koszty wymagają zatwierdzenia przez przełożonego. Po "
+"zaakceptowaniu zostaną uwzględnione w rozliczeniu projektu."
+
+#: .\templates\costs\new.html:43
+msgid "Wybierz projekt"
+msgstr "Wybierz projekt"
+
+#: .\templates\costs\new.html:44
+msgid "Projekt, do którego ma być przypisany koszt"
+msgstr "Projekt, do którego ma być przypisany koszt"
+
+#: .\templates\costs\new.html:59
+msgid "Wybierz projekt..."
+msgstr "Wybierz projekt..."
+
+#: .\templates\costs\new.html:64
+msgid "Wybierz projekt z listy aktywnych projektów"
+msgstr "Wybierz projekt z listy aktywnych projektów"
+
+#: .\templates\costs\new.html:71
+msgid "Pozycja kosztowa"
+msgstr "Pozycja kosztowa"
+
+#: .\templates\costs\new.html:72
+msgid "Określ typ i nazwę wydatku"
+msgstr "Określ typ i nazwę wydatku"
+
+#: .\templates\costs\new.html:82
+msgid "Kategoria"
+msgstr "Kategoria"
+
+#: .\templates\costs\new.html:94
+msgid "Wybierz typ wydatku"
+msgstr "Wybierz typ wydatku"
+
+#: .\templates\costs\new.html:104
+msgid "Jednostka"
+msgstr "Jednostka"
+
+#: .\templates\costs\new.html:114
+msgid "Jednostka miary (np. szt., metr, kg)"
+msgstr "Jednostka miary (np. szt., metr, kg)"
+
+#: .\templates\costs\new.html:125
+msgid "Nazwa pozycji"
+msgstr "Nazwa pozycji"
+
+#: .\templates\costs\new.html:134
+msgid "Pełna nazwa pozycji kosztowej"
+msgstr "Pełna nazwa pozycji kosztowej"
+
+#: .\templates\costs\new.html:141
+msgid "Szczegóły finansowe"
+msgstr "Szczegóły finansowe"
+
+#: .\templates\costs\new.html:142
+msgid "Ilość i cena jednostkowa"
+msgstr "Ilość i cena jednostkowa"
+
+#: .\templates\costs\new.html:168
+msgid "Liczba sztuk/metrów/godzin itp."
+msgstr "Liczba sztuk/metrów/godzin itp."
+
+#: .\templates\costs\new.html:177
+msgid "Cena netto (za jednostkę)"
+msgstr "Cena netto (za jednostkę)"
+
+#: .\templates\costs\new.html:191
+msgid "Cena netto za jedną jednostkę"
+msgstr "Cena netto za jedną jednostkę"
+
+#: .\templates\costs\new.html:197
+msgid "Wartość całkowita (netto):"
+msgstr "Wartość całkowita (netto):"
+
+#: .\templates\costs\new.html:205
+msgid "Notatka (opcjonalnie)"
+msgstr "Notatka (opcjonalnie)"
+
+#: .\templates\costs\new.html:206
+msgid "Dodatkowe informacje o wydatku"
+msgstr "Dodatkowe informacje o wydatku"
+
+#: .\templates\costs\new.html:216
+msgid "Opis wydatku"
+msgstr "Opis wydatku"
+
+#: .\templates\costs\new.html:223
+msgid "Opcjonalny opis, numer faktury lub inne szczegóły"
+msgstr "Opcjonalny opis, numer faktury lub inne szczegóły"
+
+#: .\templates\costs\new.html:235
+#: .\templates\projects\_location_quick_form.html:53
+#: .\templates\projects\new.html:248
+msgid "Anuluj"
+msgstr "Anuluj"
+
+#: .\templates\costs\new.html:241
+msgid "Wyślij do akceptacji"
+msgstr "Wyślij do akceptacji"
+
+#: .\templates\costs\review.html:3
+#, fuzzy
+#| msgid "Archiwum projektów - WorkTrack"
+msgid "Akceptacja kosztów - WorkTrack"
+msgstr "Akceptacja kosztów - WorkTrack"
+
+#: .\templates\costs\review.html:16
+msgid "Akceptacja kosztów"
+msgstr "Akceptacja kosztów"
+
+#: .\templates\costs\review.html:17
+msgid "Pozycje kosztowe oczekujące na zatwierdzenie"
+msgstr "Pozycje kosztowe oczekujące na zatwierdzenie"
+
+#: .\templates\costs\review.html:27
+msgid "Do akceptacji"
+msgstr "Do akceptacji"
+
+#: .\templates\costs\review.html:47 .\templates\projects\detail.html:225
+msgid "Zgłosił"
+msgstr "Zgłosił"
+
+#: .\templates\costs\review.html:48 .\templates\kanban\archive.html:70
+#: .\templates\projects\_table_partial.html:16
+#: .\templates\timesheets\review.html:45
+msgid "Akcje"
+msgstr "Akcje"
+
+#: .\templates\costs\review.html:97 .\templates\timesheets\review.html:91
+msgid "Zatwierdź"
+msgstr "Zatwierdź"
+
+#: .\templates\costs\review.html:105 .\templates\timesheets\review.html:106
+msgid "Odrzuć"
+msgstr "Odrzuć"
+
+#: .\templates\costs\review.html:122
+msgid "Wszystko zaakceptowane!"
+msgstr "Wszystko zaakceptowane!"
+
+#: .\templates\costs\review.html:124
+msgid ""
+"Brak pozycji kosztowych oczekujących na akceptację. Sprawdź ponownie później."
+msgstr ""
+"Brak pozycji kosztowych oczekujących na akceptację. Sprawdź ponownie później."
+
+#: .\templates\dashboard\_year_block.html:8
+msgid "Godzin zatwierdzonych"
+msgstr "Godzin zatwierdzonych"
+
+#: .\templates\dashboard\_year_block.html:14
+msgid "Godzin"
+msgstr "Godzin"
+
+#: .\templates\dashboard\_year_block.html:20
+msgid "Całkowite koszty (zatwierdzone)"
+msgstr "Całkowite koszty (zatwierdzone)"
+
+#: .\templates\dashboard\_year_block.html:26
+msgid "Kategorie statusów"
+msgstr "Kategorie statusów"
+
+#: .\templates\dashboard\_year_block.html:33
+msgid "Godziny per miesiąc"
+msgstr "Godziny per miesiąc"
+
+#: .\templates\dashboard\_year_block.html:48
+msgid "Pokaż dane tabelaryczne"
+msgstr "Pokaż dane tabelaryczne"
+
+#: .\templates\dashboard\_year_block.html:59
+msgid "Godziny per projekt"
+msgstr "Godziny per projekt"
+
+#: .\templates\dashboard\_year_block.html:61
+msgid "Kolumny:"
+msgstr "Kolumny:"
+
+#: .\templates\dashboard\_year_block.html:62
+msgid "miesiące"
+msgstr "miesiące"
+
+#: .\templates\dashboard\_year_block.html:63
+#: .\templates\dashboard\_year_block.html:77
+msgid "Łącznie"
+msgstr "Łącznie"
+
+#: .\templates\dashboard\_year_block.html:92
+#: .\templates\exports\projects_table_pdf.html:44
+msgid "Brak danych."
+msgstr "Brak danych."
+
+#: .\templates\dashboard\_year_block.html:97
+msgid "SUMY"
+msgstr "SUMY"
+
+#: .\templates\dashboard\home.html:3
+msgid "Dashboard - WorkTrack"
+msgstr "Dashboard - WorkTrack"
+
+#: .\templates\dashboard\home.html:14
+msgid "Przegląd kluczowych metryk i statystyk"
+msgstr "Przegląd kluczowych metryk i statystyk"
+
+#: .\templates\exports\projects_table_pdf.html:7
+#, fuzzy
+#| msgid "Archiwum projektów"
+msgid "Tabela projektów"
+msgstr "Tabela projektów"
+
+#: .\templates\exports\projects_table_pdf.html:19
+msgid "Projekty – zestawienie"
+msgstr "Projekty – zestawienie"
+
+#: .\templates\exports\projects_table_pdf.html:23
+#: .\templates\projects\_location_quick_form.html:20
+#: .\templates\projects\_table_partial.html:9
+#: .\templates\projects\list.html:124
+msgid "Nazwa"
+msgstr "Nazwa"
+
+#: .\templates\exports\projects_table_pdf.html:23
+#: .\templates\projects\_table_partial.html:10
+#: .\templates\projects\list.html:125 .\templates\projects\new.html:97
+msgid "Zlecający"
+msgstr "Zlecający"
+
+#: .\templates\exports\projects_table_pdf.html:24
+#: .\templates\projects\_table_partial.html:11
+#: .\templates\projects\list.html:126 .\templates\projects\new.html:121
+msgid "Lokalizacja"
+msgstr "Lokalizacja"
+
+#: .\templates\exports\projects_table_pdf.html:24
+#: .\templates\projects\_table_partial.html:12
+#: .\templates\projects\detail.html:89 .\templates\projects\list.html:127
+#: .\templates\projects\new.html:153
+msgid "Urządzenia"
+msgstr "Urządzenia"
+
+#: .\templates\exports\projects_table_pdf.html:24
+#: .\templates\projects\_table_partial.html:13
+#: .\templates\projects\list.html:128
+msgid "Przyjęcie"
+msgstr "Przyjęcie"
+
+#: .\templates\exports\projects_table_pdf.html:24
+#: .\templates\projects\_table_partial.html:14
+#: .\templates\projects\list.html:129
+msgid "Termin"
+msgstr "Termin"
+
+#: .\templates\exports\projects_table_pdf.html:25
+msgid "Godziny (poprzedni rok)"
+msgstr "Godziny (poprzedni rok)"
+
+#: .\templates\exports\projects_table_pdf.html:25
+msgid "Godziny (bieżący YTD)"
+msgstr "Godziny (bieżący YTD)"
+
+#: .\templates\kanban\_board_inner.html:19
+msgid " Brak projektów w backlogu"
+msgstr " Brak projektów w backlogu"
+
+#: .\templates\kanban\_board_inner.html:27
+msgid "W toku"
+msgstr "W toku"
+
+#: .\templates\kanban\_board_inner.html:39
+msgid " Brak projektów w realizacji"
+msgstr " Brak projektów w realizacji"
+
+#: .\templates\kanban\_board_inner.html:47
+msgid "Zablokowany "
+msgstr "Zablokowany "
+
+#: .\templates\kanban\_board_inner.html:59
+#, fuzzy
+#| msgid "Brak zarchiwizowanych projektów"
+msgid " Brak zablokowanych projektów"
+msgstr " Brak zablokowanych projektów"
+
+#: .\templates\kanban\_board_inner.html:67
+msgid "Do weryfikacji "
+msgstr "Do weryfikacji "
+
+#: .\templates\kanban\_board_inner.html:79
+msgid "Brak projektów do weryfikacji"
+msgstr "Brak projektów do weryfikacji"
+
+#: .\templates\kanban\_board_inner.html:87
+msgid "Zakończony "
+msgstr "Zakończony "
+
+#: .\templates\kanban\_board_inner.html:99
+#, fuzzy
+#| msgid "Brak zarchiwizowanych projektów"
+msgid " Brak zakończonych projektów"
+msgstr " Brak zakończonych projektów"
+
+#: .\templates\kanban\_board_inner.html:107
+msgid "Anulowany"
+msgstr "Anulowany"
+
+#: .\templates\kanban\_board_inner.html:119
+#, fuzzy
+#| msgid "Brak zarchiwizowanych projektów"
+msgid "Brak anulowanych projektów"
+msgstr "Brak anulowanych projektów"
+
+#: .\templates\kanban\_project_card.html:111
+#, fuzzy
+#| msgid "Archiwum"
+msgid "Archiwizuj"
+msgstr "Archiwizuj"
+
+#: .\templates\kanban\archive.html:4
+msgid "Archiwum projektów - WorkTrack"
+msgstr "Archiwum projektów - WorkTrack"
+
+#: .\templates\kanban\archive.html:16
+msgid "Archiwum projektów"
+msgstr "Archiwum projektów"
+
+#: .\templates\kanban\archive.html:17
+msgid "Zarchiwizowane projekty zakończone i anulowane"
+msgstr "Zarchiwizowane projekty zakończone i anulowane"
+
+#: .\templates\kanban\archive.html:25
+msgid "Powrót do tablicy"
+msgstr "Powrót do tablicy"
+
+#: .\templates\kanban\archive.html:119
+msgid "Zobacz"
+msgstr "Zobacz"
+
+#: .\templates\kanban\archive.html:158
+msgid "Przywróć"
+msgstr "Przywróć"
+
+#: .\templates\kanban\archive.html:176
+msgid "Brak zarchiwizowanych projektów"
+msgstr "Brak zarchiwizowanych projektów"
+
+#: .\templates\kanban\archive.html:177
+msgid "Projekty zakończone lub anulowane możesz zarchiwizować z tablicy Kanban"
+msgstr ""
+"Projekty zakończone lub anulowane możesz zarchiwizować z tablicy Kanban"
+
+#: .\templates\kanban\archive.html:182
+msgid "Przejdź do tablicy"
+msgstr "Przejdź do tablicy"
+
+#: .\templates\kanban\board.html:15
+msgid "Tablica Kanban"
+msgstr "Tablica Kanban"
+
+#: .\templates\kanban\board.html:16
+msgid "Status projektów w czasie rzeczywistym"
+msgstr "Status projektów w czasie rzeczywistym"
+
+#: .\templates\kanban\board.html:32
+msgid "Archiwum"
+msgstr "Archiwum"
+
+#: .\templates\projects\_location_quick_form.html:11
+#: .\templates\projects\new.html:142
+msgid "Dodaj nową lokalizację"
+msgstr "Dodaj nową lokalizację"
+
+#: .\templates\projects\_location_quick_form.html:12
+msgid "Wypełnij pola aby szybko dodać lokalizację"
+msgstr "Wypełnij pola aby szybko dodać lokalizację"
+
+#: .\templates\projects\_location_quick_form.html:34
+msgid "Pod-lokalizacja"
+msgstr "Pod-lokalizacja"
+
+#: .\templates\projects\_location_quick_form.html:59
+msgid "Dodaj lokalizację"
+msgstr "Dodaj lokalizację"
+
+#: .\templates\projects\_location_quick_success.html:20
+msgid "Lokalizacja dodana!"
+msgstr "Lokalizacja dodana!"
+
+#: .\templates\projects\_location_quick_success.html:22
+msgid " Utworzono lokalizację:"
+msgstr " Utworzono lokalizację:"
+
+#: .\templates\projects\_table_partial.html:7
+#: .\templates\projects\list.html:122
+#, fuzzy
+#| msgid "Archiwum projektów"
+msgid "Nr projektu"
+msgstr "Nr projektu"
+
+#: .\templates\projects\_table_partial.html:56
+#: .\templates\projects\list.html:171
+#, fuzzy
+#| msgid "Archiwum projektów"
+msgid "Brak projektów"
+msgstr "Brak projektów"
+
+#: .\templates\projects\_table_partial.html:57
+#: .\templates\projects\list.html:172
+msgid "Nie znaleziono projektów spełniających kryteria wyszukiwania."
+msgstr "Nie znaleziono projektów spełniających kryteria wyszukiwania."
+
+#: .\templates\projects\_table_partial.html:77
+#: .\templates\projects\list.html:193
+msgid "Poprzednia"
+msgstr "Poprzednia"
+
+#: .\templates\projects\_table_partial.html:83
+msgid "Strona"
+msgstr "Strona"
+
+#: .\templates\projects\_table_partial.html:92
+#: .\templates\projects\list.html:208
+msgid "Następna"
+msgstr "Następna"
+
+#: .\templates\projects\detail.html:15
+#, fuzzy
+#| msgid "Powrót do tablicy"
+msgid "Wróć do listy"
+msgstr "Wróć do listy"
+
+#: .\templates\projects\detail.html:34
+msgid "Zlecający:"
+msgstr "Zlecający:"
+
+#: .\templates\projects\detail.html:43
+msgid "Lokalizacja:"
+msgstr "Lokalizacja:"
+
+#: .\templates\projects\detail.html:66 .\templates\projects\new.html:168
+msgid "Terminy"
+msgstr "Terminy"
+
+#: .\templates\projects\detail.html:70
+msgid "Data przyjęcia:"
+msgstr "Data przyjęcia:"
+
+#: .\templates\projects\detail.html:74
+msgid "Termin zakończenia:"
+msgstr "Termin zakończenia:"
+
+#: .\templates\projects\detail.html:108
+msgid "Godzin (rok poprzedni)"
+msgstr "Godzin (rok poprzedni)"
+
+#: .\templates\projects\detail.html:120
+msgid "Godzin (bieżący rok)"
+msgstr "Godzin (bieżący rok)"
+
+#: .\templates\projects\detail.html:132
+msgid "Koszty zatwierdzone"
+msgstr "Koszty zatwierdzone"
+
+#: .\templates\projects\detail.html:144
+msgid "Wpisy godzin"
+msgstr "Wpisy godzin"
+
+#: .\templates\projects\detail.html:150
+msgid "Dodaj wpis"
+msgstr "Dodaj wpis"
+
+#: .\templates\projects\detail.html:159 .\templates\projects\detail.html:219
+#: .\templates\timesheets\my_entries.html:72
+#: .\templates\timesheets\new_bulk.html:86
+#: .\templates\timesheets\review.html:42
+msgid "Data"
+msgstr "Data"
+
+#: .\templates\projects\detail.html:160
+msgid "Technik"
+msgstr "Technik"
+
+#: .\templates\projects\detail.html:162
+#: .\templates\timesheets\_draft_list.html:26
+#: .\templates\timesheets\new_bulk.html:120
+#: .\templates\timesheets\review.html:44
+msgid "Notatka"
+msgstr "Notatka"
+
+#: .\templates\projects\detail.html:186
+msgid "Brak wpisów godzin dla tego projektu"
+msgstr "Brak wpisów godzin dla tego projektu"
+
+#: .\templates\projects\detail.html:250
+msgid "Brak kosztów dla tego projektu"
+msgstr "Brak kosztów dla tego projektu"
+
+#: .\templates\projects\list.html:3
+#, fuzzy
+#| msgid "Archiwum projektów - WorkTrack"
+msgid "Projekty - WorkTrack"
+msgstr "Projekty - WorkTrack"
+
+#: .\templates\projects\list.html:17
+msgid "Zarządzaj i przeglądaj wszystkie projekty"
+msgstr "Zarządzaj i przeglądaj wszystkie projekty"
+
+#: .\templates\projects\list.html:46
+msgid "Szukaj"
+msgstr "Szukaj"
+
+#: .\templates\projects\list.html:66
+msgid "Wszystkie statusy"
+msgstr "Wszystkie statusy"
+
+#: .\templates\projects\list.html:81
+msgid "Filtruj"
+msgstr "Filtruj"
+
+#: .\templates\projects\list.html:89
+msgid "Eksport"
+msgstr "Eksport"
+
+#: .\templates\projects\list.html:97
+msgid "Eksportuj PDF"
+msgstr "Eksportuj PDF"
+
+#: .\templates\projects\list.html:101
+msgid "Eksportuj Excel"
+msgstr "Eksportuj Excel"
+
+#: .\templates\projects\list.html:111
+msgid "Ładowanie..."
+msgstr "Ładowanie..."
+
+#: .\templates\projects\list.html:199
+msgid " Strona "
+msgstr " Strona "
+
+#: .\templates\projects\new.html:3
+#, fuzzy
+#| msgid "Archiwum projektów - WorkTrack"
+msgid "Nowy projekt - WorkTrack"
+msgstr "Nowy projekt - WorkTrack"
+
+#: .\templates\projects\new.html:17
+msgid "Dodaj nowy projekt"
+msgstr "Dodaj nowy projekt"
+
+#: .\templates\projects\new.html:18
+msgid "Wypełnij formularz aby utworzyć nowy projekt w systemie"
+msgstr "Wypełnij formularz aby utworzyć nowy projekt w systemie"
+
+#: .\templates\projects\new.html:47
+msgid "Podstawowe informacje"
+msgstr "Podstawowe informacje"
+
+#: .\templates\projects\new.html:48
+msgid "Dane identyfikacyjne projektu"
+msgstr "Dane identyfikacyjne projektu"
+
+#: .\templates\projects\new.html:55
+#, fuzzy
+#| msgid "Archiwum projektów"
+msgid "Numer projektu"
+msgstr "Numer projektu"
+
+#: .\templates\projects\new.html:64
+msgid "Unikalny identyfikator projektu"
+msgstr "Unikalny identyfikator projektu"
+
+#: .\templates\projects\new.html:83
+msgid "Nazwa projektu"
+msgstr "Nazwa projektu"
+
+#: .\templates\projects\new.html:113
+msgid "Lokalizacja i urządzenia"
+msgstr "Lokalizacja i urządzenia"
+
+#: .\templates\projects\new.html:114
+msgid "Miejsce realizacji i sprzęt"
+msgstr "Miejsce realizacji i sprzęt"
+
+#: .\templates\projects\new.html:169
+msgid "Daty rozpoczęcia i zakończenia"
+msgstr "Daty rozpoczęcia i zakończenia"
+
+#: .\templates\projects\new.html:176
+msgid "Data przyjęcia"
+msgstr "Data przyjęcia"
+
+#: .\templates\projects\new.html:190
+msgid "Data zakończenia"
+msgstr "Data zakończenia"
+
+#: .\templates\projects\new.html:198
+msgid "Planowany termin ukończenia"
+msgstr "Planowany termin ukończenia"
+
+#: .\templates\projects\new.html:206
+msgid "Status i szczegóły"
+msgstr "Status i szczegóły"
+
+#: .\templates\projects\new.html:207
+msgid "Dodatkowe informacje o projekcie"
+msgstr "Dodatkowe informacje o projekcie"
+
+#: .\templates\projects\new.html:214
+msgid "Status projektu"
+msgstr "Status projektu"
+
+#: .\templates\projects\new.html:235
+msgid "Szczegółowy opis projektu, uwagi i informacje dodatkowe"
+msgstr "Szczegółowy opis projektu, uwagi i informacje dodatkowe"
+
+#: .\templates\projects\new.html:254
+msgid "Zapisz projekt"
+msgstr "Zapisz projekt"
+
+#: .\templates\timesheets\_draft_actions.html:9
+msgid "Wyślij zaznaczone"
+msgstr "Wyślij zaznaczone"
+
+#: .\templates\timesheets\_draft_actions.html:20
+msgid "Wyślij wszystkie"
+msgstr "Wyślij wszystkie"
+
+#: .\templates\timesheets\_draft_list.html:9
+msgid "Suma:"
+msgstr "Suma:"
+
+#: .\templates\timesheets\_draft_list.html:66
+msgid "Brak wpisów roboczych"
+msgstr "Brak wpisów roboczych"
+
+#: .\templates\timesheets\_messages.html:12
+msgid "Błędy walidacji:"
+msgstr "Błędy walidacji:"
+
+#: .\templates\timesheets\_mix_warning.html:10
+msgid "Uwaga:"
+msgstr "Uwaga:"
+
+#: .\templates\timesheets\_mix_warning.html:10
+msgid "Wybrałeś jednocześnie tryb "
+msgstr "Wybrałeś jednocześnie tryb "
+
+#: .\templates\timesheets\_mix_warning.html:10
+#: .\templates\timesheets\new_bulk.html:150
+msgid "Miesiąc"
+msgstr "Miesiąc"
+
+#: .\templates\timesheets\_mix_warning.html:12
+msgid "Jeśli to zamierzone, zaznacz opcję „Potwierdzam łączenie wpisów…"
+msgstr "Jeśli to zamierzone, zaznacz opcję „Potwierdzam łączenie wpisów…"
+
+#: .\templates\timesheets\_month_grid.html:9
+msgid "dni miesiąca"
+msgstr "dni miesiąca"
+
+#: .\templates\timesheets\_month_grid.html:50
+msgid "Wybierz rok i miesiąc, następnie kliknij „Załaduj kalendarz"
+msgstr "Wybierz rok i miesiąc, następnie kliknij „Załaduj kalendarz"
+
+#: .\templates\timesheets\my_entries.html:4
+#, fuzzy
+#| msgid "Archiwum projektów - WorkTrack"
+msgid "Moje wpisy - WorkTrack"
+msgstr "Moje wpisy - WorkTrack"
+
+#: .\templates\timesheets\my_entries.html:16
+msgid "Moje wpisy godzin"
+msgstr "Moje wpisy godzin"
+
+#: .\templates\timesheets\my_entries.html:17
+#, fuzzy
+#| msgid "Brak zarchiwizowanych projektów"
+msgid "Historia wszystkich zgłoszonych wpisów"
+msgstr "Historia wszystkich zgłoszonych wpisów"
+
+#: .\templates\timesheets\my_entries.html:25
+msgid "Dodaj nowy wpis"
+msgstr "Dodaj nowy wpis"
+
+#: .\templates\timesheets\my_entries.html:41
+#: .\templates\timesheets\my_entries.html:87
+msgid "Oczekujące"
+msgstr "Oczekujące"
+
+#: .\templates\timesheets\my_entries.html:53
+#: .\templates\timesheets\my_entries.html:94
+msgid "Zatwierdzone"
+msgstr "Zatwierdzone"
+
+#: .\templates\timesheets\my_entries.html:61
+msgid "Wszystkie wpisy"
+msgstr "Wszystkie wpisy"
+
+#: .\templates\timesheets\my_entries.html:75
+msgid "Akceptacja"
+msgstr "Akceptacja"
+
+#: .\templates\timesheets\my_entries.html:101
+msgid "Odrzucone"
+msgstr "Odrzucone"
+
+#: .\templates\timesheets\my_entries.html:156
+msgid "Dodaj pierwszy wpis"
+msgstr "Dodaj pierwszy wpis"
+
+#: .\templates\timesheets\new_bulk.html:6
+#, fuzzy
+#| msgid "Archiwum projektów - WorkTrack"
+msgid "Dodaj godziny - WorkTrack"
+msgstr "Dodaj godziny - WorkTrack"
+
+#: .\templates\timesheets\new_bulk.html:18
+msgid "Dodawanie godzin"
+msgstr "Dodawanie godzin"
+
+#: .\templates\timesheets\new_bulk.html:19
+msgid "Zapisz wpisy robocze, a następnie wyślij do akceptacji"
+msgstr "Zapisz wpisy robocze, a następnie wyślij do akceptacji"
+
+#: .\templates\timesheets\new_bulk.html:30
+msgid "Nowy wpis"
+msgstr "Nowy wpis"
+
+#: .\templates\timesheets\new_bulk.html:52
+msgid "wybierz projekt"
+msgstr "wybierz projekt"
+
+#: .\templates\timesheets\new_bulk.html:65
+msgid "Tryb wprowadzania"
+msgstr "Tryb wprowadzania"
+
+#: .\templates\timesheets\new_bulk.html:70
+msgid "Pojedynczy dzień"
+msgstr "Pojedynczy dzień"
+
+#: .\templates\timesheets\new_bulk.html:74
+msgid "Cały miesiąc"
+msgstr "Cały miesiąc"
+
+#: .\templates\timesheets\new_bulk.html:101
+msgid "Liczba godzin"
+msgstr "Liczba godzin"
+
+#: .\templates\timesheets\new_bulk.html:136
+msgid "Rok"
+msgstr "Rok"
+
+#: .\templates\timesheets\new_bulk.html:174
+msgid "Załaduj kalendarz"
+msgstr "Załaduj kalendarz"
+
+#: .\templates\timesheets\new_bulk.html:184
+msgid "Ukryj dni"
+msgstr "Ukryj dni"
+
+#: .\templates\timesheets\new_bulk.html:194
+msgid "Wyczyść"
+msgstr "Wyczyść"
+
+#: .\templates\timesheets\new_bulk.html:205
+msgid "Notatka globalna"
+msgstr "Notatka globalna"
+
+#: .\templates\timesheets\new_bulk.html:220
+msgid "Potwierdzam łączenie wpisów (dzień + miesiąc)"
+msgstr "Potwierdzam łączenie wpisów (dzień + miesiąc)"
+
+#: .\templates\timesheets\new_bulk.html:230
+msgid "Dodaj do roboczych"
+msgstr "Dodaj do roboczych"
+
+#: .\templates\timesheets\new_bulk.html:240
+msgid "Wpisy robocze"
+msgstr "Wpisy robocze"
+
+#: .\templates\timesheets\review.html:4
+#, fuzzy
+#| msgid "Archiwum projektów - WorkTrack"
+msgid "Akceptacja wpisów - WorkTrack"
+msgstr "Akceptacja wpisów - WorkTrack"
+
+#: .\templates\timesheets\review.html:16
+#, fuzzy
+#| msgid "Archiwum projektów - WorkTrack"
+msgid "Akceptacja wpisów godzin"
+msgstr "Akceptacja wpisów godzin"
+
+#: .\templates\timesheets\review.html:17
+msgid "Przegląd i zatwierdzanie zgłoszonych godzin pracowników"
+msgstr "Przegląd i zatwierdzanie zgłoszonych godzin pracowników"
+
+#: .\templates\timesheets\review.html:27
+msgid "Wpisy oczekujące na akceptację"
+msgstr "Wpisy oczekujące na akceptację"
+
+#: .\templates\timesheets\review.html:40
+msgid "Pracownik"
+msgstr "Pracownik"
+
+#: .\templates\timesheets\review.html:124
+msgid "Brak wpisów do akceptacji"
+msgstr "Brak wpisów do akceptacji"
+
+#: .\templates\timesheets\review.html:125
+msgid "Wszystkie zgłoszone wpisy zostały już przetworzone"
+msgstr "Wszystkie zgłoszone wpisy zostały już przetworzone"

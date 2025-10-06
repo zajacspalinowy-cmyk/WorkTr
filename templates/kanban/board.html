@@ -1,223 +1,437 @@
 {% extends "base.html" %}
-{% block title %}Kanban - Tablica projektów{% endblock %}
+{% load static %}
+{% load i18n %}
+{% block title %}Kanban - WorkTrack{% endblock %}
 
 {% block content %}
-<style>
-/* Full width for Kanban board */
-.container {
-  max-width: 98vw !important;
-  padding-left: var(--space-lg);
-  padding-right: var(--space-lg);
-}
-
-@media (min-width: 1600px) {
-  .container {
-    max-width: 1800px !important;
-  }
-}
-</style>
-
-<div class="page-header">
-  <div class="page-header-content">
-    <div class="page-title-section">
-      <svg class="page-icon" aria-hidden="true">
+<div class="kiosk-container">
+  <!-- Compact Header -->
+  <div class="kiosk-header">
+    <div class="header-left">
+      <svg class="header-icon" aria-hidden="true">
         <use href="#i-kanban"/>
       </svg>
-      <h1 class="page-title">Tablica Kanban</h1>
+      <div class="header-info">
+        <h1 class="header-title">{% trans "Tablica Kanban" %}</h1>
+        <p class="header-subtitle">{% trans "Status projektów w czasie rzeczywistym"%}</p>
+      </div>
     </div>
-    <p class="page-subtitle">Zarządzaj statusami projektów poprzez przeciąganie kart</p>
+    <div class="header-right">
+      <button type="button"
+              onclick="document.documentElement.requestFullscreen()"
+              class="btn btn-secondary btn-icon"
+              title="Tryb pełnoekranowy">
+        <svg class="ico" aria-hidden="true">
+          <use href="#i-search"/>
+        </svg>
+      </button>
+      <a href="{% url 'kanban:archive' %}" class="btn btn-secondary">
+        <svg class="ico" aria-hidden="true">
+          <use href="#i-folder"/>
+        </svg>
+        <span>{% trans "Archiwum" %}</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Kanban Board - auto-refresh co 30s -->
+  <div id="kanban-board"
+       class="kiosk-board"
+       hx-get="{% url 'kanban:board' %}"
+       hx-trigger="revealed, every 30s"
+       hx-swap="outerHTML">
+    {% include "kanban/_board_inner.html" %}
   </div>
 </div>
 
-<div id="kanban-board"
-     hx-get="{% url 'kanban:board' %}"
-     hx-trigger="revealed, every 30s"
-     hx-swap="outerHTML">
-  {% include "kanban/_board_inner.html" %}
-</div>
-
 <style>
-/* Kanban Board Styles */
-.page-header {
-  margin-bottom: var(--space-2xl);
-  max-width: none;
-}
-
-.page-header-content {
+/* ========== KIOSK LAYOUT - FULLSCREEN ========== */
+.kiosk-container {
+  width: 100%;
+  height: 100vh;
+  margin: 0;
+  padding: 8px;
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  overflow: hidden;
+  background: var(--color-bg-secondary);
 }
 
-.page-title-section {
+/* ========== COMPACT HEADER ========== */
+.kiosk-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--color-bg);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 12px 16px;
+  margin-bottom: 8px;
+  box-shadow: var(--shadow-md);
+  flex-shrink: 0;
+}
+
+.header-left {
   display: flex;
   align-items: center;
-  gap: var(--space-md);
+  gap: 12px;
 }
 
-.page-icon {
-  width: 2rem;
-  height: 2rem;
+.header-icon {
+  width: 32px;
+  height: 32px;
   color: var(--color-primary);
+  flex-shrink: 0;
 }
 
-.page-title {
+.header-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.header-title {
   margin: 0;
-  font-size: 1.875rem;
+  font-size: 1.25rem;
   font-weight: 700;
   color: var(--color-text);
+  line-height: 1;
 }
 
-.page-subtitle {
+.header-subtitle {
   margin: 0;
-  font-size: var(--font-size-base);
+  font-size: 0.875rem;
   color: var(--color-text-secondary);
+  line-height: 1;
 }
 
+.header-right {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.btn-icon {
+  padding: 8px;
+  min-width: auto;
+}
+
+/* ========== BOARD - FULL HEIGHT ========== */
+.kiosk-board {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ========== GRID - 6 COLUMNS ALWAYS ========== */
 .kanban-grid {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
-  gap: var(--space-md);
-  padding-bottom: var(--space-2xl);
+  gap: 8px;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
 }
 
-@media (max-width: 1400px) {
-  .kanban-grid {
-    gap: var(--space-sm);
-  }
-}
-
-@media (max-width: 1200px) {
-  .kanban-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-@media (max-width: 768px) {
-  .kanban-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 640px) {
-  .kanban-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
+/* ========== COLUMNS ========== */
 .kanban-col {
   display: flex;
   flex-direction: column;
-  min-height: 400px;
   background: var(--color-bg);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
   overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  min-height: 0;
 }
 
 .col-header {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  padding: var(--space-md) var(--space-lg);
-  background: linear-gradient(to bottom, var(--color-bg-secondary), var(--color-bg));
+  align-items: center;
+  padding: 12px 16px;
+  background: var(--color-bg-secondary);
   border-bottom: 2px solid var(--color-border);
+  flex-shrink: 0;
 }
 
 .col-header h3 {
+  margin: 0;
+  font-weight: 700;
+  color: var(--color-text);
+  font-size: 1.125rem;
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
-  margin: 0;
-  font-size: var(--font-size-lg);
-  font-weight: 600;
-  color: var(--color-text);
+  gap: 8px;
 }
 
 .count {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 1.5rem;
-  height: 1.5rem;
-  padding: 0 0.5rem;
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-  background: var(--color-bg-secondary);
-  border: 1px solid var(--color-border);
+  min-width: 32px;
+  height: 32px;
+  padding: 0 10px;
+  font-size: 1rem;
+  font-weight: 700;
+  background: var(--color-bg);
+  border: 2px solid var(--color-border);
   border-radius: var(--radius-full);
-  color: var(--color-text-secondary);
+  color: var(--color-text);
 }
 
+/* ========== LIST - ONLY HERE IS SCROLL ========== */
 .kanban-list {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: var(--space-md);
-  padding: var(--space-lg);
+  gap: 8px;
+  padding: 8px;
   overflow-y: auto;
-  min-height: 200px;
+  overflow-x: hidden;
+  min-height: 0;
 }
 
-.kanban-list:empty::after,
+.kanban-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.kanban-list::-webkit-scrollbar-track {
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-sm);
+}
+
+.kanban-list::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: var(--radius-sm);
+}
+
+.kanban-list::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-muted);
+}
+
 .kanban-list .empty {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: var(--space-2xl);
+  padding: 24px 12px;
   color: var(--color-text-muted);
-  font-size: var(--font-size-sm);
-  text-align: center;
-}
-
-.kanban-list .empty {
+  font-size: 0.875rem;
   font-style: italic;
+  text-align: center;
+  border: 2px dashed var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-secondary);
 }
 
-/* Status-specific colors */
-.kanban-col:has(#col-BACKLOG) .col-header {
-  border-bottom-color: #94a3b8;
+.kanban-list.drop-hover {
+  background: rgba(37, 99, 235, 0.05);
+  outline: 3px dashed var(--color-primary);
+  outline-offset: -8px;
 }
 
-.kanban-col:has(#col-IN_PROGRESS) .col-header {
-  border-bottom-color: var(--color-primary);
+/* ========== CARDS - COMPACT & READABLE ========== */
+.project-card {
+  background: var(--color-bg);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  transition: all 0.2s ease;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  flex-shrink: 0;
 }
 
-.kanban-col:has(#col-BLOCKED) .col-header {
-  border-bottom-color: var(--color-error);
+.project-card:active {
+  cursor: grabbing;
 }
 
-.kanban-col:has(#col-REVIEW) .col-header {
-  border-bottom-color: var(--color-warning);
+.project-card:hover {
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
 }
 
-.kanban-col:has(#col-DONE) .col-header {
-  border-bottom-color: var(--color-success);
+.project-card.dragging {
+  opacity: 0.5;
+  cursor: grabbing;
+  transform: rotate(3deg);
+  box-shadow: var(--shadow-xl);
 }
 
-.kanban-col:has(#col-CANCELLED) .col-header {
-  border-bottom-color: #64748b;
+.project-card[data-can-drag="0"] {
+  cursor: default;
 }
 
-/* Responsive */
-@media (max-width: 1024px) {
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: var(--color-bg-secondary);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.card-number {
+  font-size: 1rem;
+  font-weight: 700;
+  font-family: 'SF Mono', Consolas, monospace;
+  color: var(--color-primary);
+  background: rgba(37, 99, 235, 0.1);
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+}
+
+.card-status-badge {
+  width: 14px;
+  height: 14px;
+  border-radius: var(--radius-full);
+  border: 2px solid var(--color-bg);
+  box-shadow: var(--shadow-sm);
+}
+
+.status-BACKLOG { background: var(--color-text-muted); }
+.status-IN_PROGRESS { background: var(--color-primary); }
+.status-BLOCKED { background: var(--color-error); }
+.status-REVIEW { background: var(--color-warning); }
+.status-DONE { background: var(--color-success); }
+.status-CANCELLED { background: var(--color-text-secondary); }
+
+.card-body {
+  padding: 12px;
+  cursor: pointer;
+}
+
+.card-body:hover {
+  background: var(--color-bg-secondary);
+}
+
+.card-name {
+  margin: 0 0 8px 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text);
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.card-client,
+.card-location,
+.card-date,
+.card-assigned {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.3;
+}
+
+.card-date {
+  color: var(--color-primary);
+  font-weight: 500;
+}
+
+.card-assigned {
+  color: var(--color-text);
+  font-weight: 500;
+}
+
+.card-icon {
+  width: 16px;
+  height: 16px;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+}
+
+.card-footer {
+  padding: 8px 12px;
+  background: var(--color-bg-secondary);
+  border-top: 1px solid var(--color-border);
+}
+
+.card-status-form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.status-label {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+.status-select {
+  flex: 1;
+  padding: 6px 8px;
+  font-size: 0.875rem;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-text);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.status-select:hover {
+  border-color: var(--color-text-muted);
+}
+
+.status-select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* ========== RESPONSIVE (dla testów) ========== */
+@media (max-width: 1400px) {
+  .kanban-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 900px) {
   .kanban-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 600px) {
   .kanban-grid {
     grid-template-columns: 1fr;
   }
 
-  .page-title {
-    font-size: 1.5rem;
+  .header-subtitle {
+    display: none;
   }
+}
 
-  .kanban-col {
-    min-height: 300px;
+/* ========== ANIMATION ========== */
+@keyframes cardAppear {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
   }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.card-moved {
+  animation: cardAppear 0.3s ease;
 }
 </style>
 {% endblock %}

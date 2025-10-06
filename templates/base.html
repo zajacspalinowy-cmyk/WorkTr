@@ -1,9 +1,10 @@
 <!doctype html>
 {% load static %}
+{% load i18n %}
 <html lang="pl">
 <head>
   <meta charset="utf-8">
-  <title>{% block title %}WorkTrack - Nadzór projektów{% endblock %}</title>
+  <title>{% block title %}{% trans "WorkTrack - Nadzór projektów "%}{% endblock %}</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script defer src="{% static 'vendor/htmx/htmx.min.js' %}"></script>
   <link rel="stylesheet" href="{% static 'base_style.css' %}">
@@ -46,28 +47,28 @@
     <div class="nav-dropdown" role="none">
       <button class="nav-link dropdown-trigger" aria-haspopup="true" aria-expanded="false" type="button">
         <svg class="ico" aria-hidden="true"><use href="#i-folder"/></svg>
-        <span>Projekty</span>
+        <span>{% trans "Projekty"%}</span>
         <svg class="chevron" aria-hidden="true"><use href="#i-chevron"/></svg>
       </button>
       <div class="dropdown-menu" role="menu">
         <a href="{% url 'projects:list' %}" role="menuitem">
           <svg class="ico" aria-hidden="true"><use href="#i-list"/></svg>
-          <span>Wszystkie projekty</span>
+          <span>{% trans "Wszystkie projekty"%}</span>
         </a>
         {% if perms.projects.add_project %}
           <a href="{% url 'projects:create' %}" role="menuitem" class="accent">
             <svg class="ico" aria-hidden="true"><use href="#i-plus-circle"/></svg>
-            <span>Nowy projekt</span>
+            <span>{% trans "Nowy projekt"%}</span>
           </a>
         {% endif %}
         <div class="dropdown-divider"></div>
         <a href="{% url 'exports:projects_table_excel' %}" role="menuitem">
           <svg class="ico" aria-hidden="true"><use href="#i-excel"/></svg>
-          <span>Eksportuj do Excel</span>
+          <span>{% trans "Eksportuj do Excel"%}</span>
         </a>
         <a href="{% url 'exports:projects_table_pdf' %}" role="menuitem">
           <svg class="ico" aria-hidden="true"><use href="#i-pdf"/></svg>
-          <span>Eksportuj do PDF</span>
+          <span>{% trans "Eksportuj do PDF"%}</span>
         </a>
       </div>
     </div>
@@ -82,13 +83,13 @@
     <div class="nav-dropdown" role="none">
       <button class="nav-link dropdown-trigger" aria-haspopup="true" aria-expanded="false" type="button">
         <svg class="ico" aria-hidden="true"><use href="#i-clock"/></svg>
-        <span>Godziny</span>
+        <span>{% trans "Godziny" %}</span>
         <svg class="chevron" aria-hidden="true"><use href="#i-chevron"/></svg>
       </button>
       <div class="dropdown-menu" role="menu">
         <a href="{% url 'timesheets:new_bulk' %}" role="menuitem">
           <svg class="ico" aria-hidden="true"><use href="#i-edit"/></svg>
-          <span>Wpisz godziny</span>
+          <span>{% trans "Wpisz godziny"%}</span>
         </a>
         <a href="{% url 'timesheets:review' %}" role="menuitem" class="{% if not nav_counts.timesheets_pending %}muted{% endif %}">
           <svg class="ico" aria-hidden="true"><use href="#i-checklist"/></svg>
@@ -97,9 +98,9 @@
             <span class="badge badge-primary">{{ nav_counts.timesheets_pending }}</span>
           {% endif %}
         </a>
-        <a href="{% url 'timesheets:my_entries' %}" role="menuitem">
+        <a href="{% url 'timesheets:mine' %}" role="menuitem">
           <svg class="ico" aria-hidden="true"><use href="#i-user-circle"/></svg>
-          <span>Moje wpisy</span>
+          <span>{% trans "Moje wpisy"%}</span>
         </a>
       </div>
     </div>
@@ -108,13 +109,13 @@
     <div class="nav-dropdown" role="none">
       <button class="nav-link dropdown-trigger" aria-haspopup="true" aria-expanded="false" type="button">
         <svg class="ico" aria-hidden="true"><use href="#i-cash"/></svg>
-        <span>Koszty</span>
+        <span>{% trans "Koszty"%}</span>
         <svg class="chevron" aria-hidden="true"><use href="#i-chevron"/></svg>
       </button>
       <div class="dropdown-menu" role="menu">
         <a href="{% url 'costs:new' %}" role="menuitem" class="accent">
           <svg class="ico" aria-hidden="true"><use href="#i-plus-circle"/></svg>
-          <span>Zgłoś koszt</span>
+          <span>{% trans "Zgłoś koszt"%}</span>
         </a>
         <a href="{% url 'costs:review' %}" role="menuitem" class="{% if not nav_counts.costs_pending %}muted{% endif %}">
           <svg class="ico" aria-hidden="true"><use href="#i-approve"/></svg>
@@ -125,11 +126,32 @@
         </a>
         <a href="{% url 'costs:mine' %}" role="menuitem">
           <svg class="ico" aria-hidden="true"><use href="#i-user-circle"/></svg>
-          <span>Moje koszty</span>
+          <span>{% trans "Moje koszty"%}</span>
         </a>
       </div>
     </div>
   </div>
+
+  <div class="lang-switcher">
+  <form action="{% url 'set_language' %}" method="post" class="lang-form">
+    {% csrf_token %}
+    <input name="next" type="hidden" value="{{ request.get_full_path }}">
+
+    {% get_current_language as LANGUAGE_CODE %}
+
+    <button type="submit" name="language" value="pl"
+            class="lang-btn {% if LANGUAGE_CODE == 'pl' %}active{% endif %}"
+            title="Polski">
+      🇵🇱 PL
+    </button>
+
+    <button type="submit" name="language" value="de"
+            class="lang-btn {% if LANGUAGE_CODE == 'de' %}active{% endif %}"
+            title="Deutsch">
+      🇩🇪 DE
+    </button>
+  </form>
+</div>
 
   <!-- Prawa strona: User -->
   <div class="nav-auth">
@@ -142,14 +164,14 @@
         <div class="user-dropdown">
           <a href="{% url 'accounts:logout' %}">
             <svg class="ico" aria-hidden="true"><use href="#i-logout"/></svg>
-            <span>Wyloguj się</span>
+            <span>{% trans "Wyloguj się"%}</span>
           </a>
         </div>
       </div>
     {% else %}
       <a class="btn btn-primary" href="{% url 'accounts:login' %}">
         <svg class="ico" aria-hidden="true"><use href="#i-login"/></svg>
-        <span>Zaloguj</span>
+        <span>{% trans "Zaloguj"%}</span>
       </a>
     {% endif %}
   </div>
@@ -182,7 +204,7 @@
 
 <!-- Footer -->
 <footer class="app-footer">
-  <p>&copy; 2025 WorkTrack. System zarządzania projektami.</p>
+  <p>&copy; {% trans "2025 WorkTrack. System zarządzania projektami."%}</p>
 </footer>
 
 <!-- SVG Icons -->

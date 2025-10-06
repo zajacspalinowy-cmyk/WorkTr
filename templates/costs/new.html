@@ -1,5 +1,6 @@
 {% extends "base.html" %}
-{% block title %}Zgłoś koszt - WorkTrack{% endblock %}
+{% load i18n %}
+{% block title %}{% trans "Zgłoś koszt - WorkTrack" %}{% endblock %}
 
 {% block content %}
 <div class="cost-form-container">
@@ -13,8 +14,8 @@
         </svg>
       </div>
       <div>
-        <h1 class="form-title">Zgłoś koszt</h1>
-        <p class="form-subtitle">Dodaj wydatek związany z realizacją projektu (części, usługi, materiały)</p>
+        <h1 class="form-title">{% trans "Zgłoś koszt" %}</h1>
+        <p class="form-subtitle">{% trans "Dodaj wydatek związany z realizacją projektu (części, usługi, materiały)"%}</p>
       </div>
     </div>
   </div>
@@ -25,7 +26,7 @@
       <use href="#i-info"/>
     </svg>
     <div class="info-content">
-      <strong>Informacja:</strong> Wszystkie zgłoszone koszty wymagają zatwierdzenia przez przełożonego. Po zaakceptowaniu zostaną uwzględnione w rozliczeniu projektu.
+      <strong>{% trans "Informacja:"%}</strong> {% trans "Wszystkie zgłoszone koszty wymagają zatwierdzenia przez przełożonego. Po zaakceptowaniu zostaną uwzględnione w rozliczeniu projektu."%}
     </div>
   </div>
 
@@ -39,8 +40,8 @@
         <!-- Section: Projekt -->
         <div class="form-section">
           <div class="section-header">
-            <h2 class="section-title">Wybierz projekt</h2>
-            <p class="section-description">Projekt, do którego ma być przypisany koszt</p>
+            <h2 class="section-title">{% trans "Wybierz projekt"%}</h2>
+            <p class="section-description">{% trans "Projekt, do którego ma być przypisany koszt"%}</p>
           </div>
 
           <div class="form-field">
@@ -48,27 +49,27 @@
               <svg class="label-icon" aria-hidden="true">
                 <use href="#i-folder"/>
               </svg>
-              <span>Projekt</span>
+              <span>{% trans "Projekt"%}</span>
               <span class="field-required">*</span>
             </label>
             <select id="project-select"
                     name="project"
                     required
                     class="form-select">
-              <option value="">Wybierz projekt...</option>
+              <option value="">{% trans "Wybierz projekt..."%}</option>
               {% for p in projects %}
                 <option value="{{ p.id }}">{{ p.number }} – {{ p.name }}</option>
               {% endfor %}
             </select>
-            <p class="field-help">Wybierz projekt z listy aktywnych projektów</p>
+            <p class="field-help">{% trans "Wybierz projekt z listy aktywnych projektów"%}</p>
           </div>
         </div>
 
         <!-- Section: Pozycja -->
         <div class="form-section">
           <div class="section-header">
-            <h2 class="section-title">Pozycja kosztowa</h2>
-            <p class="section-description">Określ typ i nazwę wydatku</p>
+            <h2 class="section-title">{% trans "Pozycja kosztowa"%}</h2>
+            <p class="section-description">{% trans "Określ typ i nazwę wydatku"%}</p>
           </div>
 
           <div class="form-grid-2">
@@ -78,7 +79,7 @@
                 <svg class="label-icon" aria-hidden="true">
                   <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                 </svg>
-                <span>Kategoria</span>
+                <span>{% trans "Kategoria"%}</span>
               </label>
               <select id="category-select"
                       name="category"
@@ -90,7 +91,7 @@
                 <option value="usługa">Usługa zewnętrzna</option>
                 <option value="transport">Transport</option>
               </select>
-              <p class="field-help">Wybierz typ wydatku</p>
+              <p class="field-help">{% trans "Wybierz typ wydatku"%}</p>
             </div>
 
             <!-- Jednostka -->
@@ -100,7 +101,7 @@
                   <rect x="3" y="3" width="18" height="18" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
                   <path d="M9 9h6M9 15h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                 </svg>
-                <span>Jednostka</span>
+                <span>{% trans "Jednostka"%}</span>
                 <span class="field-required">*</span>
               </label>
               <input type="text"
@@ -110,7 +111,7 @@
                      required
                      class="form-input"
                      oninput="updateUnitDisplay()">
-              <p class="field-help">Jednostka miary (np. szt., metr, kg)</p>
+              <p class="field-help">{% trans "Jednostka miary (np. szt., metr, kg)"%}</p>
             </div>
           </div>
 
@@ -121,7 +122,7 @@
                 <rect x="2" y="3" width="20" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
                 <path d="M8 3v4M16 3v4M2 10h20" stroke="currentColor" stroke-width="2"/>
               </svg>
-              <span>Nazwa pozycji</span>
+              <span>{% trans "Nazwa pozycji"%}</span>
               <span class="field-required">*</span>
             </label>
             <input type="text"
@@ -130,15 +131,15 @@
                    placeholder="np. Czujnik temperatury XYZ-123, Olej hydrauliczny 5L..."
                    required
                    class="form-input">
-            <p class="field-help">Pełna nazwa pozycji kosztowej</p>
+            <p class="field-help">{% trans "Pełna nazwa pozycji kosztowej"%}</p>
           </div>
         </div>
 
         <!-- Section: Ilość i cena -->
         <div class="form-section">
           <div class="section-header">
-            <h2 class="section-title">Szczegóły finansowe</h2>
-            <p class="section-description">Ilość i cena jednostkowa</p>
+            <h2 class="section-title">{% trans "Szczegóły finansowe"%}</h2>
+            <p class="section-description">{% trans "Ilość i cena jednostkowa"%}</p>
           </div>
 
           <div class="form-grid-2">
@@ -149,7 +150,7 @@
                   <rect x="3" y="3" width="18" height="18" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
                   <path d="M9 9h6M9 15h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                 </svg>
-                <span>Ilość</span>
+                <span>{% trans "Ilość"%}</span>
                 <span class="field-required">*</span>
               </label>
               <div class="input-with-unit">
@@ -164,7 +165,7 @@
                        oninput="calculateSum()">
                 <span id="unit-display" class="input-unit">szt.</span>
               </div>
-              <p class="field-help">Liczba sztuk/metrów/godzin itp.</p>
+              <p class="field-help">{% trans "Liczba sztuk/metrów/godzin itp."%}</p>
             </div>
 
             <!-- Cena netto -->
@@ -173,7 +174,7 @@
                 <svg class="label-icon" aria-hidden="true">
                   <use href="#i-cash"/>
                 </svg>
-                <span>Cena netto (za jednostkę)</span>
+                <span>{% trans "Cena netto (za jednostkę)"%}</span>
                 <span class="field-required">*</span>
               </label>
               <div class="input-with-unit">
@@ -187,13 +188,13 @@
                        oninput="calculateSum()">
                 <span class="input-unit">zł</span>
               </div>
-              <p class="field-help">Cena netto za jedną jednostkę</p>
+              <p class="field-help">{% trans "Cena netto za jedną jednostkę"%}</p>
             </div>
           </div>
 
           <!-- Suma (obliczana) -->
           <div class="sum-display">
-            <div class="sum-label">Wartość całkowita (netto):</div>
+            <div class="sum-label">{% trans "Wartość całkowita (netto):"%}</div>
             <div id="total-sum" class="sum-value">0.00 zł</div>
           </div>
         </div>
@@ -201,8 +202,8 @@
         <!-- Section: Notatka -->
         <div class="form-section">
           <div class="section-header">
-            <h2 class="section-title">Notatka (opcjonalnie)</h2>
-            <p class="section-description">Dodatkowe informacje o wydatku</p>
+            <h2 class="section-title">{% trans "Notatka (opcjonalnie)"%}</h2>
+            <p class="section-description">{% trans "Dodatkowe informacje o wydatku"%}</p>
           </div>
 
           <div class="form-field">
@@ -212,14 +213,14 @@
                 <line x1="7" y1="7" x2="17" y2="7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                 <line x1="7" y1="12" x2="17" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
               </svg>
-              <span>Opis wydatku</span>
+              <span>{% trans "Opis wydatku"%}</span>
             </label>
             <input type="text"
                    id="note-input"
                    name="note"
                    placeholder="np. Czujnik temperatury XYZ-123, faktura VAT nr..."
                    class="form-input">
-            <p class="field-help">Opcjonalny opis, numer faktury lub inne szczegóły</p>
+            <p class="field-help">{% trans "Opcjonalny opis, numer faktury lub inne szczegóły"%}</p>
           </div>
         </div>
 
@@ -231,13 +232,13 @@
           <svg class="ico" aria-hidden="true">
             <path d="M19 12H5M12 19l-7-7 7-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
-          <span>Anuluj</span>
+          <span>{% trans "Anuluj"%}</span>
         </a>
         <button type="submit" class="btn btn-primary">
           <svg class="ico" aria-hidden="true">
             <use href="#i-approve"/>
           </svg>
-          <span>Wyślij do akceptacji</span>
+          <span>{% trans "Wyślij do akceptacji"%}</span>
         </button>
       </div>
     </form>

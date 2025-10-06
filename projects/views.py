@@ -11,6 +11,7 @@ from costs.models import ProjectCost
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Sum, F, DecimalField, ExpressionWrapper
 
+
 # Create your views here.
 
 def project_list(request):

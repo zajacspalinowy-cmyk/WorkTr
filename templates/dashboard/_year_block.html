@@ -1,0 +1,146 @@
+{# Ten partial jest podmieniany HTMX-em przy zmianie roku #}
+{% load i18n %}
+<!-- Kafelki -->
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-ico"><svg aria-hidden="true"><use href="#i-clock"/></svg></div>
+    <div class="stat-num">{{ hours_curr|floatformat:1 }}</div>
+    <div class="stat-label">{% trans "Godzin zatwierdzonych"%} ({{ year }})</div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-ico"><svg aria-hidden="true"><use href="#i-clock"/></svg></div>
+    <div class="stat-num">{{ hours_prev|floatformat:1 }}</div>
+    <div class="stat-label">{% trans "Godzin"%} ({{ prev }})</div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-ico"><svg aria-hidden="true"><use href="#i-cash"/></svg></div>
+    <div class="stat-num">{{ cost_total }}</div>
+    <div class="stat-label">{% trans "Całkowite koszty (zatwierdzone)"%}</div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-ico"><svg aria-hidden="true"><use href="#i-folder"/></svg></div>
+    <div class="stat-num">{{ status_counts|length }}</div>
+    <div class="stat-label">{% trans "Kategorie statusów"%}</div>
+  </div>
+</div>
+
+<!-- Wykres -->
+<div class="chart-card">
+  <div class="chart-head">
+    <h2 class="chart-title">{% trans "Godziny per miesiąc"%} ({{ year }})</h2>
+  </div>
+
+  <div class="bars" role="img" aria-label="Słupki godzin per miesiąc">
+    {% for b in monthly_bars %}
+      <div class="bar">
+        <div class="bar-col" style="height: {{ b.pct|floatformat:0 }}%">
+          <span class="bar-val">{% if b.value %}{{ b.value|floatformat:0 }}{% endif %}</span>
+        </div>
+        <span class="bar-lbl">{{ b.label }}</span>
+      </div>
+    {% endfor %}
+  </div>
+
+  <details class="table-toggle">
+    <summary>{% trans "Pokaż dane tabelaryczne"%}</summary>
+    <table class="mini-table">
+      <thead><tr>{% for m in months %}<th>{{ m }}</th>{% endfor %}</tr></thead>
+      <tbody><tr>{% for v in monthly %}<td>{{ v|floatformat:1 }}</td>{% endfor %}</tr></tbody>
+    </table>
+  </details>
+</div>
+
+<!-- Tabela projektów -->
+<div class="matrix-card">
+  <div class="matrix-head">
+    <h2>{% trans "Godziny per projekt"%} – {{ year }}</h2>
+    <p class="muted">
+      {% trans "Kolumny:"%} <strong>{{ prev }}</strong>, <strong>&lt; {{ prev }}</strong>,
+      {% trans "miesiące"%} <strong>{{ year }}</strong>, <strong>{% trans "Suma"%} {{ year }}</strong>,
+      <strong>{{ year }}+{{ prev }}</strong>, <strong>{% trans "Łącznie"%}</strong>.
+    </p>
+  </div>
+
+  <div class="table-wrap">
+    <table class="wide-table">
+      <thead>
+        <tr>
+          <th class="left">{% trans "Projekt"%}</th>
+          <th>{{ prev }}</th>
+          <th>&lt; {{ prev }}</th>
+          {% for m in months %}<th>{{ m }}</th>{% endfor %}
+          <th>Suma {{ year }}</th>
+          <th>{{ year }}+{{ prev }}</th>
+          <th>{% trans "Łącznie" %}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in project_rows %}
+          <tr>
+            <td class="left">{{ r.project }}</td>
+            <td>{{ r.prev_year|floatformat:1 }}</td>
+            <td>{{ r.earlier_years|floatformat:1 }}</td>
+            {% for v in r.months %}<td>{{ v|floatformat:1 }}</td>{% endfor %}
+            <td><strong>{{ r.sum_current|floatformat:1 }}</strong></td>
+            <td><strong>{{ r.sum_curr_prev|floatformat:1 }}</strong></td>
+            <td><strong>{{ r.sum_all|floatformat:1 }}</strong></td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="{{ empty_colspan }}">{% trans "Brak danych."%}</td></tr>
+        {% endfor %}
+      </tbody>
+      <tfoot>
+        <tr>
+          <th class="left">{% trans "SUMY"%}</th>
+          <th>{{ totals.prev_year|floatformat:1 }}</th>
+          <th>{{ totals.earlier_years|floatformat:1 }}</th>
+          {% for v in totals.months %}<th>{{ v|floatformat:1 }}</th>{% endfor %}
+          <th>{{ totals.sum_current|floatformat:1 }}</th>
+          <th>{{ totals.sum_curr_prev|floatformat:1 }}</th>
+          <th>{{ totals.sum_all|floatformat:1 }}</th>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+</div>
+
+<style>
+/* Siatki i karty – wspólne style (kompatybilne z Twoim CSS) */
+.stats-grid{
+  display:grid; grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:12px; margin: 8px 0 18px;
+}
+@media (max-width: 1200px){ .stats-grid{ grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@media (max-width: 640px){ .stats-grid{ grid-template-columns:1fr; } }
+.stat-card{ background:#fff; border:1px solid #d6dbe3; border-radius:12px; padding:14px; }
+.stat-ico svg{ width:24px; height:24px; color:#111; }
+.stat-num{ font-weight:700; font-size:1.4rem; color:#111; }
+.stat-label{ color:#333; }
+
+.chart-card{ background:#fff; border:1px solid #d6dbe3; border-radius:12px; padding:16px; margin: 6px 0 20px; }
+.chart-title{ margin:0 0 8px; }
+.bars{ height:220px; display:flex; align-items:flex-end; gap:10px; border-left:1px solid #d6dbe3; border-bottom:1px solid #d6dbe3; padding:12px 10px 8px; }
+.bar{ flex:1; display:flex; flex-direction:column; align-items:center; gap:6px; min-width:28px; }
+.bar-col{ width:100%; background:#edf1f6; border:1px solid #d6dbe3; border-bottom:none; display:flex; align-items:flex-end; justify-content:center; transition:height .2s ease; }
+.bar-val{ font-size:.8rem; padding-bottom:4px; color:#111; }
+.bar-lbl{ font-size:.8rem; color:#333; }
+
+.matrix-card{ background:#fff; border:1px solid #d6dbe3; border-radius:12px; padding:16px; margin-top:8px; }
+.matrix-head h2{ margin:0 0 4px; }
+.muted{ color:#555; }
+
+.table-wrap{ overflow:auto; }
+.wide-table{ width:100%; border-collapse:collapse; }
+.wide-table th, .wide-table td{ border:1px solid #d6dbe3; padding:6px 8px; text-align:right; }
+.wide-table thead th{ background:#edf1f6; color:#111; }
+.wide-table .left{ text-align:left; }
+.wide-table tbody tr:nth-child(odd){ background:#f7f9fc; }
+
+.table-toggle{ margin-top:10px; }
+.mini-table{ width:100%; border-collapse:collapse; }
+.mini-table th,.mini-table td{ border:1px solid #d6dbe3; padding:4px 6px; text-align:right; }
+.mini-table thead th{ background:#edf1f6; }
+</style>

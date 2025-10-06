@@ -1,5 +1,6 @@
+from django.conf import settings
 from django.db import models
-
+from django.utils.translation import gettext_lazy as _
 # Create your models here.
 
 class Location(models.Model):
@@ -31,6 +32,15 @@ class Project(models.Model):
     description = models.TextField(blank=True)
 
     updated_at = models.DateTimeField(auto_now=True)
+
+    archived = models.BooleanField(default=False, verbose_name=_("Zarchiwizowany"))
+    archived_at = models.DateTimeField(null=True, blank=True)
+    archived_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True, blank=True,
+        on_delete=models.SET_NULL,
+        related_name="archived_projects"
+    )
 
     class Meta:
         permissions = [

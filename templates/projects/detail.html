@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load i18n %}
 {% block title %}{{ p.number }} - {{ p.name }}{% endblock %}
 
 {% block content %}
@@ -11,7 +12,7 @@
         <svg aria-hidden="true">
           <path d="M19 12H5M12 19l-7-7 7-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
-        <span>Wróć do listy</span>
+        <span>{% trans "Wróć do listy"%}</span>
       </a>
     </div>
 
@@ -30,7 +31,7 @@
               <svg class="meta-icon" aria-hidden="true">
                 <use href="#i-user-circle"/>
               </svg>
-              <strong>Zlecający:</strong> {{ p.client_name }}
+              <strong>{% trans "Zlecający:"%}</strong> {{ p.client_name }}
             </span>
             {% if p.location %}
               <span class="meta-separator">•</span>
@@ -39,7 +40,7 @@
                   <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" fill="none" stroke="currentColor" stroke-width="2"/>
                   <circle cx="12" cy="10" r="3" fill="none" stroke="currentColor" stroke-width="2"/>
                 </svg>
-                <strong>Lokalizacja:</strong> {{ p.location }}
+                <strong>{% trans "Lokalizacja:"%}</strong> {{ p.location }}
               </span>
             {% endif %}
           </div>
@@ -62,15 +63,15 @@
         <svg class="info-icon" aria-hidden="true">
           <use href="#i-clock"/>
         </svg>
-        <h2 class="info-title">Terminy</h2>
+        <h2 class="info-title">{% trans "Terminy"%}</h2>
       </div>
       <div class="info-card-body">
         <div class="info-row">
-          <span class="info-label">Data przyjęcia:</span>
+          <span class="info-label">{% trans "Data przyjęcia:"%}</span>
           <span class="info-value">{{ p.date_received|date:"d.m.Y" }}</span>
         </div>
         <div class="info-row">
-          <span class="info-label">Termin zakończenia:</span>
+          <span class="info-label">{% trans "Termin zakończenia:"%}</span>
           <span class="info-value">{{ p.date_due|date:"d.m.Y"|default:"—" }}</span>
         </div>
       </div>
@@ -85,7 +86,7 @@
             <line x1="8" y1="21" x2="16" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
             <line x1="12" y1="17" x2="12" y2="21" stroke="currentColor" stroke-width="2"/>
           </svg>
-          <h2 class="info-title">Urządzenia</h2>
+          <h2 class="info-title">{% trans "Urządzenia"%}</h2>
         </div>
         <div class="info-card-body">
           <p class="devices-text">{{ p.devices }}</p>
@@ -104,7 +105,7 @@
       </div>
       <div class="stat-content">
         <div class="stat-value-detail">{{ hours_prev }}</div>
-        <div class="stat-label-detail">Godzin (rok poprzedni)</div>
+        <div class="stat-label-detail">{% trans "Godzin (rok poprzedni)"%}</div>
       </div>
     </div>
 
@@ -116,7 +117,7 @@
       </div>
       <div class="stat-content">
         <div class="stat-value-detail">{{ hours_curr }}</div>
-        <div class="stat-label-detail">Godzin (bieżący rok)</div>
+        <div class="stat-label-detail">{% trans "Godzin (bieżący rok)"%}</div>
       </div>
     </div>
 
@@ -128,7 +129,7 @@
       </div>
       <div class="stat-content">
         <div class="stat-value-detail">{{ cost_sum }} <span class="stat-unit">zł</span></div>
-        <div class="stat-label-detail">Koszty zatwierdzone</div>
+        <div class="stat-label-detail">{% trans "Koszty zatwierdzone"%}</div>
       </div>
     </div>
   </div>
@@ -140,13 +141,13 @@
         <svg class="section-icon" aria-hidden="true">
           <use href="#i-checklist"/>
         </svg>
-        <h2 class="section-title">Wpisy godzin</h2>
+        <h2 class="section-title">{% trans "Wpisy godzin"%}</h2>
       </div>
       <a href="{% url 'timesheets:new_bulk' %}" class="btn btn-sm btn-primary">
         <svg class="ico" aria-hidden="true">
           <use href="#i-plus-circle"/>
         </svg>
-        <span>Dodaj wpis</span>
+        <span>{% trans "Dodaj wpis"%}</span>
       </a>
     </div>
 
@@ -155,11 +156,11 @@
         <table class="detail-table">
           <thead>
             <tr>
-              <th>Data</th>
-              <th>Technik</th>
-              <th>Godziny</th>
-              <th>Notatka</th>
-              <th>Status</th>
+              <th>{% trans "Data"%}</th>
+              <th>{% trans "Technik"%}</th>
+              <th>{% trans "Godziny"%}</th>
+              <th>{% trans "Notatka"%}</th>
+              <th>{% trans "Status"%}</th>
             </tr>
           </thead>
           <tbody>
@@ -182,7 +183,7 @@
                     <svg class="empty-icon" aria-hidden="true">
                       <use href="#i-clock"/>
                     </svg>
-                    <p>Brak wpisów godzin dla tego projektu</p>
+                    <p>{% trans "Brak wpisów godzin dla tego projektu"%}</p>
                   </div>
                 </td>
               </tr>
@@ -200,13 +201,13 @@
         <svg class="section-icon" aria-hidden="true">
           <use href="#i-cash"/>
         </svg>
-        <h2 class="section-title">Koszty</h2>
+        <h2 class="section-title">{% trans "Koszty"%}</h2>
       </div>
       <a href="{% url 'costs:new' %}" class="btn btn-sm btn-primary">
         <svg class="ico" aria-hidden="true">
           <use href="#i-plus-circle"/>
         </svg>
-        <span>Zgłoś koszt</span>
+        <span>{% trans "Zgłoś koszt"%}</span>
       </a>
     </div>
 
@@ -215,13 +216,13 @@
         <table class="detail-table">
           <thead>
             <tr>
-              <th>Data</th>
-              <th>Pozycja</th>
-              <th>Ilość</th>
-              <th>Cena netto</th>
-              <th>Suma</th>
-              <th>Status</th>
-              <th>Zgłosił</th>
+              <th>{% trans "Data"%}</th>
+              <th>{% trans "Pozycja"%}</th>
+              <th>{% trans "Ilość"%}</th>
+              <th>{% trans "Cena netto"%}</th>
+              <th>{% trans "Suma"%}</th>
+              <th>{% trans "Status"%}</th>
+              <th>{% trans "Zgłosił"%}</th>
             </tr>
           </thead>
           <tbody>
@@ -246,7 +247,7 @@
                     <svg class="empty-icon" aria-hidden="true">
                       <use href="#i-cash"/>
                     </svg>
-                    <p>Brak kosztów dla tego projektu</p>
+                    <p>{% trans "Brak kosztów dla tego projektu"%}</p>
                   </div>
                 </td>
               </tr>

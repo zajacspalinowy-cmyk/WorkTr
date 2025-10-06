@@ -1,0 +1,117 @@
+{% load i18n %}
+{% comment %} Fragment podstawiany do #ts-messages {% endcomment %}
+
+
+{% if form_errors %}
+  <div class="alert alert-error">
+    <svg class="alert-icon" aria-hidden="true">
+      <use href="#i-alert"/>
+    </svg>
+    <div class="alert-content">
+      <strong>{% trans "Błędy walidacji:"%}</strong>
+      <ul class="alert-list">
+        {% for k, v in form_errors.items %}
+          <li>{{ k }}: {{ v|join:", " }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+{% endif %}
+
+{% if messages %}
+  <div class="alert alert-success">
+    <svg class="alert-icon" aria-hidden="true">
+      <use href="#i-approve"/>
+    </svg>
+    <div class="alert-content">
+      {% for m in messages %}
+        <div>{{ m }}</div>
+      {% endfor %}
+    </div>
+  </div>
+{% endif %}
+
+{% comment %} OOB updates {% endcomment %}
+{% if draft_oob %}{{ draft_oob|safe }}{% endif %}
+{% if draft_actions_oob %}{{ draft_actions_oob|safe }}{% endif %}
+{% if month_oob %}{{ month_oob|safe }}{% endif %}
+
+<style>
+.alert {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-md);
+  font-size: var(--font-size-sm);
+  border: 1px solid;
+}
+
+.alert-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.alert-content {
+  flex: 1;
+}
+
+.alert-content strong {
+  font-weight: 600;
+  display: block;
+  margin-bottom: var(--space-xs);
+}
+
+.alert-list {
+  margin: var(--space-xs) 0 0 0;
+  padding-left: var(--space-md);
+  list-style: disc;
+}
+
+.alert-list li {
+  margin-bottom: var(--space-xs);
+}
+
+.alert-success {
+  background: #f0fdf4;
+  border-color: #86efac;
+  color: #166534;
+}
+
+.alert-success .alert-icon {
+  color: #16a34a;
+}
+
+.alert-error {
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: #991b1b;
+}
+
+.alert-error .alert-icon {
+  color: #dc2626;
+}
+
+.alert-warning {
+  background: #fffbeb;
+  border-color: #fde68a;
+  color: #92400e;
+}
+
+.alert-warning .alert-icon {
+  color: #f59e0b;
+}
+
+.alert-info {
+  background: #f0f9ff;
+  border-color: #bae6fd;
+  color: #075985;
+}
+
+.alert-info .alert-icon {
+  color: #0284c7;
+}
+</style>

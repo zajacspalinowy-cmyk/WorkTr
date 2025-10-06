@@ -1,5 +1,6 @@
 {% extends "base.html" %}
-{% block title %}Akceptacja kosztów - WorkTrack{% endblock %}
+{% load i18n %}
+{% block title %}{% trans "Akceptacja kosztów - WorkTrack"%}{% endblock %}
 
 {% block content %}
 <div class="review-container">
@@ -12,8 +13,8 @@
           <use href="#i-approve"/>
         </svg>
         <div>
-          <h1 class="page-title">Akceptacja kosztów</h1>
-          <p class="page-subtitle">Pozycje kosztowe oczekujące na zatwierdzenie</p>
+          <h1 class="page-title">{% trans "Akceptacja kosztów"%}</h1>
+          <p class="page-subtitle">{% trans "Pozycje kosztowe oczekujące na zatwierdzenie"%}</p>
         </div>
       </div>
       <div class="page-stats">
@@ -23,7 +24,7 @@
           </svg>
           <div class="stats-content">
             <div class="stats-value">{{ rows|length }}</div>
-            <div class="stats-label">Do akceptacji</div>
+            <div class="stats-label">{% trans "Do akceptacji"%}</div>
           </div>
         </div>
       </div>
@@ -37,14 +38,14 @@
         <table class="review-table">
           <thead>
             <tr>
-              <th>Data zgłoszenia</th>
-              <th>Projekt</th>
-              <th>Pozycja</th>
-              <th>Ilość</th>
-              <th>Cena netto</th>
-              <th>Suma</th>
-              <th>Zgłosił</th>
-              <th class="th-actions">Akcje</th>
+              <th>{% trans "Data zgłoszenia"%}</th>
+              <th>{% trans "Projekt"%}</th>
+              <th>{% trans "Pozycja"%}</th>
+              <th>{% trans "Ilość"%}</th>
+              <th>{% trans "Cena netto"%}</th>
+              <th>{% trans "Suma"%}</th>
+              <th>{% trans "Zgłosił"%}</th>
+              <th class="th-actions">{% trans "Akcje"%}</th>
             </tr>
           </thead>
           <tbody>
@@ -93,7 +94,7 @@
                       <svg aria-hidden="true">
                         <use href="#i-approve"/>
                       </svg>
-                      <span>Zatwierdź</span>
+                      <span>{% trans "Zatwierdź"%}</span>
                     </a>
                     <a href="{% url 'costs:reject' r.id %}"
                        class="btn-action btn-reject"
@@ -101,7 +102,7 @@
                       <svg aria-hidden="true">
                         <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                       </svg>
-                      <span>Odrzuć</span>
+                      <span>{% trans "Odrzuć"%}</span>
                     </a>
                   </div>
                 </td>
@@ -118,9 +119,9 @@
             <use href="#i-approve"/>
           </svg>
         </div>
-        <h3 class="empty-title">Wszystko zaakceptowane!</h3>
+        <h3 class="empty-title">{% trans "Wszystko zaakceptowane!"%}</h3>
         <p class="empty-description">
-          Brak pozycji kosztowych oczekujących na akceptację. Sprawdź ponownie później.
+          {% trans "Brak pozycji kosztowych oczekujących na akceptację. Sprawdź ponownie później."%}
         </p>
       </div>
     {% endif %}

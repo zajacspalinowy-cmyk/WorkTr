@@ -1,18 +1,19 @@
+{% load i18n %}
 <div id="projects-table" class="table-card">
   <div class="table-wrapper">
     <table class="modern-table">
       <thead>
         <tr>
-          <th>Nr projektu</th>
+          <th>{% trans "Nr projektu"%}</th>
           <th>D-nr</th>
-          <th>Nazwa</th>
-          <th>Zlecający</th>
-          <th>Lokalizacja</th>
-          <th>Urządzenia</th>
-          <th>Przyjęcie</th>
-          <th>Termin</th>
-          <th>Status</th>
-          <th class="th-actions">Akcje</th>
+          <th>{% trans "Nazwa"%}</th>
+          <th>{% trans "Zlecający"%}</th>
+          <th>{% trans "Lokalizacja"%}</th>
+          <th>{% trans "Urządzenia"%}</th>
+          <th>{% trans "Przyjęcie"%}</th>
+          <th>{% trans "Termin"%}</th>
+          <th>{% trans "Status"%}</th>
+          <th class="th-actions">{% trans "Akcje"%}</th>
         </tr>
       </thead>
       <tbody>
@@ -52,8 +53,8 @@
                 <svg class="empty-icon" aria-hidden="true">
                   <use href="#i-folder"/>
                 </svg>
-                <p class="empty-title">Brak projektów</p>
-                <p class="empty-description">Nie znaleziono projektów spełniających kryteria wyszukiwania.</p>
+                <p class="empty-title">{% trans "Brak projektów"%}</p>
+                <p class="empty-description">{% trans "Nie znaleziono projektów spełniających kryteria wyszukiwania."%}</p>
               </div>
             </td>
           </tr>
@@ -73,13 +74,13 @@
             <svg aria-hidden="true">
               <path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
-            <span>Poprzednia</span>
+            <span>{% trans "Poprzednia"%}</span>
           </a>
         {% endif %}
 
         <div class="pagination-info">
           <span class="pagination-text">
-            Strona <strong>{{ page_obj.number }}</strong> z <strong>{{ page_obj.paginator.num_pages }}</strong>
+            {% trans "Strona"%} <strong>{{ page_obj.number }}</strong> z <strong>{{ page_obj.paginator.num_pages }}</strong>
           </span>
         </div>
 
@@ -88,7 +89,7 @@
              hx-get="?page={{ page_obj.next_page_number }}&{{ request.GET.urlencode }}"
              class="pagination-btn pagination-next"
              title="Następna strona">
-            <span>Następna</span>
+            <span>{% trans "Następna"%}</span>
             <svg aria-hidden="true">
               <path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>

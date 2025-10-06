@@ -26,4 +26,5 @@ urlpatterns = [
     path('kanban/', include('kanban.urls')),
     path('dashboard/', include('dashboard.urls')),
     path('exports/', include('exports.urls')),   # już masz
+    path('i18n/', include('django.conf.urls.i18n')),
 ]

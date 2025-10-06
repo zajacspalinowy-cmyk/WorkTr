@@ -1,0 +1,56 @@
+{% load i18n %}
+{% comment %} timesheets/_mix_warning.html {% endcomment %}
+
+<div class="alert alert-warning">
+  <svg class="alert-icon" aria-hidden="true">
+    <use href="#i-alert"/>
+  </svg>
+  <div class="alert-content">
+    <strong>{% trans "Uwaga:"%}</strong> {% trans "Wybrałeś jednocześnie tryb "%}<em>{% trans "Miesiąc"%}</em>{% trans " oraz wpisałeś godziny dla pojedynczego dnia
+    w tym samym miesiącu dla projektu "%}<strong>{{ project }}</strong> ({{ year }}-{{ month|stringformat:"02d" }}).<br>
+    {% trans "Jeśli to zamierzone, zaznacz opcję „Potwierdzam łączenie wpisów…" i wyślij ponownie."%}
+  </div>
+</div>
+
+<style>
+.alert {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-md);
+  font-size: var(--font-size-sm);
+  border: 1px solid;
+}
+
+.alert-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.alert-content {
+  flex: 1;
+  line-height: 1.6;
+}
+
+.alert-content strong {
+  font-weight: 600;
+}
+
+.alert-content em {
+  font-style: italic;
+}
+
+.alert-warning {
+  background: #fffbeb;
+  border-color: #fde68a;
+  color: #92400e;
+}
+
+.alert-warning .alert-icon {
+  color: #f59e0b;
+}
+</style>

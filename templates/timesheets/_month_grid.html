@@ -1,0 +1,174 @@
+{% load i18n %}
+{% comment %} timesheets/_month_grid.html {% endcomment %}
+{% if days and days|length %}
+  <div class="month-grid-header">
+    <svg class="grid-icon" aria-hidden="true">
+      <use href="#i-clock"/>
+    </svg>
+    <span>{{ days|length }} {% trans "dni miesiąca"%}</span>
+  </div>
+
+  <div class="table-card">
+    <div class="table-wrapper">
+      <table class="modern-table month-table">
+        <thead>
+          <tr>
+            <th>Dzień</th>
+            <th style="width: 120px;">{% trans "Godziny"%}</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for d in days %}
+          <tr class="table-row {% if d.weekday >= 5 %}weekend-row{% endif %}">
+            <td class="td-day">
+              <span class="day-number">{{ d.day }}</span>
+              <span class="day-name">{{ d|date:"l" }}</span>
+              <span class="day-date">{{ d|date:"Y-m-d" }}</span>
+            </td>
+            <td class="td-input">
+              <input type="number"
+                     step="0.25"
+                     min="0"
+                     max="24"
+                     name="hours_{{ d|date:'Y-m-d' }}"
+                     class="hours-input"
+                     placeholder="0.00"
+                     aria-label="Godziny dla {{ d|date:'Y-m-d' }}">
+            </td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% else %}
+  <div class="empty-state-small">
+    <svg class="empty-icon-small" aria-hidden="true">
+      <use href="#i-info"/>
+    </svg>
+    <p class="empty-text">{% trans "Wybierz rok i miesiąc, następnie kliknij „Załaduj kalendarz""%}</p>
+  </div>
+{% endif %}
+
+<style>
+/* Month Grid Header */
+.month-grid-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-md);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.grid-icon {
+  width: 16px;
+  height: 16px;
+  color: var(--color-primary);
+}
+
+/* Month Table */
+.month-table .td-day {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.day-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: var(--font-size-base);
+  color: var(--color-text);
+  flex-shrink: 0;
+}
+
+.day-name {
+  font-weight: 500;
+  color: var(--color-text);
+  min-width: 100px;
+}
+
+.day-date {
+  font-family: 'SF Mono', Consolas, monospace;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.weekend-row {
+  background: rgba(99, 102, 241, 0.02);
+}
+
+.weekend-row .day-number {
+  background: rgba(99, 102, 241, 0.1);
+  color: var(--color-primary);
+}
+
+.td-input {
+  text-align: right;
+}
+
+.hours-input {
+  width: 100%;
+  max-width: 120px;
+  padding: var(--space-xs) var(--space-sm);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text);
+  background: var(--color-bg);
+  text-align: right;
+  transition: all 0.2s ease;
+}
+
+.hours-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.hours-input:hover:not(:focus) {
+  border-color: var(--color-text-muted);
+}
+
+.hours-input::placeholder {
+  color: var(--color-text-muted);
+}
+
+/* Empty State Small */
+.empty-state-small {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-xl) var(--space-md);
+  text-align: center;
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-md);
+  border: 1px dashed var(--color-border);
+}
+
+.empty-icon-small {
+  width: 48px;
+  height: 48px;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-md);
+}
+
+.empty-text {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  margin: 0;
+  max-width: 300px;
+}
+</style>

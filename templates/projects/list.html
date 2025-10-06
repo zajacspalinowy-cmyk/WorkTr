@@ -1,5 +1,6 @@
 {% extends "base.html" %}
-{% block title %}Projekty - WorkTrack{% endblock %}
+{% load i18n %}
+{% block title %}{% trans "Projekty - WorkTrack"%}{% endblock %}
 
 {% block content %}
 <div class="projects-container">
@@ -12,15 +13,15 @@
           <use href="#i-folder"/>
         </svg>
         <div>
-          <h1 class="page-title">Projekty</h1>
-          <p class="page-subtitle">Zarządzaj i przeglądaj wszystkie projekty</p>
+          <h1 class="page-title">{% trans "Projekty"%}</h1>
+          <p class="page-subtitle">{% trans "Zarządzaj i przeglądaj wszystkie projekty"%}</p>
         </div>
       </div>
       <div class="page-actions">
         {% if perms.projects.add_project %}
           <a href="{% url 'projects:create' %}" class="btn btn-primary">
             <svg class="ico" aria-hidden="true"><use href="#i-plus-circle"/></svg>
-            <span>Nowy projekt</span>
+            <span>{% trans "Nowy projekt"%}</span>
           </a>
         {% endif %}
       </div>
@@ -42,7 +43,7 @@
             <svg class="filter-icon" aria-hidden="true">
               <use href="#i-search"/>
             </svg>
-            Szukaj
+            {% trans "Szukaj"%}
           </label>
           <input type="text"
                  id="search-input"
@@ -59,10 +60,10 @@
             <svg class="filter-icon" aria-hidden="true">
               <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
             </svg>
-            Status
+            {% trans "Status"%}
           </label>
           <select name="status" id="status-select" class="filter-select">
-            <option value="">Wszystkie statusy</option>
+            <option value="">{% trans "Wszystkie statusy"%}</option>
             {% for key, label in status_choices %}
               <option value="{{ key }}" {% if request.GET.status == key %}selected{% endif %}>
                 {{ label }}
@@ -77,7 +78,7 @@
             <svg class="ico" aria-hidden="true">
               <path d="M3 6h18M7 12h10M10 18h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
             </svg>
-            <span>Filtruj</span>
+            <span>{% trans "Filtruj"%}</span>
           </button>
 
           <div class="export-dropdown">
@@ -85,7 +86,7 @@
               <svg class="ico" aria-hidden="true">
                 <use href="#i-download"/>
               </svg>
-              <span>Eksport</span>
+              <span>{% trans "Eksport"%}</span>
               <svg class="chevron-icon" aria-hidden="true">
                 <use href="#i-chevron"/>
               </svg>
@@ -93,11 +94,11 @@
             <div class="export-menu">
               <a href="{% url 'exports:projects_table_pdf' %}?{{ request.GET.urlencode }}" class="export-item">
                 <svg class="ico" aria-hidden="true"><use href="#i-pdf"/></svg>
-                <span>Eksportuj PDF</span>
+                <span>{% trans "Eksportuj PDF"%}</span>
               </a>
               <a href="{% url 'exports:projects_table_excel' %}?{{ request.GET.urlencode }}" class="export-item">
                 <svg class="ico" aria-hidden="true"><use href="#i-excel"/></svg>
-                <span>Eksportuj Excel</span>
+                <span>{% trans "Eksportuj Excel"%}</span>
               </a>
             </div>
           </div>
@@ -107,7 +108,7 @@
       <!-- Loading Indicator -->
       <div id="filter-loading" class="filter-loading htmx-indicator">
         <div class="spinner"></div>
-        <span>Ładowanie...</span>
+        <span>{% trans "Ładowanie..."%}</span>
       </div>
     </form>
   </div>
@@ -118,15 +119,15 @@
       <table class="modern-table">
         <thead>
           <tr>
-            <th>Nr projektu</th>
+            <th>{% trans "Nr projektu"%}</th>
             <th>D-nr</th>
-            <th>Nazwa</th>
-            <th>Zlecający</th>
-            <th>Lokalizacja</th>
-            <th>Urządzenia</th>
-            <th>Przyjęcie</th>
-            <th>Termin</th>
-            <th>Status</th>
+            <th>{% trans "Nazwa"%}</th>
+            <th>{% trans "Zlecający"%}</th>
+            <th>{% trans "Lokalizacja"%}</th>
+            <th>{% trans "Urządzenia"%}</th>
+            <th>{% trans "Przyjęcie"%}</th>
+            <th>{% trans "Termin"%}</th>
+            <th>{% trans "Status"%}</th>
             <th class="th-actions">Akcje</th>
           </tr>
         </thead>
@@ -167,8 +168,8 @@
                   <svg class="empty-icon" aria-hidden="true">
                     <use href="#i-folder"/>
                   </svg>
-                  <p class="empty-title">Brak projektów</p>
-                  <p class="empty-description">Nie znaleziono projektów spełniających kryteria wyszukiwania.</p>
+                  <p class="empty-title">{% trans "Brak projektów"%}</p>
+                  <p class="empty-description">{% trans "Nie znaleziono projektów spełniających kryteria wyszukiwania."%}</p>
                 </div>
               </td>
             </tr>
@@ -189,13 +190,13 @@
               <svg aria-hidden="true">
                 <path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
-              <span>Poprzednia</span>
+              <span>{% trans "Poprzednia"%}</span>
             </a>
           {% endif %}
 
           <div class="pagination-info">
             <span class="pagination-text">
-              Strona <strong>{{ page_obj.number }}</strong> z <strong>{{ page_obj.paginator.num_pages }}</strong>
+             {% trans " Strona "%}<strong>{{ page_obj.number }}</strong> z <strong>{{ page_obj.paginator.num_pages }}</strong>
             </span>
           </div>
 
@@ -204,7 +205,7 @@
                hx-get="?page={{ page_obj.next_page_number }}&{{ request.GET.urlencode }}"
                class="pagination-btn pagination-next"
                title="Następna strona">
-              <span>Następna</span>
+              <span>{% trans "Następna"%}</span>
               <svg aria-hidden="true">
                 <path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>

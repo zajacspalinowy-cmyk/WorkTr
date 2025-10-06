@@ -1,5 +1,6 @@
 {% extends "base.html" %}
-{% block title %}Nowy projekt - WorkTrack{% endblock %}
+{% load i18n %}
+{% block title %}{% trans "Nowy projekt - WorkTrack"%}{% endblock %}
 
 {% block content %}
 <div class="form-container">
@@ -13,8 +14,8 @@
         </svg>
       </div>
       <div>
-        <h1 class="form-title">Dodaj nowy projekt</h1>
-        <p class="form-subtitle">Wypełnij formularz aby utworzyć nowy projekt w systemie</p>
+        <h1 class="form-title">{% trans "Dodaj nowy projekt"%}</h1>
+        <p class="form-subtitle">{% trans "Wypełnij formularz aby utworzyć nowy projekt w systemie"%}</p>
       </div>
     </div>
   </div>
@@ -43,15 +44,15 @@
         <!-- Section: Podstawowe informacje -->
         <div class="form-section">
           <div class="section-header">
-            <h2 class="section-title">Podstawowe informacje</h2>
-            <p class="section-description">Dane identyfikacyjne projektu</p>
+            <h2 class="section-title">{% trans "Podstawowe informacje"%}</h2>
+            <p class="section-description">{% trans "Dane identyfikacyjne projektu"%}</p>
           </div>
 
           <div class="form-grid">
             <!-- Nr projektu -->
             <div class="form-field {% if form.number.errors %}has-error{% endif %}">
               <label for="{{ form.number.id_for_label }}" class="field-label">
-                <span>Numer projektu</span>
+                <span>{% trans "Numer projektu"%}</span>
                 <span class="field-required">*</span>
               </label>
               {{ form.number }}
@@ -60,7 +61,7 @@
                   {{ form.number.errors }}
                 </div>
               {% endif %}
-              <p class="field-help">Unikalny identyfikator projektu</p>
+              <p class="field-help">{% trans "Unikalny identyfikator projektu"%}</p>
             </div>
 
             <!-- D-nr -->
@@ -79,7 +80,7 @@
             <!-- Nazwa -->
             <div class="form-field field-wide {% if form.name.errors %}has-error{% endif %}">
               <label for="{{ form.name.id_for_label }}" class="field-label">
-                <span>Nazwa projektu</span>
+                <span>{% trans "Nazwa projektu"%}</span>
                 <span class="field-required">*</span>
               </label>
               {{ form.name }}
@@ -93,7 +94,7 @@
             <!-- Zlecający -->
             <div class="form-field field-wide {% if form.client_name.errors %}has-error{% endif %}">
               <label for="{{ form.client_name.id_for_label }}" class="field-label">
-                <span>Zlecający</span>
+                <span>{% trans "Zlecający"%}</span>
                 <span class="field-required">*</span>
               </label>
               {{ form.client_name }}
@@ -109,15 +110,15 @@
         <!-- Section: Lokalizacja i urządzenia -->
         <div class="form-section">
           <div class="section-header">
-            <h2 class="section-title">Lokalizacja i urządzenia</h2>
-            <p class="section-description">Miejsce realizacji i sprzęt</p>
+            <h2 class="section-title">{% trans "Lokalizacja i urządzenia"%}</h2>
+            <p class="section-description">{% trans "Miejsce realizacji i sprzęt"%}</p>
           </div>
 
           <div class="form-grid">
             <!-- Lokalizacja z Quick Add -->
             <div class="form-field {% if form.location.errors %}has-error{% endif %}">
               <label for="{{ form.location.id_for_label }}" class="field-label">
-                <span>Lokalizacja</span>
+                <span>{% trans "Lokalizacja"%}</span>
               </label>
 
               <div id="location-field">
@@ -138,7 +139,7 @@
                   <svg class="link-icon" aria-hidden="true">
                     <use href="#i-plus-circle"/>
                   </svg>
-                  <span>Dodaj nową lokalizację</span>
+                  <span>{% trans "Dodaj nową lokalizację"%}</span>
                 </a>
               </div>
 
@@ -149,7 +150,7 @@
             <!-- Urządzenia -->
             <div class="form-field {% if form.devices.errors %}has-error{% endif %}">
               <label for="{{ form.devices.id_for_label }}" class="field-label">
-                <span>Urządzenia</span>
+                <span>{% trans "Urządzenia"%}</span>
               </label>
               {{ form.devices }}
               {% if form.devices.errors %}
@@ -164,15 +165,15 @@
         <!-- Section: Terminy -->
         <div class="form-section">
           <div class="section-header">
-            <h2 class="section-title">Terminy</h2>
-            <p class="section-description">Daty rozpoczęcia i zakończenia</p>
+            <h2 class="section-title">{% trans "Terminy"%}</h2>
+            <p class="section-description">{% trans "Daty rozpoczęcia i zakończenia"%}</p>
           </div>
 
           <div class="form-grid">
             <!-- Data przyjęcia -->
             <div class="form-field {% if form.date_received.errors %}has-error{% endif %}">
               <label for="{{ form.date_received.id_for_label }}" class="field-label">
-                <span>Data przyjęcia</span>
+                <span>{% trans "Data przyjęcia"%}</span>
                 <span class="field-required">*</span>
               </label>
               {{ form.date_received }}
@@ -186,7 +187,7 @@
             <!-- Data zakończenia -->
             <div class="form-field {% if form.date_due.errors %}has-error{% endif %}">
               <label for="{{ form.date_due.id_for_label }}" class="field-label">
-                <span>Data zakończenia</span>
+                <span>{% trans "Data zakończenia"%}</span>
               </label>
               {{ form.date_due }}
               {% if form.date_due.errors %}
@@ -194,7 +195,7 @@
                   {{ form.date_due.errors }}
                 </div>
               {% endif %}
-              <p class="field-help">Planowany termin ukończenia</p>
+              <p class="field-help">{% trans "Planowany termin ukończenia"%}</p>
             </div>
           </div>
         </div>
@@ -202,15 +203,15 @@
         <!-- Section: Status i opis -->
         <div class="form-section">
           <div class="section-header">
-            <h2 class="section-title">Status i szczegóły</h2>
-            <p class="section-description">Dodatkowe informacje o projekcie</p>
+            <h2 class="section-title">{% trans "Status i szczegóły"%}</h2>
+            <p class="section-description">{% trans "Dodatkowe informacje o projekcie"%}</p>
           </div>
 
           <div class="form-grid">
             <!-- Status -->
             <div class="form-field {% if form.status.errors %}has-error{% endif %}">
               <label for="{{ form.status.id_for_label }}" class="field-label">
-                <span>Status projektu</span>
+                <span>{% trans "Status projektu"%}</span>
               </label>
               {{ form.status }}
               {% if form.status.errors %}
@@ -231,7 +232,7 @@
                   {{ form.description.errors }}
                 </div>
               {% endif %}
-              <p class="field-help">Szczegółowy opis projektu, uwagi i informacje dodatkowe</p>
+              <p class="field-help">{% trans "Szczegółowy opis projektu, uwagi i informacje dodatkowe"%}</p>
             </div>
           </div>
         </div>
@@ -244,13 +245,13 @@
           <svg class="ico" aria-hidden="true">
             <path d="M19 12H5M12 19l-7-7 7-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
-          <span>Anuluj</span>
+          <span>{% trans "Anuluj"%}</span>
         </a>
         <button type="submit" class="btn btn-primary">
           <svg class="ico" aria-hidden="true">
             <use href="#i-approve"/>
           </svg>
-          <span>Zapisz projekt</span>
+          <span>{% trans "Zapisz projekt"%}</span>
         </button>
       </div>
     </form>

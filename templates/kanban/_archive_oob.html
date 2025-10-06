@@ -1,0 +1,14 @@
+{# Główna pusta odpowiedź #}
+<div></div>
+
+{# OOB - usuń kartę z kanbana #}
+<div id="project-{{ project_id }}" hx-swap-oob="delete"></div>
+
+{# OOB - zaktualizuj licznik #}
+<span id="count-{{ old_status }}" class="count" hx-swap-oob="outerHTML">{{ count }}</span>
+
+{# OOB - pokaż/ukryj empty state #}
+<div id="empty-{{ old_status }}" hx-swap-oob="outerHTML"
+     class="empty" {% if count > 0 %}style="display:none"{% endif %}>
+  {{ empty_text }}
+</div>

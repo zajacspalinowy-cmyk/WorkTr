@@ -1,5 +1,6 @@
 {% extends "base.html" %}
-{% block title %}Moje koszty - WorkTrack{% endblock %}
+{% load i18n %}
+{% block title %}{% trans "Moje koszty - WorkTrack"%}{% endblock %}
 
 {% block content %}
 <div class="costs-container">
@@ -12,8 +13,8 @@
           <use href="#i-cash"/>
         </svg>
         <div>
-          <h1 class="page-title">Moje koszty</h1>
-          <p class="page-subtitle">Historia wszystkich zgłoszonych kosztów projektowych</p>
+          <h1 class="page-title">{% trans "Moje koszty"%}</h1>
+          <p class="page-subtitle">{% trans "Historia wszystkich zgłoszonych kosztów projektowych"%}</p>
         </div>
       </div>
       <div class="page-actions">
@@ -21,7 +22,7 @@
           <svg class="ico" aria-hidden="true">
             <use href="#i-plus-circle"/>
           </svg>
-          <span>Zgłoś koszt</span>
+          <span>{% trans "Zgłoś koszt"%}</span>
         </a>
       </div>
     </div>
@@ -37,7 +38,7 @@
       </div>
       <div class="summary-content">
         <div class="summary-value">{{ rows|length }}</div>
-        <div class="summary-label">Wszystkich pozycji</div>
+        <div class="summary-label">{% trans "Wszystkich pozycji"%}</div>
       </div>
     </div>
 
@@ -50,7 +51,7 @@
       </div>
       <div class="summary-content">
         <div class="summary-value">{{ pending_count|default:0 }}</div>
-        <div class="summary-label">Oczekujących</div>
+        <div class="summary-label">{% trans "Oczekujących"%}</div>
       </div>
     </div>
 
@@ -62,7 +63,7 @@
       </div>
       <div class="summary-content">
         <div class="summary-value">{{ approved_count|default:0 }}</div>
-        <div class="summary-label">Zatwierdzonych</div>
+        <div class="summary-label">{% trans "Zatwierdzonych"%}</div>
       </div>
     </div>
   </div>
@@ -74,13 +75,13 @@
         <table class="costs-table">
           <thead>
             <tr>
-              <th>Data zgłoszenia</th>
-              <th>Projekt</th>
-              <th>Pozycja</th>
-              <th>Ilość</th>
-              <th>Cena netto</th>
-              <th>Suma</th>
-              <th>Status</th>
+              <th>{% trans "Data zgłoszenia"%}</th>
+              <th>{% trans "Projekt"%}</th>
+              <th>{% trans "Pozycja"%}</th>
+              <th>{% trans "Ilość"%}</th>
+              <th>{% trans "Cena netto"%}</th>
+              <th>{% trans "Suma"%}</th>
+              <th>{% trans "Status"%}</th>
             </tr>
           </thead>
           <tbody>
@@ -145,15 +146,15 @@
             <use href="#i-cash"/>
           </svg>
         </div>
-        <h3 class="empty-title">Brak zgłoszonych kosztów</h3>
+        <h3 class="empty-title">{% trans "Brak zgłoszonych kosztów"%}</h3>
         <p class="empty-description">
-          Nie masz jeszcze żadnych zgłoszonych kosztów. Zacznij od dodania pierwszej pozycji.
+          {% trans "Nie masz jeszcze żadnych zgłoszonych kosztów. Zacznij od dodania pierwszej pozycji."%}
         </p>
         <a href="{% url 'costs:new' %}" class="btn btn-primary">
           <svg class="ico" aria-hidden="true">
             <use href="#i-plus-circle"/>
           </svg>
-          <span>Zgłoś pierwszy koszt</span>
+          <span>{% trans "Zgłoś pierwszy koszt"%}</span>
         </a>
       </div>
     {% endif %}

@@ -1,9 +1,9 @@
 {% extends "base.html" %}
-{% block title %}Logowanie{% endblock %}
+{% block title %}{% trans "Logowanie"%}{% endblock %}
 
 {% block content %}
 <div class="auth-card">
-  <h2>Zaloguj się</h2>
+  <h2>{% trans "Zaloguj się"%}</h2>
 
   {% if form.non_field_errors %}
     <div class="error">{{ form.non_field_errors }}</div>

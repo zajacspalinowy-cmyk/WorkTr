@@ -1,9 +1,10 @@
 {% load static %}
+{% load i18n %}
 <!doctype html>
 <html lang="pl">
 <head>
   <meta charset="utf-8">
-  <title>Tabela projektów</title>
+  <title>{% trans "Tabela projektów"%}</title>
   <style>
     @page { size: A4 landscape; margin: 12mm; }
     body { font-family: DejaVu Sans, Arial, sans-serif; font-size: 12px; }
@@ -15,13 +16,13 @@
   </style>
 </head>
 <body>
-  <h1>Projekty – zestawienie</h1>
+  <h1>{% trans "Projekty – zestawienie"%}</h1>
   <table>
     <thead>
       <tr>
-        <th>Nr</th><th>D-nr</th><th>Nazwa</th><th>Zlecający</th>
-        <th>Lokalizacja</th><th>Urządzenia</th><th>Przyjęcie</th><th>Termin</th><th>Status</th>
-        <th>Godziny (poprzedni rok)</th><th>Godziny (bieżący YTD)</th>
+        <th>Nr</th><th>D-nr</th><th>{% trans "Nazwa"%}</th><th>{% trans "Zlecający"%}</th>
+        <th>{% trans "Lokalizacja"%}</th><th>{% trans "Urządzenia"%}</th><th>{% trans "Przyjęcie"%}</th><th>{% trans "Termin"%}</th><th>{% trans "Status"%}</th>
+        <th>{% trans "Godziny (poprzedni rok)"%}</th><th>{% trans "Godziny (bieżący YTD)"%}</th>
       </tr>
     </thead>
     <tbody>
@@ -40,7 +41,7 @@
         <td>{{ p.current_year_hours|default:0 }}</td>
       </tr>
       {% empty %}
-      <tr><td class="muted" colspan="11">Brak danych.</td></tr>
+      <tr><td class="muted" colspan="11">{% trans "Brak danych."%}</td></tr>
       {% endfor %}
     </tbody>
   </table>
