@@ -1,4 +1,3 @@
-
 {% load i18n %}
 <div class="kanban-grid">
   <!-- BACKLOG -->
@@ -16,7 +15,7 @@
         {% include "kanban/_project_card.html" with project=project status_choices=status_choices %}
       {% endfor %}
       <div id="empty-BACKLOG" class="empty" {% if backlog %}style="display:none"{% endif %}>
-       {% trans " Brak projektów w backlogu"%}
+        {% trans "Brak projektów w backlogu" %}
       </div>
     </div>
   </section>
@@ -24,7 +23,7 @@
   <!-- W TOKU -->
   <section class="kanban-col">
     <header class="col-header">
-      <h3>{% trans "W toku"%} <span id="count-IN_PROGRESS" class="count">{{ in_progress|length }}</span></h3>
+      <h3>{% trans "W toku" %} <span id="count-IN_PROGRESS" class="count">{{ in_progress|length }}</span></h3>
     </header>
     <div class="kanban-list"
          id="col-IN_PROGRESS"
@@ -36,7 +35,7 @@
         {% include "kanban/_project_card.html" with project=project status_choices=status_choices %}
       {% endfor %}
       <div id="empty-IN_PROGRESS" class="empty" {% if in_progress %}style="display:none"{% endif %}>
-       {% trans " Brak projektów w realizacji"%}
+        {% trans "Brak projektów w realizacji" %}
       </div>
     </div>
   </section>
@@ -44,7 +43,7 @@
   <!-- ZABLOKOWANY -->
   <section class="kanban-col">
     <header class="col-header">
-      <h3>{% trans "Zablokowany "%}<span id="count-BLOCKED" class="count">{{ blocked|length }}</span></h3>
+      <h3>{% trans "Zablokowany" %} <span id="count-BLOCKED" class="count">{{ blocked|length }}</span></h3>
     </header>
     <div class="kanban-list"
          id="col-BLOCKED"
@@ -56,7 +55,7 @@
         {% include "kanban/_project_card.html" with project=project status_choices=status_choices %}
       {% endfor %}
       <div id="empty-BLOCKED" class="empty" {% if blocked %}style="display:none"{% endif %}>
-       {% trans " Brak zablokowanych projektów"%}
+        {% trans "Brak zablokowanych projektów" %}
       </div>
     </div>
   </section>
@@ -64,7 +63,7 @@
   <!-- DO WERYFIKACJI -->
   <section class="kanban-col">
     <header class="col-header">
-      <h3>{% trans "Do weryfikacji "%}<span id="count-REVIEW" class="count">{{ review|length }}</span></h3>
+      <h3>{% trans "Do weryfikacji" %} <span id="count-REVIEW" class="count">{{ review|length }}</span></h3>
     </header>
     <div class="kanban-list"
          id="col-REVIEW"
@@ -76,7 +75,7 @@
         {% include "kanban/_project_card.html" with project=project status_choices=status_choices %}
       {% endfor %}
       <div id="empty-REVIEW" class="empty" {% if review %}style="display:none"{% endif %}>
-        {% trans "Brak projektów do weryfikacji"%}
+        {% trans "Brak projektów do weryfikacji" %}
       </div>
     </div>
   </section>
@@ -84,7 +83,7 @@
   <!-- ZAKOŃCZONY -->
   <section class="kanban-col">
     <header class="col-header">
-      <h3>{% trans "Zakończony "%}<span id="count-DONE" class="count">{{ done|length }}</span></h3>
+      <h3>{% trans "Zakończony" %} <span id="count-DONE" class="count">{{ done|length }}</span></h3>
     </header>
     <div class="kanban-list"
          id="col-DONE"
@@ -96,7 +95,7 @@
         {% include "kanban/_project_card.html" with project=project status_choices=status_choices %}
       {% endfor %}
       <div id="empty-DONE" class="empty" {% if done %}style="display:none"{% endif %}>
-       {% trans " Brak zakończonych projektów"%}
+        {% trans "Brak zakończonych projektów" %}
       </div>
     </div>
   </section>
@@ -104,7 +103,8 @@
   <!-- ANULOWANY -->
   <section class="kanban-col">
     <header class="col-header">
-      <h3>{% trans "Anulowany"%} <span id="count-CANCELLED" class="count">{{ cancelled|length }}</span></h3>
+      <h3>{% trans "Anulowany" %} <span id="count-CANCELLED" class="count">{{ cancelled|length }}</span></h3>
+    </header>
     </header>
     <div class="kanban-list"
          id="col-CANCELLED"
@@ -116,7 +116,7 @@
         {% include "kanban/_project_card.html" with project=project status_choices=status_choices %}
       {% endfor %}
       <div id="empty-CANCELLED" class="empty" {% if cancelled %}style="display:none"{% endif %}>
-        {% trans "Brak anulowanych projektów"%}
+        {% trans "Brak anulowanych projektów" %}
       </div>
     </div>
   </section>

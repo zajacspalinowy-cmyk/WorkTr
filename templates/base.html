@@ -6,7 +6,7 @@
   <meta charset="utf-8">
   <title>{% block title %}{% trans "WorkTrack - Nadzór projektów "%}{% endblock %}</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <script defer src="{% static 'vendor/htmx/htmx.min.js' %}"></script>
+ <script  src="{% static 'vendor/htmx/htmx.min.js' %}"></script>
   <link rel="stylesheet" href="{% static 'base_style.css' %}">
 </head>
 <body>
@@ -321,6 +321,16 @@
     <line x1="12" y1="9" x2="12" y2="13"/>
     <line x1="12" y1="17" x2="12.01" y2="17"/>
   </symbol>
+
+  <symbol id="i-fullscreen" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+</symbol>
+
+<symbol id="i-minimize" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/>
+</symbol>
+
+
 </svg>
 
 <script>

@@ -2,271 +2,487 @@
 {% load static %}
 {% load i18n %}
 {% block title %}{% trans "Archiwum projektów - WorkTrack" %}{% endblock %}
-{% load i18n %}
+
 {% block content %}
-<div class="page-container">
-  <!-- Page Header -->
-  <div class="page-header">
-    <div class="page-header-content">
-      <div class="page-title-section">
-        <svg class="page-icon" aria-hidden="true">
+<div class="archive-container">
+  <!-- Compact Header -->
+  <div class="archive-header">
+    <div class="header-left">
+      <div class="header-icon-wrapper">
+        <svg class="header-icon" aria-hidden="true">
           <use href="#i-folder"/>
         </svg>
-        <div>
-          <h1 class="page-title">{% trans "Archiwum projektów" %}</h1>
-          <p class="page-subtitle">{% trans "Zarchiwizowane projekty zakończone i anulowane" %}</p>
-        </div>
       </div>
-      <div class="page-actions">
-        <a href="{% url 'kanban:board' %}" class="btn btn-secondary">
-          <svg class="ico" aria-hidden="true">
-            <use href="#i-kanban"/>
-          </svg>
-          <span>{% trans "Powrót do tablicy" %}</span>
-        </a>
+      <div>
+        <h1 class="page-title">{% trans "Archiwum projektów" %}</h1>
+        <p class="page-subtitle">{% trans "Zarchiwizowane projekty zakończone i anulowane" %}</p>
       </div>
+    </div>
+    <div class="header-right">
+      <div class="project-count-badge">
+        <span class="count-number">{{ projects|length }}</span>
+        <span class="count-label">{% trans "projektów" %}</span>
+      </div>
+      <a href="{% url 'kanban:board' %}" class="btn btn-primary">
+        <svg class="ico" aria-hidden="true">
+          <use href="#i-kanban"/>
+        </svg>
+        <span>{% trans "Powrót do tablicy" %}</span>
+      </a>
     </div>
   </div>
 
   <!-- Filtry -->
-  <div class="card" style="margin-bottom: var(--space-xl);">
-    <div class="card-body">
-      <form method="get" class="filter-form">
-        <div class="form-field">
-          <label for="status" class="field-label">
-            <svg class="label-icon" aria-hidden="true">
-              <use href="#i-kanban"/>
-            </svg>
-            <span>{% trans Status %}</span>
-          </label>
-          <select id="status" name="status" class="form-input" onchange="this.form.submit()">
-            <option value="">{% trans Wszystkie %}</option>
-            {% for value, label in status_choices %}
-              <option value="{{ value }}" {% if value == status_filter %}selected{% endif %}>{{ label }}</option>
-            {% endfor %}
-          </select>
-        </div>
-      </form>
-    </div>
+  <div class="filter-section">
+    <form method="get" class="filter-form">
+      <label for="status" class="filter-label">
+        <svg class="filter-icon" aria-hidden="true">
+          <use href="#i-kanban"/>
+        </svg>
+        <span>{% trans "Filtruj po statusie" %}:</span>
+      </label>
+      <select id="status" name="status" class="filter-select" onchange="this.form.submit()">
+        <option value="">{% trans "Wszystkie statusy" %}</option>
+        {% for value, label in status_choices %}
+          <option value="{{ value }}" {% if value == status_filter %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </form>
   </div>
 
   <!-- Tabela projektów -->
-  <div class="card">
-    <div class="card-header">
-      <h2 class="card-title">{% trans Projekty %} ({{ projects|length }})</h2>
-    </div>
-    <div class="card-body">
-      {% if projects %}
-        <div class="table-card">
-          <div class="table-wrapper">
-            <table class="modern-table">
-              <thead>
-                <tr>
-                  <th>{% trans Status %}</th>
-                  <th>{% trans Numer %}</th>
-                  <th>{% trans Nazwa %}</th>
-                  <th>{% trans Klient %}</th>
-                  <th>{% trans Zarchiwizowane %}</th>
-                  <th style="width: 180px;">{% trans "Akcje" %}</th>
-                </tr>
-              </thead>
-              <tbody>
-              {% for project in projects %}
-                <tr class="table-row" id="project-row-{{ project.id }}">
-                  <td>
-                    {% if project.status == 'DONE' %}
-                      <span class="status-badge status-DONE">
-                        <svg class="status-icon" aria-hidden="true">
-                          <use href="#i-approve"/>
-                        </svg>
-                        <span>{% trans Zakończony %}</span>
-                      </span>
-                    {% elif project.status == 'CANCELLED' %}
-                      <span class="status-badge status-CANCELLED">
-                        <svg class="status-icon" aria-hidden="true">
-                          <use href="#i-alert"/>
-                        </svg>
-                        <span>{% trans Anulowany %}</span>
-                      </span>
-                    {% endif %}
-                  </td>
-                  <td class="td-number">
-                    <span class="project-number">{{ project.number }}</span>
-                  </td>
-                  <td class="td-name">
-                    <svg class="td-icon" aria-hidden="true">
-                      <use href="#i-folder"/>
+  {% if projects %}
+    <div class="table-container">
+      <table class="archive-table">
+        <thead>
+          <tr>
+            <th class="col-number">{% trans "Numer" %}</th>
+            <th class="col-name">{% trans "Nazwa projektu" %}</th>
+            <th class="col-client">{% trans "Klient" %}</th>
+            <th class="col-status">{% trans "Status" %}</th>
+            <th class="col-archived">{% trans "Zarchiwizowane" %}</th>
+            <th class="col-actions">{% trans "Akcje" %}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for project in projects %}
+            <tr class="table-row" id="project-row-{{ project.id }}">
+              <!-- Numer -->
+              <td class="col-number">
+                <span class="project-number">{{ project.number }}</span>
+              </td>
+
+              <!-- Nazwa -->
+              <td class="col-name">
+                <div class="project-name-cell">
+                  <svg class="name-icon" aria-hidden="true">
+                    <use href="#i-folder"/>
+                  </svg>
+                  <span class="name-text">{{ project.name }}</span>
+                </div>
+              </td>
+
+              <!-- Klient -->
+              <td class="col-client">
+                <div class="client-cell">
+                  <svg class="client-icon" aria-hidden="true">
+                    <use href="#i-user-circle"/>
+                  </svg>
+                  <span>{{ project.client_name }}</span>
+                </div>
+              </td>
+
+              <!-- Status -->
+              <td class="col-status">
+                {% if project.status == 'DONE' %}
+                  <span class="status-badge status-done">
+                    <svg class="status-icon" aria-hidden="true">
+                      <use href="#i-approve"/>
                     </svg>
-                    <span>{{ project.name }}</span>
-                  </td>
-                  <td class="td-client">{{ project.client_name }}</td>
-                  <td class="td-archive-info">
-                    {% if project.archived_by %}
-                      <div class="archive-info">
-                        <div class="archive-user">{{ project.archived_by.get_full_name|default:project.archived_by.username }}</div>
-                        <div class="archive-date">{{ project.archived_at|date:"Y-m-d H:i" }}</div>
-                      </div>
-                    {% else %}
-                      <span class="text-muted">—</span>
-                    {% endif %}
-                  </td>
-                  <td class="td-actions">
-                    <div class="action-buttons">
-                      <a href="/projects/{{ project.id }}/" class="btn-action btn-view">
-                        <svg class="ico" aria-hidden="true">
-                          <use href="#i-search"/>
-                        </svg>
-                        <span>{% trans "Zobacz" %}</span>
-                      </a>
+                    <span>{% trans "Zakończony" %}</span>
+                  </span>
+                {% elif project.status == 'CANCELLED' %}
+                  <span class="status-badge status-cancelled">
+                    <svg class="status-icon" aria-hidden="true">
+                      <use href="#i-alert"/>
+                    </svg>
+                    <span>{% trans "Anulowany" %}</span>
+                  </span>
+                {% endif %}
+              </td>
 
-                      {% if perms.projects.change_project %}
-                      <button type="button"
-                              class="btn-action btn-restore"
-                              onclick="
-                                if(!confirm('Przywrócić projekt {{ project.number }} do tablicy Kanban?')) return;
-                                const csrf = document.cookie.match(/csrftoken=([^;]+)/)?.[1];
-                                const btn = this;
-                                btn.disabled = true;
-                                btn.innerHTML = '<span>Przywracanie...</span>';
+              <!-- Zarchiwizowane -->
+              <td class="col-archived">
+                {% if project.archived_by %}
+                  <div class="archive-info">
+                    <div class="archive-date">{{ project.archived_at|date:"d.m.Y H:i" }}</div>
+                    <div class="archive-user">{{ project.archived_by.get_full_name|default:project.archived_by.username }}</div>
+                  </div>
+                {% else %}
+                  <span class="text-muted">—</span>
+                {% endif %}
+              </td>
 
-                                fetch('{% url 'kanban:unarchive_project' project.id %}', {
-                                  method: 'POST',
-                                  headers: {'X-CSRFToken': csrf}
-                                }).then(r => {
-                                  if(r.ok) {
-                                    btn.innerHTML = '<span>✓ Przywrócono</span>';
-                                    btn.style.background = 'rgba(16, 185, 129, 0.2)';
-                                    // Przeładuj stronę po krótkiej chwili
-                                    setTimeout(() => {
-                                      location.reload();
-                                    }, 500);
-                                  } else {
-                                    btn.disabled = false;
-                                    btn.innerHTML = '<svg class=\'ico\'><use href=\'#i-approve\'/></svg><span>Przywróć</span>';
-                                    alert('Błąd podczas przywracania projektu');
-                                  }
-                                }).catch(err => {
-                                  console.error('Błąd:', err);
-                                  btn.disabled = false;
-                                  btn.innerHTML = '<svg class=\'ico\'><use href=\'#i-approve\'/></svg><span>Przywróć</span>';
-                                  alert('Błąd połączenia z serwerem');
-                                });
-                              ">
-                        <svg class="ico" aria-hidden="true">
-                          <use href="#i-approve"/>
-                        </svg>
-                        <span>{% trans "Przywróć" %}</span>
-                      </button>
-                      {% endif %}
-                    </div>
-                  </td>
-                </tr>
-              {% endfor %}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      {% else %}
-        <div class="empty-state">
-          <div class="empty-icon-wrapper">
-            <svg class="empty-icon" aria-hidden="true">
-              <use href="#i-folder"/>
-            </svg>
-          </div>
-          <h3 class="empty-title">{% trans "Brak zarchiwizowanych projektów" %}</h3>
-          <p class="empty-description">{% trans "Projekty zakończone lub anulowane możesz zarchiwizować z tablicy Kanban" %}</p>
-          <a href="{% url 'kanban:board' %}" class="btn btn-primary">
-            <svg class="ico" aria-hidden="true">
-              <use href="#i-kanban"/>
-            </svg>
-            <span>{% trans "Przejdź do tablicy" %}</span>
-          </a>
-        </div>
-      {% endif %}
+              <!-- Akcje -->
+              <td class="col-actions">
+                <div class="action-buttons">
+                  <a href="{% url 'projects:detail' project.id %}"
+                     class="btn-action btn-view"
+                     title="{% trans 'Zobacz szczegóły' %}">
+                    <svg class="btn-icon" aria-hidden="true">
+                      <use href="#i-search"/>
+                    </svg>
+                    <span>{% trans "Zobacz" %}</span>
+                  </a>
+
+                  {% if perms.projects.change_project %}
+                    <button type="button"
+                            class="btn-action btn-restore"
+                            onclick="restoreProject({{ project.id }}, '{{ project.number }}')"
+                            title="{% trans 'Przywróć do Kanban' %}">
+                      <svg class="btn-icon" aria-hidden="true">
+                        <use href="#i-approve"/>
+                      </svg>
+                      <span>{% trans "Przywróć" %}</span>
+                    </button>
+                  {% endif %}
+                </div>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
-  </div>
+  {% else %}
+    <!-- Empty State -->
+    <div class="empty-state">
+      <div class="empty-icon-wrapper">
+        <svg class="empty-icon" aria-hidden="true">
+          <use href="#i-folder"/>
+        </svg>
+      </div>
+      <h3 class="empty-title">{% trans "Brak zarchiwizowanych projektów" %}</h3>
+      <p class="empty-description">{% trans "Projekty zakończone lub anulowane możesz zarchiwizować z tablicy Kanban" %}</p>
+      <a href="{% url 'kanban:board' %}" class="btn btn-primary btn-lg">
+        <svg class="ico" aria-hidden="true">
+          <use href="#i-kanban"/>
+        </svg>
+        <span>{% trans "Przejdź do tablicy" %}</span>
+      </a>
+    </div>
+  {% endif %}
 </div>
 
+<script>
+function restoreProject(projectId, projectNumber) {
+  if (!confirm('{% trans "Przywrócić projekt" %} ' + projectNumber + ' {% trans "do tablicy Kanban?" %}')) {
+    return;
+  }
+
+  const row = document.getElementById('project-row-' + projectId);
+  const btn = event.target.closest('.btn-restore');
+
+  btn.disabled = true;
+  btn.innerHTML = '<span>{% trans "Przywracanie..." %}</span>';
+
+  const csrf = document.cookie.match(/csrftoken=([^;]+)/)?.[1];
+
+  fetch('{% url "kanban:unarchive_project" 0 %}'.replace('0', projectId), {
+    method: 'POST',
+    headers: {'X-CSRFToken': csrf}
+  })
+  .then(r => {
+    if (r.ok) {
+      btn.innerHTML = '<span>✓ {% trans "Przywrócono" %}</span>';
+      btn.style.background = 'rgba(16, 185, 129, 0.3)';
+      row.style.opacity = '0.5';
+
+      setTimeout(() => {
+        location.reload();
+      }, 600);
+    } else {
+      btn.disabled = false;
+      btn.innerHTML = '<svg class="btn-icon"><use href="#i-approve"/></svg><span>{% trans "Przywróć" %}</span>';
+      alert('{% trans "Błąd podczas przywracania projektu" %}');
+    }
+  })
+  .catch(err => {
+    console.error('{% trans "Błąd" %}:', err);
+    btn.disabled = false;
+    btn.innerHTML = '<svg class="btn-icon"><use href="#i-approve"/></svg><span>{% trans "Przywróć" %}</span>';
+    alert('{% trans "Błąd połączenia z serwerem" %}');
+  });
+}
+</script>
+
 <style>
-/* Layout */
-.page-container {
-  max-width: 1400px;
+/* ========== CONTAINER ========== */
+.archive-container {
+  max-width: 1800px;
   margin: 0 auto;
-  padding: var(--space-xl);
+  padding: var(--space-xl) var(--space-lg);
 }
 
-/* Page Header */
-.page-header {
+/* ========== HEADER - COMPACT ========== */
+.archive-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-lg) var(--space-xl);
+  margin-bottom: var(--space-lg);
   background: var(--color-bg);
   border: 2px solid var(--color-border);
   border-radius: var(--radius-lg);
-  padding: var(--space-lg);
-  margin-bottom: var(--space-xl);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-sm);
 }
 
-/* Filter Form */
-.filter-form {
-  max-width: 300px;
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
 }
 
-/* Table */
-.table-card {
-  border: 1px solid var(--color-border);
+.header-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, var(--color-primary), rgba(37, 99, 235, 0.8));
   border-radius: var(--radius-md);
+}
+
+.header-icon {
+  width: 24px;
+  height: 24px;
+  color: white;
+}
+
+.page-title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-text);
+  line-height: 1.2;
+}
+
+.page-subtitle {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  line-height: 1.4;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.project-count-badge {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--color-bg-secondary);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.count-number {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  line-height: 1;
+}
+
+.count-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+/* ========== FILTER SECTION ========== */
+.filter-section {
+  margin-bottom: var(--space-lg);
+  padding: var(--space-md) var(--space-lg);
+  background: var(--color-bg);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.filter-form {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  max-width: 600px;
+}
+
+.filter-label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-text);
+  white-space: nowrap;
+}
+
+.filter-icon {
+  width: 18px;
+  height: 18px;
+  color: var(--color-primary);
+}
+
+.filter-select {
+  flex: 1;
+  padding: var(--space-sm) var(--space-md);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  background: var(--color-bg-secondary);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filter-select:hover {
+  border-color: var(--color-primary);
+}
+
+.filter-select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* ========== TABLE CONTAINER ========== */
+.table-container {
+  background: var(--color-bg);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-lg);
   overflow: hidden;
+  box-shadow: var(--shadow-sm);
 }
 
-.table-wrapper {
-  overflow-x: auto;
-}
-
-.modern-table {
+/* ========== TABLE ========== */
+.archive-table {
   width: 100%;
   border-collapse: collapse;
+  font-size: 0.9375rem;
 }
 
-.modern-table thead {
-  background: var(--color-bg-secondary);
+.archive-table thead {
+  background: linear-gradient(to bottom, var(--color-bg-secondary), var(--color-bg));
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-.modern-table th {
-  padding: var(--space-md);
+.archive-table th {
+  padding: var(--space-md) var(--space-lg);
   text-align: left;
-  font-weight: 600;
-  font-size: var(--font-size-sm);
-  color: var(--color-text-secondary);
-  border-bottom: 1px solid var(--color-border);
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--color-text);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 2px solid var(--color-border);
+  white-space: nowrap;
 }
 
-.modern-table tbody tr {
+.archive-table tbody tr {
   border-bottom: 1px solid var(--color-border);
-  transition: background-color 0.15s ease;
+  transition: all 0.15s ease;
 }
 
-.modern-table tbody tr:hover {
+.archive-table tbody tr:nth-child(even) {
   background: var(--color-bg-secondary);
 }
 
-.modern-table tbody tr:last-child {
-  border-bottom: none;
+.archive-table tbody tr:hover {
+  background: rgba(37, 99, 235, 0.05);
+  transform: scale(1.005);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
-.modern-table td {
-  padding: var(--space-md);
-  font-size: var(--font-size-sm);
+.archive-table td {
+  padding: var(--space-md) var(--space-lg);
+  vertical-align: middle;
+}
+
+/* ========== COLUMN STYLES ========== */
+.col-number {
+  width: 140px;
+}
+
+.project-number {
+  display: inline-flex;
+  padding: var(--space-xs) var(--space-md);
+  background: rgba(37, 99, 235, 0.1);
+  color: var(--color-primary);
+  border: 2px solid rgba(37, 99, 235, 0.2);
+  border-radius: var(--radius-sm);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  font-family: 'SF Mono', Consolas, monospace;
+}
+
+.col-name {
+  min-width: 250px;
+}
+
+.project-name-cell {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.name-icon {
+  width: 20px;
+  height: 20px;
+  color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+.name-text {
+  font-weight: 600;
   color: var(--color-text);
+  line-height: 1.4;
 }
 
-/* Status Badge */
+.col-client {
+  min-width: 180px;
+}
+
+.client-cell {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  color: var(--color-text-secondary);
+}
+
+.client-icon {
+  width: 16px;
+  height: 16px;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+}
+
+.col-status {
+  width: 160px;
+}
+
 .status-badge {
   display: inline-flex;
   align-items: center;
   gap: var(--space-xs);
-  padding: var(--space-xs) var(--space-sm);
+  padding: var(--space-xs) var(--space-md);
   border-radius: var(--radius-full);
-  font-size: var(--font-size-sm);
-  font-weight: 500;
+  font-size: 0.8125rem;
+  font-weight: 600;
   white-space: nowrap;
 }
 
@@ -275,129 +491,180 @@
   height: 14px;
 }
 
-.status-DONE {
-  background: rgba(16, 185, 129, 0.1);
+.status-done {
+  background: rgba(16, 185, 129, 0.15);
   color: #047857;
+  border: 1px solid rgba(16, 185, 129, 0.3);
 }
 
-.status-CANCELLED {
-  background: rgba(100, 116, 139, 0.1);
+.status-cancelled {
+  background: rgba(100, 116, 139, 0.15);
   color: #475569;
+  border: 1px solid rgba(100, 116, 139, 0.3);
 }
 
-/* Project Number */
-.td-number {
-  font-family: 'SF Mono', Consolas, monospace;
+.col-archived {
+  min-width: 180px;
 }
 
-.project-number {
-  display: inline-flex;
-  padding: var(--space-xs) var(--space-sm);
-  background: rgba(37, 99, 235, 0.1);
-  color: var(--color-primary);
-  border-radius: var(--radius-sm);
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-}
-
-/* Name */
-.td-name {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  font-weight: 500;
-}
-
-.td-icon {
-  width: 16px;
-  height: 16px;
-  color: var(--color-text-muted);
-  flex-shrink: 0;
-}
-
-/* Client */
-.td-client {
-  color: var(--color-text-secondary);
-}
-
-/* Archive Info */
 .archive-info {
-  font-size: var(--font-size-sm);
-}
-
-.archive-user {
-  font-weight: 500;
-  color: var(--color-text);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .archive-date {
-  color: var(--color-text-muted);
-  font-size: var(--font-size-sm);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  font-family: 'SF Mono', Consolas, monospace;
+  color: var(--color-text);
 }
 
-.text-muted {
-  color: var(--color-text-muted);
+.archive-user {
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
 }
 
-/* Actions */
-.td-actions {
-  text-align: center;
+/* ========== ACTION BUTTONS - COMPACT ========== */
+.col-actions {
+  width: 200px;
 }
 
 .action-buttons {
   display: flex;
   gap: var(--space-xs);
-  justify-content: center;
-  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
 .btn-action {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: var(--space-xs);
   padding: var(--space-xs) var(--space-sm);
-  border: 1px solid var(--color-border);
+  border: 2px solid var(--color-border);
   border-radius: var(--radius-sm);
-  font-size: var(--font-size-sm);
-  font-weight: 500;
-  color: var(--color-text);
-  background: var(--color-bg);
+  font-size: 0.8125rem;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
   text-decoration: none;
+  white-space: nowrap;
+  min-width: 90px;
 }
 
-.btn-action:hover {
-  border-color: var(--color-primary);
+.btn-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.btn-view {
+  background: var(--color-bg);
   color: var(--color-primary);
-  transform: translateY(-1px);
+  border-color: var(--color-primary);
 }
 
-.btn-action .ico {
-  width: 14px;
-  height: 14px;
+.btn-view:hover {
+  background: var(--color-primary);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
 }
 
 .btn-restore {
   background: rgba(16, 185, 129, 0.1);
-  border-color: #86efac;
   color: #047857;
+  border-color: #86efac;
 }
 
 .btn-restore:hover {
   background: rgba(16, 185, 129, 0.2);
   border-color: #10b981;
-  color: #047857;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
 }
 
-/* Empty State */
+.btn-restore:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Responsive - ukryj tekst na mniejszych ekranach, pokaż tylko ikony */
+@media (max-width: 1400px) {
+  .col-actions {
+    width: 120px;
+  }
+
+  .btn-action span {
+    display: none;
+  }
+
+  .btn-action {
+    min-width: auto;
+    padding: var(--space-sm);
+  }
+
+  .btn-icon {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .col-archived {
+    min-width: 140px;
+  }
+
+  .archive-user {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .archive-container {
+    padding: var(--space-md);
+  }
+
+  .archive-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-md);
+    padding: var(--space-md);
+  }
+
+  .header-right {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .filter-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .table-container {
+    overflow-x: auto;
+  }
+
+  .archive-table {
+    min-width: 800px;
+  }
+}
+
+/* ========== EMPTY STATE ========== */
 .empty-state {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: var(--space-2xl) var(--space-xl);
+  padding: var(--space-2xl);
   text-align: center;
+  background: var(--color-bg);
+  border: 2px dashed var(--color-border);
+  border-radius: var(--radius-lg);
+  min-height: 400px;
 }
 
 .empty-icon-wrapper {
@@ -418,17 +685,65 @@
 }
 
 .empty-title {
-  font-size: var(--font-size-xl);
+  font-size: 1.25rem;
   font-weight: 600;
   color: var(--color-text);
   margin: 0 0 var(--space-sm);
 }
 
 .empty-description {
-  font-size: var(--font-size-base);
+  font-size: 0.9375rem;
   color: var(--color-text-secondary);
-  margin: 0 0 var(--space-lg);
+  margin: 0 0 var(--space-xl);
   max-width: 400px;
+  line-height: 1.6;
+}
+
+.btn-lg {
+  padding: var(--space-md) var(--space-xl);
+  font-size: 1rem;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 1200px) {
+  .col-archived {
+    min-width: 140px;
+  }
+
+  .archive-user {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .archive-container {
+    padding: var(--space-md);
+  }
+
+  .archive-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-md);
+    padding: var(--space-md);
+  }
+
+  .header-right {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .filter-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .table-container {
+    overflow-x: auto;
+  }
+
+  .archive-table {
+    min-width: 800px;
+  }
 }
 </style>
 {% endblock %}

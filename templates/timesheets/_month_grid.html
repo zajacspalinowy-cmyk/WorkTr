@@ -1,52 +1,74 @@
 {% load i18n %}
-{% comment %} timesheets/_month_grid.html {% endcomment %}
 {% if days and days|length %}
   <div class="month-grid-header">
-    <svg class="grid-icon" aria-hidden="true">
-      <use href="#i-clock"/>
-    </svg>
-    <span>{{ days|length }} {% trans "dni miesiąca"%}</span>
-  </div>
-
-  <div class="table-card">
-    <div class="table-wrapper">
-      <table class="modern-table month-table">
-        <thead>
-          <tr>
-            <th>Dzień</th>
-            <th style="width: 120px;">{% trans "Godziny"%}</th>
-          </tr>
-        </thead>
-        <tbody>
-        {% for d in days %}
-          <tr class="table-row {% if d.weekday >= 5 %}weekend-row{% endif %}">
-            <td class="td-day">
-              <span class="day-number">{{ d.day }}</span>
-              <span class="day-name">{{ d|date:"l" }}</span>
-              <span class="day-date">{{ d|date:"Y-m-d" }}</span>
-            </td>
-            <td class="td-input">
-              <input type="number"
-                     step="0.25"
-                     min="0"
-                     max="24"
-                     name="hours_{{ d|date:'Y-m-d' }}"
-                     class="hours-input"
-                     placeholder="0.00"
-                     aria-label="Godziny dla {{ d|date:'Y-m-d' }}">
-            </td>
-          </tr>
-        {% endfor %}
-        </tbody>
-      </table>
+    <div class="header-left">
+      <svg class="grid-icon" aria-hidden="true">
+        <use href="#i-clock"/>
+      </svg>
+      <span><strong>{{ days|length }}</strong> dni miesiąca</span>
+    </div>
+    <div class="header-right">
+      <label class="weekend-toggle">
+        <input type="checkbox" id="enable-weekends" onchange="toggleWeekends(this.checked)">
+        <span>Włącz weekendy</span>
+      </label>
     </div>
   </div>
+
+  <div class="month-days-list" id="days-list">
+    {% for d in days %}
+      <div class="day-row {% if d.weekday >= 5 %}weekend-row{% endif %}" data-weekend="{% if d.weekday >= 5 %}1{% else %}0{% endif %}">
+        <label class="day-label">
+          <span class="day-number">{{ d.day }}</span>
+          <span class="day-name">{{ d|date:"l" }} - {{ d|date:"Y-m-d" }}</span>
+        </label>
+        <input type="number"
+               step="0.25"
+               min="0"
+               max="24"
+               name="hours_{{ d|date:'Y-m-d' }}"
+               class="hours-input"
+               placeholder="0.00"
+               {% if d.weekday >= 5 %}disabled data-is-weekend="1"{% endif %}
+               aria-label="Godziny dla {{ d|date:'Y-m-d' }}">
+      </div>
+    {% endfor %}
+  </div>
+
+  <script>
+  // Toggle weekendów
+  function toggleWeekends(enabled) {
+    const inputs = document.querySelectorAll('.hours-input[data-is-weekend="1"]');
+    const rows = document.querySelectorAll('.weekend-row');
+
+    inputs.forEach(input => {
+      input.disabled = !enabled;
+      if (enabled) {
+        input.removeAttribute('disabled');
+      } else {
+        input.setAttribute('disabled', 'disabled');
+        input.value = ''; // Wyczyść wartość przy wyłączaniu
+      }
+    });
+
+    rows.forEach(row => {
+      if (enabled) {
+        row.classList.add('weekend-enabled');
+      } else {
+        row.classList.remove('weekend-enabled');
+      }
+    });
+
+    console.log('Weekendy ' + (enabled ? 'włączone' : 'wyłączone'));
+  }
+  </script>
 {% else %}
   <div class="empty-state-small">
-    <svg class="empty-icon-small" aria-hidden="true">
-      <use href="#i-info"/>
+    <svg class="empty-icon-small" aria-hidden="true" width="48" height="48">
+      <circle cx="24" cy="24" r="20" fill="none" stroke="currentColor" stroke-width="2"/>
+      <path d="M24 8v16m0 0l-8-8m8 8l8-8" fill="none" stroke="currentColor" stroke-width="2"/>
     </svg>
-    <p class="empty-text">{% trans "Wybierz rok i miesiąc, następnie kliknij „Załaduj kalendarz""%}</p>
+    <p class="empty-text">Wybierz rok i miesiąc, następnie kliknij Załaduj kalendarz</p>
   </div>
 {% endif %}
 
@@ -54,121 +76,245 @@
 /* Month Grid Header */
 .month-grid-header {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: var(--space-sm);
-  padding: var(--space-sm) var(--space-md);
-  background: var(--color-bg-secondary);
+  padding: var(--space-md) var(--space-lg);
+  background: linear-gradient(to bottom, var(--color-bg-secondary), var(--color-bg));
   border-radius: var(--radius-md);
   margin-bottom: var(--space-md);
-  font-size: var(--font-size-sm);
+  border: 2px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+  flex-wrap: wrap;
+  gap: var(--space-md);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.grid-icon {
+  width: 20px;
+  height: 20px;
+  color: var(--color-primary);
+}
+
+.month-grid-header span {
+  font-size: 0.9375rem;
   font-weight: 500;
   color: var(--color-text);
 }
 
-.grid-icon {
-  width: 16px;
-  height: 16px;
-  color: var(--color-primary);
-}
-
-/* Month Table */
-.month-table .td-day {
+.weekend-toggle {
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-md);
+  background: var(--color-bg);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text);
+  transition: all 0.2s ease;
+}
+
+.weekend-toggle:hover {
+  border-color: var(--color-primary);
+  background: rgba(37, 99, 235, 0.05);
+}
+
+.weekend-toggle input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  margin: 0;
+}
+
+/* Days List */
+.month-days-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  max-height: 500px;
+  overflow-y: auto;
+  padding: var(--space-sm);
+  background: var(--color-bg);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.day-row {
+  display: grid;
+  grid-template-columns: 1fr 140px;
+  gap: var(--space-md);
+  align-items: center;
+  padding: var(--space-sm) var(--space-md);
+  background: var(--color-bg-secondary);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  transition: all 0.15s ease;
+}
+
+.day-row:hover:not(.weekend-row) {
+  background: rgba(37, 99, 235, 0.05);
+  border-color: var(--color-primary);
+  transform: translateX(2px);
+}
+
+.day-row.weekend-row {
+  background: rgba(100, 116, 139, 0.06);
+  opacity: 0.6;
+}
+
+.day-row.weekend-row.weekend-enabled {
+  background: rgba(37, 99, 235, 0.08);
+  opacity: 1;
+  border-color: rgba(37, 99, 235, 0.3);
+}
+
+.day-row.weekend-row.weekend-enabled:hover {
+  background: rgba(37, 99, 235, 0.1);
+  border-color: var(--color-primary);
+  transform: translateX(2px);
+}
+
+.day-label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  cursor: pointer;
 }
 
 .day-number {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
-  background: var(--color-bg-secondary);
-  border-radius: var(--radius-sm);
-  font-weight: 600;
-  font-size: var(--font-size-base);
-  color: var(--color-text);
+  min-width: 40px;
+  height: 40px;
+  background: var(--color-primary);
+  color: white;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  font-size: 1rem;
   flex-shrink: 0;
-}
-
-.day-name {
-  font-weight: 500;
-  color: var(--color-text);
-  min-width: 100px;
-}
-
-.day-date {
-  font-family: 'SF Mono', Consolas, monospace;
-  font-size: var(--font-size-sm);
-  color: var(--color-text-muted);
-}
-
-.weekend-row {
-  background: rgba(99, 102, 241, 0.02);
+  box-shadow: var(--shadow-sm);
 }
 
 .weekend-row .day-number {
-  background: rgba(99, 102, 241, 0.1);
-  color: var(--color-primary);
+  background: var(--color-text-muted);
 }
 
-.td-input {
-  text-align: right;
+.weekend-row.weekend-enabled .day-number {
+  background: var(--color-primary);
+}
+
+.day-name {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--color-text);
 }
 
 .hours-input {
   width: 100%;
-  max-width: 120px;
-  padding: var(--space-xs) var(--space-sm);
-  border: 1px solid var(--color-border);
+  padding: var(--space-sm) var(--space-md);
+  border: 2px solid var(--color-border);
   border-radius: var(--radius-sm);
-  font-size: var(--font-size-sm);
-  font-weight: 500;
-  color: var(--color-text);
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: center;
   background: var(--color-bg);
-  text-align: right;
+  color: var(--color-text);
   transition: all 0.2s ease;
+  font-family: 'SF Mono', Consolas, monospace;
 }
 
 .hours-input:focus {
   outline: none;
   border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  background: white;
 }
 
-.hours-input:hover:not(:focus) {
+.hours-input:hover:not(:disabled):not(:focus) {
   border-color: var(--color-text-muted);
+}
+
+.hours-input:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+  background: var(--color-bg-secondary);
 }
 
 .hours-input::placeholder {
   color: var(--color-text-muted);
+  font-weight: 400;
 }
 
-/* Empty State Small */
+/* Scrollbar */
+.month-days-list::-webkit-scrollbar {
+  width: 10px;
+}
+
+.month-days-list::-webkit-scrollbar-track {
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-sm);
+  margin: 4px;
+}
+
+.month-days-list::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: var(--radius-sm);
+}
+
+.month-days-list::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-muted);
+}
+
+/* Empty State */
 .empty-state-small {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: var(--space-xl) var(--space-md);
+  padding: var(--space-2xl) var(--space-lg);
   text-align: center;
   background: var(--color-bg-secondary);
-  border-radius: var(--radius-md);
-  border: 1px dashed var(--color-border);
+  border: 2px dashed var(--color-border);
+  border-radius: var(--radius-lg);
+  min-height: 200px;
 }
 
 .empty-icon-small {
-  width: 48px;
-  height: 48px;
   color: var(--color-text-muted);
-  margin-bottom: var(--space-md);
+  margin-bottom: var(--space-lg);
+  opacity: 0.5;
 }
 
 .empty-text {
-  color: var(--color-text-muted);
-  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  font-size: 0.9375rem;
   margin: 0;
-  max-width: 300px;
+  max-width: 350px;
+  line-height: 1.6;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .day-row {
+    grid-template-columns: 1fr 100px;
+  }
+
+  .day-name {
+    font-size: 0.8125rem;
+  }
 }
 </style>

@@ -84,12 +84,12 @@
               <select id="category-select"
                       name="category"
                       class="form-select">
-                <option value="inne">Inne</option>
-                <option value="część">Część</option>
-                <option value="materiał">Materiał eksploatacyjny</option>
-                <option value="roboczogodzina">Roboczogodzina</option>
-                <option value="usługa">Usługa zewnętrzna</option>
-                <option value="transport">Transport</option>
+                <option value="inne">{% trans "Inne" %} </option>
+                <option value="część">{% trans "Część" %}</option>
+                <option value="materiał">{% trans "Materiał eksploatacyjny" %}</option>
+                <option value="roboczogodzina">{% trans "Roboczogodzina" %}</option>
+                <option value="usługa">{% trans "Usługa zewnętrzna" %}</option>
+                <option value="transport">{% trans "Transport" %}</option>
               </select>
               <p class="field-help">{% trans "Wybierz typ wydatku"%}</p>
             </div>
@@ -104,10 +104,11 @@
                 <span>{% trans "Jednostka"%}</span>
                 <span class="field-required">*</span>
               </label>
+              {% trans "szt., m, kg, godz., litr..." as unit_placeholder %}
               <input type="text"
                      id="unit-input"
                      name="unit"
-                     placeholder="szt., m, kg, godz., litr..."
+                     placeholder="{{ unit_placeholder }}"
                      required
                      class="form-input"
                      oninput="updateUnitDisplay()">
@@ -125,10 +126,11 @@
               <span>{% trans "Nazwa pozycji"%}</span>
               <span class="field-required">*</span>
             </label>
+            {% trans "np. Czujnik temperatury XYZ-123, Olej hydrauliczny 5L..." as item_placeholder %}
             <input type="text"
                    id="item-name-input"
                    name="item_name"
-                   placeholder="np. Czujnik temperatury XYZ-123, Olej hydrauliczny 5L..."
+                   placeholder="{{ item_placeholder }}"
                    required
                    class="form-input">
             <p class="field-help">{% trans "Pełna nazwa pozycji kosztowej"%}</p>
@@ -163,7 +165,7 @@
                        required
                        class="form-input"
                        oninput="calculateSum()">
-                <span id="unit-display" class="input-unit">szt.</span>
+                <span id="unit-display" class="input-unit">-</span>
               </div>
               <p class="field-help">{% trans "Liczba sztuk/metrów/godzin itp."%}</p>
             </div>
@@ -215,10 +217,11 @@
               </svg>
               <span>{% trans "Opis wydatku"%}</span>
             </label>
+            {% trans "np. Czujnik temperatury XYZ-123, faktura VAT nr..." as note_placeholder %}
             <input type="text"
                    id="note-input"
                    name="note"
-                   placeholder="np. Czujnik temperatury XYZ-123, faktura VAT nr..."
+                   placeholder="{{ note_placeholder }}"
                    class="form-input">
             <p class="field-help">{% trans "Opcjonalny opis, numer faktury lub inne szczegóły"%}</p>
           </div>
@@ -460,7 +463,7 @@
 <script>
 // Update unit display in the qty field when typing
 function updateUnitDisplay() {
-  const unit = document.getElementById('unit-input').value || 'szt.';
+  const unit = document.getElementById('unit-input').value || '-';
   document.getElementById('unit-display').textContent = unit;
 }
 

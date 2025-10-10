@@ -33,7 +33,7 @@ def _split_by_status():
     }
 
 
-@login_required
+
 def board(request):
     ctx = _split_by_status()
     ctx["status_choices"] = _get_status_choices()

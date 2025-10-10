@@ -13,18 +13,32 @@
       </svg>
       <div class="header-info">
         <h1 class="header-title">{% trans "Tablica Kanban" %}</h1>
-        <p class="header-subtitle">{% trans "Status projektów w czasie rzeczywistym"%}</p>
+        <p class="header-subtitle">{% trans "Status projektów w czasie rzeczywistym" %}</p>
       </div>
     </div>
     <div class="header-right">
+      <!-- Timestamp ostatniej aktualizacji -->
+      <div id="last-update" class="last-update">
+        <svg class="update-icon" aria-hidden="true" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/>
+          <polyline points="12 6 12 12 16 14" fill="none" stroke="currentColor" stroke-width="2"/>
+        </svg>
+        <div class="update-info">
+          <span class="update-label">{% trans "Ostatnia aktualizacja" %}: <span id="update-time">{% now "H:i:s" %}</span></span>
+          <span id="next-update" class="next-update">{% trans "Następna za" %}: 30s</span>
+        </div>
+      </div>
+
       <button type="button"
-              onclick="document.documentElement.requestFullscreen()"
+              id="fullscreen-btn"
+              onclick="toggleFullscreen()"
               class="btn btn-secondary btn-icon"
-              title="Tryb pełnoekranowy">
+              title="{% trans 'Tryb pełnoekranowy' %}">
         <svg class="ico" aria-hidden="true">
-          <use href="#i-search"/>
+          <use href="#i-fullscreen"/>
         </svg>
       </button>
+
       <a href="{% url 'kanban:archive' %}" class="btn btn-secondary">
         <svg class="ico" aria-hidden="true">
           <use href="#i-folder"/>
@@ -35,16 +49,230 @@
   </div>
 
   <!-- Kanban Board - auto-refresh co 30s -->
-  <div id="kanban-board"
-       class="kiosk-board"
-       hx-get="{% url 'kanban:board' %}"
-       hx-trigger="revealed, every 30s"
-       hx-swap="outerHTML">
+  <div id="kanban-board" class="kiosk-board">
     {% include "kanban/_board_inner.html" %}
   </div>
 </div>
 
+<!-- Wskaźnik odświeżania -->
+<div id="refresh-indicator" style="display:none;position:fixed;bottom:20px;right:20px;background:rgba(37,99,235,0.95);color:white;padding:10px 20px;border-radius:24px;box-shadow:0 4px 12px rgba(0,0,0,0.15);font-size:13px;font-weight:600;z-index:99999;animation:fadeIn 0.3s;">
+  <svg style="width:16px;height:16px;display:inline-block;margin-right:8px;animation:spin 1s linear infinite;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <path d="M21 12a9 9 0 11-6.219-8.56"/>
+  </svg>
+  {% trans "Odświeżam..." %}
+</div>
+
+<script>
+(function() {
+  const REFRESH_INTERVAL = 30000; // 30 sekund
+  let refreshTimer;
+  let countdownTimer;
+  let isRefreshing = false;
+  let isDragging = false;
+  const indicator = document.getElementById('refresh-indicator');
+  const updateTimeEl = document.getElementById('update-time');
+
+  function updateTimestamp() {
+    const now = new Date();
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+    const timeString = hours + ':' + minutes + ':' + seconds;
+
+    if (updateTimeEl) {
+      updateTimeEl.textContent = timeString;
+      updateTimeEl.classList.add('just-updated');
+      setTimeout(() => {
+        updateTimeEl.classList.remove('just-updated');
+      }, 500);
+    }
+
+    return timeString;
+  }
+
+  async function refreshKanban() {
+    // Nie odświeżaj podczas przeciągania lub już trwającego odświeżania
+    if (isDragging || isRefreshing) {
+      console.log('⏸️ Skip refresh (dragging:', isDragging, 'refreshing:', isRefreshing, ')');
+      return;
+    }
+
+    isRefreshing = true;
+    indicator.style.display = 'flex';
+    console.log('🔄 [' + updateTimestamp() + '] Odświeżam Kanban...');
+
+    try {
+      const response = await fetch('{% url "kanban:board" %}', {
+        headers: {
+          'HX-Request': 'true',
+          'X-Requested-With': 'XMLHttpRequest'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('HTTP ' + response.status);
+      }
+
+      const html = await response.text();
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, 'text/html');
+      const newGrid = doc.querySelector('.kanban-grid');
+
+      if (newGrid) {
+        const currentGrid = document.querySelector('.kanban-grid');
+        if (currentGrid) {
+          // Zapisz pozycję scrolla
+          const scrollPositions = {};
+          document.querySelectorAll('.kanban-list').forEach(list => {
+            scrollPositions[list.id] = list.scrollTop;
+          });
+
+          // Zamień grid
+          currentGrid.outerHTML = newGrid.outerHTML;
+
+          // Przywróć pozycje scrolla
+          setTimeout(() => {
+            Object.keys(scrollPositions).forEach(id => {
+              const list = document.getElementById(id);
+              if (list) list.scrollTop = scrollPositions[id];
+            });
+          }, 50);
+
+          // Aktualizuj timestamp
+          const timestamp = updateTimestamp();
+          console.log('✅ [' + timestamp + '] Kanban odświeżony pomyślnie');
+        }
+      } else {
+        console.warn('⚠️ Nie znaleziono .kanban-grid w odpowiedzi');
+      }
+    } catch (error) {
+      console.error('❌ Błąd odświeżania:', error);
+    } finally {
+      isRefreshing = false;
+      setTimeout(() => {
+        indicator.style.display = 'none';
+      }, 500);
+    }
+  }
+
+  // Śledź drag & drop
+  document.addEventListener('dragstart', () => {
+    isDragging = true;
+    console.log('🎯 Drag started - pausing refresh');
+  });
+
+  document.addEventListener('dragend', () => {
+    setTimeout(() => {
+      isDragging = false;
+      console.log('✅ Drag ended - resuming refresh');
+    }, 100);
+  });
+
+  // Start auto-refresh
+  refreshTimer = setInterval(refreshKanban, REFRESH_INTERVAL);
+
+  // Countdown do następnego odświeżenia
+  let countdown = REFRESH_INTERVAL / 1000;
+  countdownTimer = setInterval(() => {
+    countdown--;
+    const nextUpdateEl = document.getElementById('next-update');
+    if (nextUpdateEl && !isDragging) {
+      nextUpdateEl.textContent = '{% trans "Następna za" %}: ' + countdown + 's';
+    }
+    if (countdown <= 0) {
+      countdown = REFRESH_INTERVAL / 1000;
+    }
+  }, 1000);
+
+  console.log('⏰ Auto-refresh started (every ' + (REFRESH_INTERVAL/1000) + 's)');
+
+  // Aktualizuj timestamp przy pierwszym załadowaniu
+  updateTimestamp();
+
+  // Cleanup
+  window.addEventListener('beforeunload', () => {
+    clearInterval(refreshTimer);
+    clearInterval(countdownTimer);
+  });
+})();
+
+// Toggle fullscreen z ikoną
+function toggleFullscreen() {
+  const btn = document.getElementById('fullscreen-btn');
+  const icon = btn ? btn.querySelector('use') : null;
+
+  if (!icon) {
+    console.error('❌ Nie znaleziono ikony fullscreen');
+    return;
+  }
+
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen().then(() => {
+      icon.setAttribute('href', '#i-minimize');
+      btn.title = '{% trans "Wyjdź z pełnego ekranu" %}';
+      console.log('✅ Fullscreen ON');
+    }).catch(err => {
+      console.error('❌ Fullscreen error:', err);
+      alert('Nie udało się przejść w tryb pełnoekranowy');
+    });
+  } else {
+    document.exitFullscreen().then(() => {
+      icon.setAttribute('href', '#i-fullscreen');
+      btn.title = '{% trans "Tryb pełnoekranowy" %}';
+      console.log('✅ Fullscreen OFF');
+    });
+  }
+}
+
+// Obsługa ESC (zmień ikonę z powrotem)
+document.addEventListener('fullscreenchange', () => {
+  const btn = document.getElementById('fullscreen-btn');
+  const icon = btn ? btn.querySelector('use') : null;
+
+  if (icon) {
+    if (document.fullscreenElement) {
+      icon.setAttribute('href', '#i-minimize');
+      btn.title = '{% trans "Wyjdź z pełnego ekranu" %}';
+    } else {
+      icon.setAttribute('href', '#i-fullscreen');
+      btn.title = '{% trans "Tryb pełnoekranowy" %}';
+    }
+  }
+});
+</script>
+
 <style>
+/* ========== ANIMATIONS ========== */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.05); }
+}
+
+@keyframes cardAppear {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+#refresh-indicator {
+  display: flex;
+  align-items: center;
+}
+
 /* ========== KIOSK LAYOUT - FULLSCREEN ========== */
 .kiosk-container {
   width: 100%;
@@ -114,6 +342,57 @@
 .btn-icon {
   padding: 8px;
   min-width: auto;
+}
+
+/* ========== LAST UPDATE INDICATOR ========== */
+.last-update {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  margin-right: 8px;
+}
+
+.update-icon {
+  width: 20px;
+  height: 20px;
+  color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+.update-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.update-label {
+  font-size: 0.6875rem;
+  color: var(--color-text-muted);
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.next-update {
+  font-size: 0.6875rem;
+  color: var(--color-primary);
+  font-weight: 600;
+  font-family: 'Courier New', monospace;
+  line-height: 1;
+}
+
+.update-time {
+  font-weight: 700;
+  color: var(--color-text);
+  font-family: 'Courier New', monospace;
+}
+
+.update-time.just-updated {
+  color: var(--color-success);
+  animation: pulse 0.5s ease;
 }
 
 /* ========== BOARD - FULL HEIGHT ========== */
@@ -395,7 +674,11 @@
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
-/* ========== RESPONSIVE (dla testów) ========== */
+.card-moved {
+  animation: cardAppear 0.3s ease;
+}
+
+/* ========== RESPONSIVE ========== */
 @media (max-width: 1400px) {
   .kanban-grid {
     grid-template-columns: repeat(3, 1fr);
@@ -408,6 +691,25 @@
   }
 }
 
+@media (max-width: 768px) {
+  .last-update {
+    padding: 6px 10px;
+  }
+
+  .update-label {
+    font-size: 0.625rem;
+  }
+
+  .next-update {
+    font-size: 0.625rem;
+  }
+
+  .update-icon {
+    width: 16px;
+    height: 16px;
+  }
+}
+
 @media (max-width: 600px) {
   .kanban-grid {
     grid-template-columns: 1fr;
@@ -416,22 +718,10 @@
   .header-subtitle {
     display: none;
   }
-}
 
-/* ========== ANIMATION ========== */
-@keyframes cardAppear {
-  from {
-    opacity: 0;
-    transform: translateY(-10px) scale(0.95);
+  .update-label {
+    display: none;
   }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-.card-moved {
-  animation: cardAppear 0.3s ease;
 }
 </style>
 {% endblock %}

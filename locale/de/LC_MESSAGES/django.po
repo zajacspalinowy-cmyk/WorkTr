@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-06 12:25+0200\n"
+"POT-Creation-Date: 2025-10-10 12:03+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -30,11 +30,11 @@ msgstr "Deutsch"
 msgid "Zarchiwizowany"
 msgstr "Archiviert"
 
-#: .\templates\accounts\login.html:2
+#: .\templates\accounts\login.html:3
 msgid "Logowanie"
 msgstr "Anmeldung"
 
-#: .\templates\accounts\login.html:6
+#: .\templates\accounts\login.html:7
 msgid "Zaloguj się"
 msgstr "Anmelden"
 
@@ -62,7 +62,7 @@ msgstr "In Excel exportieren"
 msgid "Eksportuj do PDF"
 msgstr "In PDF exportieren"
 
-#: .\templates\base.html:86 .\templates\projects\detail.html:161
+#: .\templates\base.html:86 .\templates\projects\detail.html:170
 #: .\templates\timesheets\_month_grid.html:18
 #: .\templates\timesheets\my_entries.html:73
 #: .\templates\timesheets\review.html:43
@@ -77,12 +77,12 @@ msgstr "Stunden eintragen"
 msgid "Moje wpisy"
 msgstr "Meine Einträge"
 
-#: .\templates\base.html:112 .\templates\projects\detail.html:204
+#: .\templates\base.html:112 .\templates\projects\detail.html:213
 msgid "Koszty"
 msgstr "Kosten"
 
 #: .\templates\base.html:118 .\templates\costs\mine.html:25
-#: .\templates\costs\new.html:17 .\templates\projects\detail.html:210
+#: .\templates\costs\new.html:17 .\templates\projects\detail.html:219
 msgid "Zgłoś koszt"
 msgstr "Kosten melden"
 
@@ -136,30 +136,30 @@ msgid "Projekt"
 msgstr "Projekt"
 
 #: .\templates\costs\mine.html:80 .\templates\costs\review.html:43
-#: .\templates\projects\detail.html:220
+#: .\templates\projects\detail.html:229
 msgid "Pozycja"
 msgstr "Position"
 
-#: .\templates\costs\mine.html:81 .\templates\costs\new.html:153
-#: .\templates\costs\review.html:44 .\templates\projects\detail.html:221
+#: .\templates\costs\mine.html:81 .\templates\costs\new.html:155
+#: .\templates\costs\review.html:44 .\templates\projects\detail.html:230
 msgid "Ilość"
 msgstr "Menge"
 
 #: .\templates\costs\mine.html:82 .\templates\costs\review.html:45
-#: .\templates\projects\detail.html:222
+#: .\templates\projects\detail.html:231
 msgid "Cena netto"
 msgstr "Nettopreis"
 
 #: .\templates\costs\mine.html:83 .\templates\costs\review.html:46
 #: .\templates\dashboard\_year_block.html:62
-#: .\templates\projects\detail.html:223
+#: .\templates\projects\detail.html:232
 msgid "Suma"
 msgstr "Summe"
 
 #: .\templates\costs\mine.html:84
 #: .\templates\exports\projects_table_pdf.html:24
 #: .\templates\projects\_table_partial.html:15
-#: .\templates\projects\detail.html:163 .\templates\projects\detail.html:224
+#: .\templates\projects\detail.html:172 .\templates\projects\detail.html:233
 #: .\templates\projects\list.html:63 .\templates\projects\list.html:130
 #: .\templates\timesheets\my_entries.html:70
 msgid "Status"
@@ -232,6 +232,33 @@ msgstr "Gib den Typ und Namen der Ausgabe an"
 msgid "Kategoria"
 msgstr "Kategorie"
 
+#: .\templates\costs\new.html:87
+msgid "Inne"
+msgstr "Andere"
+
+
+#: .\templates\costs\new.html:88
+msgid "Część"
+msgstr "Teil"
+
+#: .\templates\costs\new.html:89
+msgid "Materiał eksploatacyjny"
+msgstr "Verbrauchsmaterial"
+
+#: .\templates\costs\new.html:90
+msgid "Roboczogodzina"
+msgstr "Arbeitsstunde"
+
+#: .\templates\costs\new.html:91
+msgid "Usługa zewnętrzna"
+msgstr "Externer Dienst"
+
+#: .\templates\costs\new.html:92
+#, fuzzy
+#| msgid "Eksport"
+msgid "Transport"
+msgstr "In PDF exportieren"
+
 #: .\templates\costs\new.html:94
 msgid "Wybierz typ wydatku"
 msgstr "Wähle den Ausgabentyp"
@@ -240,65 +267,77 @@ msgstr "Wähle den Ausgabentyp"
 msgid "Jednostka"
 msgstr "Einheit"
 
-#: .\templates\costs\new.html:114
+#: .\templates\costs\new.html:107
+msgid "szt., m, kg, godz., litr..."
+msgstr "St., m, kg, Std., Liter..."
+
+#: .\templates\costs\new.html:115
 msgid "Jednostka miary (np. szt., metr, kg)"
 msgstr "Maßeinheit (z. B. Stk., Meter, kg)"
 
-#: .\templates\costs\new.html:125
+#: .\templates\costs\new.html:126
 msgid "Nazwa pozycji"
 msgstr "Positionsname"
 
-#: .\templates\costs\new.html:134
+#: .\templates\costs\new.html:129
+msgid "np. Czujnik temperatury XYZ-123, Olej hydrauliczny 5L..."
+msgstr "z.B. XYZ-123 Temperatursensor, 5L Hydrauliköl..."
+
+#: .\templates\costs\new.html:136
 msgid "Pełna nazwa pozycji kosztowej"
 msgstr "Vollständiger Name der Kostenposition"
 
-#: .\templates\costs\new.html:141
+#: .\templates\costs\new.html:143
 msgid "Szczegóły finansowe"
 msgstr "Finanzdetails"
 
-#: .\templates\costs\new.html:142
+#: .\templates\costs\new.html:144
 msgid "Ilość i cena jednostkowa"
 msgstr "Menge und Stückpreis"
 
-#: .\templates\costs\new.html:168
+#: .\templates\costs\new.html:170
 msgid "Liczba sztuk/metrów/godzin itp."
 msgstr "Anzahl der Stücke/Meter/Stunden usw."
 
-#: .\templates\costs\new.html:177
+#: .\templates\costs\new.html:179
 msgid "Cena netto (za jednostkę)"
 msgstr "Nettopreis (pro Einheit)"
 
-#: .\templates\costs\new.html:191
+#: .\templates\costs\new.html:193
 msgid "Cena netto za jedną jednostkę"
 msgstr "Nettopreis pro Einheit"
 
-#: .\templates\costs\new.html:197
+#: .\templates\costs\new.html:199
 msgid "Wartość całkowita (netto):"
 msgstr "Gesamtwert (netto):"
 
-#: .\templates\costs\new.html:205
+#: .\templates\costs\new.html:207
 msgid "Notatka (opcjonalnie)"
 msgstr "Notiz (optional)"
 
-#: .\templates\costs\new.html:206
+#: .\templates\costs\new.html:208
 msgid "Dodatkowe informacje o wydatku"
 msgstr "Zusätzliche Informationen zur Ausgabe"
 
-#: .\templates\costs\new.html:216
+#: .\templates\costs\new.html:218
 msgid "Opis wydatku"
 msgstr "Beschreibung der Ausgabe"
 
-#: .\templates\costs\new.html:223
+#: .\templates\costs\new.html:220
+msgid "np. Czujnik temperatury XYZ-123, faktura VAT nr..."
+msgstr "z. B. Temperaturfühler XYZ-123, Mehrwertsteuerrechnung Nr..."
+
+#: .\templates\costs\new.html:226
 msgid "Opcjonalny opis, numer faktury lub inne szczegóły"
 msgstr "Optionale Beschreibung, Rechnungsnummer oder weitere Details"
 
-#: .\templates\costs\new.html:235
+#: .\templates\costs\new.html:238
 #: .\templates\projects\_location_quick_form.html:53
 #: .\templates\projects\new.html:248
 msgid "Anuluj"
 msgstr "Abbrechen"
 
-#: .\templates\costs\new.html:241
+#: .\templates\costs\new.html:244
 msgid "Wyślij do akceptacji"
 msgstr "Zur Genehmigung senden"
 
@@ -318,7 +357,7 @@ msgstr "Kostenpositionen, die auf Genehmigung warten"
 msgid "Do akceptacji"
 msgstr "Zur Genehmigung"
 
-#: .\templates\costs\review.html:47 .\templates\projects\detail.html:225
+#: .\templates\costs\review.html:47 .\templates\projects\detail.html:234
 msgid "Zgłosił"
 msgstr "Gemeldet von"
 
@@ -433,7 +472,7 @@ msgstr "Standort"
 
 #: .\templates\exports\projects_table_pdf.html:24
 #: .\templates\projects\_table_partial.html:12
-#: .\templates\projects\detail.html:89 .\templates\projects\list.html:127
+#: .\templates\projects\detail.html:98 .\templates\projects\list.html:127
 #: .\templates\projects\new.html:153
 msgid "Urządzenia"
 msgstr "Geräte"
@@ -458,43 +497,44 @@ msgstr "Neues Projekt"
 msgid "Godziny (bieżący YTD)"
 msgstr "Stunden pro Monat"
 
-#: .\templates\kanban\_board_inner.html:19
-msgid " Brak projektów w backlogu"
+#: .\templates\kanban\_board_inner.html:18
+msgid "Brak projektów w backlogu"
 msgstr " Keine Projekte im Backlog"
 
-#: .\templates\kanban\_board_inner.html:27
+#: .\templates\kanban\_board_inner.html:26
 msgid "W toku"
 msgstr "In Bearbeitung"
 
-#: .\templates\kanban\_board_inner.html:39
-msgid " Brak projektów w realizacji"
+#: .\templates\kanban\_board_inner.html:38
+
+msgid "Brak projektów w realizacji"
 msgstr " Keine Projekte in Bearbeitung"
 
-#: .\templates\kanban\_board_inner.html:47
-msgid "Zablokowany "
+#: .\templates\kanban\_board_inner.html:46
+msgid "Zablokowany"
 msgstr " Blockiert "
 
-#: .\templates\kanban\_board_inner.html:59
-msgid " Brak zablokowanych projektów"
+#: .\templates\kanban\_board_inner.html:58
+msgid "Brak zablokowanych projektów"
 msgstr "Keine archivierten Projekte"
 
-#: .\templates\kanban\_board_inner.html:67
-msgid "Do weryfikacji "
+#: .\templates\kanban\_board_inner.html:66
+msgid "Do weryfikacji"
 msgstr " Zur Prüfung "
 
-#: .\templates\kanban\_board_inner.html:79
+#: .\templates\kanban\_board_inner.html:78
 msgid "Brak projektów do weryfikacji"
 msgstr "Keine Projekte zur Prüfung"
 
-#: .\templates\kanban\_board_inner.html:87
-msgid "Zakończony "
+#: .\templates\kanban\_board_inner.html:86
+msgid "Zakończony"
 msgstr " Abgeschlossen "
 
-#: .\templates\kanban\_board_inner.html:99
-msgid " Brak zakończonych projektów"
+#: .\templates\kanban\_board_inner.html:98
+msgid "Brak zakończonych projektów"
 msgstr "Keine archivierten Projekte"
 
-#: .\templates\kanban\_board_inner.html:107
+#: .\templates\kanban\_board_inner.html:106
 msgid "Anulowany"
 msgstr "Storniert"
 
@@ -502,7 +542,13 @@ msgstr "Storniert"
 msgid "Brak anulowanych projektów"
 msgstr "Keine archivierten Projekte"
 
-#: .\templates\kanban\_project_card.html:111
+#: .\templates\kanban\_project_card.html:81
+#, fuzzy
+#| msgid "Brak zarchiwizowanych projektów"
+msgid "Czy na pewno zarchiwizować projekt"
+msgstr "Keine archivierten Projekte"
+
+#: .\templates\kanban\_project_card.html:110
 msgid "Archiwizuj"
 msgstr "Archiv"
 
@@ -544,7 +590,7 @@ msgstr ""
 msgid "Przejdź do tablicy"
 msgstr "Zum Board wechseln"
 
-#: .\templates\kanban\board.html:15
+#: .\templates\kanban\board.html:15 .\templates\projects\detail.html:23
 msgid "Tablica Kanban"
 msgstr "Kanban-Board"
 
@@ -552,9 +598,30 @@ msgstr "Kanban-Board"
 msgid "Status projektów w czasie rzeczywistym"
 msgstr "Projektstatus in Echtzeit"
 
-#: .\templates\kanban\board.html:32
+#: .\templates\kanban\board.html:27
+msgid "Ostatnia aktualizacja"
+msgstr "Letzte Aktualisierung"
+
+#: .\templates\kanban\board.html:28 .\templates\kanban\board.html:180
+msgid "Następna za"
+msgstr "Nächste"
+
+#: .\templates\kanban\board.html:36 .\templates\kanban\board.html:221
+#: .\templates\kanban\board.html:238
+msgid "Tryb pełnoekranowy"
+msgstr ""
+
+#: .\templates\kanban\board.html:46
 msgid "Archiwum"
 msgstr "Archiv"
+
+#: .\templates\kanban\board.html:62
+msgid "Odświeżam..."
+msgstr ""
+
+#: .\templates\kanban\board.html:212 .\templates\kanban\board.html:235
+msgid "Wyjdź z pełnego ekranu"
+msgstr ""
 
 #: .\templates\projects\_location_quick_form.html:11
 #: .\templates\projects\new.html:142
@@ -610,73 +677,73 @@ msgstr "Seite"
 msgid "Następna"
 msgstr "Nächste"
 
-#: .\templates\projects\detail.html:15
+#: .\templates\projects\detail.html:16
 msgid "Wróć do listy"
 msgstr "Zurück zum Board"
 
-#: .\templates\projects\detail.html:34
+#: .\templates\projects\detail.html:43
 msgid "Zlecający:"
 msgstr "Auftraggeber:"
 
-#: .\templates\projects\detail.html:43
+#: .\templates\projects\detail.html:52
 msgid "Lokalizacja:"
 msgstr "Standort:"
 
-#: .\templates\projects\detail.html:66 .\templates\projects\new.html:168
+#: .\templates\projects\detail.html:75 .\templates\projects\new.html:168
 msgid "Terminy"
 msgstr "Termine"
 
-#: .\templates\projects\detail.html:70
+#: .\templates\projects\detail.html:79
 msgid "Data przyjęcia:"
 msgstr "Eingangsdatum:"
 
-#: .\templates\projects\detail.html:74
+#: .\templates\projects\detail.html:83
 msgid "Termin zakończenia:"
 msgstr "Endtermin:"
 
-#: .\templates\projects\detail.html:108
+#: .\templates\projects\detail.html:117
 msgid "Godzin (rok poprzedni)"
 msgstr "Stunden (Vorjahr)"
 
-#: .\templates\projects\detail.html:120
+#: .\templates\projects\detail.html:129
 msgid "Godzin (bieżący rok)"
 msgstr "Stunden (laufendes Jahr)"
 
-#: .\templates\projects\detail.html:132
+#: .\templates\projects\detail.html:141
 msgid "Koszty zatwierdzone"
 msgstr "Gesamtkosten (genehmigt)"
 
-#: .\templates\projects\detail.html:144
+#: .\templates\projects\detail.html:153
 msgid "Wpisy godzin"
 msgstr "Stunden eintragen"
 
-#: .\templates\projects\detail.html:150
+#: .\templates\projects\detail.html:159
 msgid "Dodaj wpis"
 msgstr "Meine Einträge"
 
-#: .\templates\projects\detail.html:159 .\templates\projects\detail.html:219
+#: .\templates\projects\detail.html:168 .\templates\projects\detail.html:228
 #: .\templates\timesheets\my_entries.html:72
 #: .\templates\timesheets\new_bulk.html:86
 #: .\templates\timesheets\review.html:42
 msgid "Data"
 msgstr "Datum"
 
-#: .\templates\projects\detail.html:160
+#: .\templates\projects\detail.html:169
 msgid "Technik"
 msgstr "Techniker"
 
-#: .\templates\projects\detail.html:162
+#: .\templates\projects\detail.html:171
 #: .\templates\timesheets\_draft_list.html:26
-#: .\templates\timesheets\new_bulk.html:120
+#: .\templates\timesheets\new_bulk.html:121
 #: .\templates\timesheets\review.html:44
 msgid "Notatka"
 msgstr "Notiz"
 
-#: .\templates\projects\detail.html:186
+#: .\templates\projects\detail.html:195
 msgid "Brak wpisów godzin dla tego projektu"
 msgstr "Keine Zeiteinträge für dieses Projekt"
 
-#: .\templates\projects\detail.html:250
+#: .\templates\projects\detail.html:259
 msgid "Brak kosztów dla tego projektu"
 msgstr "Keine Kosten für dieses Projekt"
 
@@ -825,7 +892,7 @@ msgid "Wybrałeś jednocześnie tryb "
 msgstr "Du hast gleichzeitig den Modus gewählt "
 
 #: .\templates\timesheets\_mix_warning.html:10
-#: .\templates\timesheets\new_bulk.html:150
+#: .\templates\timesheets\new_bulk.html:152
 msgid "Miesiąc"
 msgstr "Monate"
 
@@ -921,35 +988,43 @@ msgstr "Monate"
 msgid "Liczba godzin"
 msgstr "Stunden eintragen"
 
-#: .\templates\timesheets\new_bulk.html:136
+#: .\templates\timesheets\new_bulk.html:104
+msgid "np. 8.0"
+msgstr "z.B. 8.0"
+
+#: .\templates\timesheets\new_bulk.html:123
+msgid "Opcjonalny opis pracy"
+msgstr "Optionale Arbeitsbeschreibung"
+
+#: .\templates\timesheets\new_bulk.html:138
 msgid "Rok"
 msgstr "Jahr"
 
-#: .\templates\timesheets\new_bulk.html:174
+#: .\templates\timesheets\new_bulk.html:176
 msgid "Załaduj kalendarz"
 msgstr "Kalender laden"
 
-#: .\templates\timesheets\new_bulk.html:184
+#: .\templates\timesheets\new_bulk.html:186
 msgid "Ukryj dni"
 msgstr "Tage ausblenden"
 
-#: .\templates\timesheets\new_bulk.html:194
+#: .\templates\timesheets\new_bulk.html:196
 msgid "Wyczyść"
 msgstr "Leeren"
 
-#: .\templates\timesheets\new_bulk.html:205
+#: .\templates\timesheets\new_bulk.html:207
 msgid "Notatka globalna"
 msgstr "Notiz (optional)"
 
-#: .\templates\timesheets\new_bulk.html:220
+#: .\templates\timesheets\new_bulk.html:222
 msgid "Potwierdzam łączenie wpisów (dzień + miesiąc)"
 msgstr "Ich bestätige das Zusammenführen der Einträge (Tag + Monat)"
 
-#: .\templates\timesheets\new_bulk.html:230
+#: .\templates\timesheets\new_bulk.html:232
 msgid "Dodaj do roboczych"
 msgstr "Zu Entwürfen hinzufügen"
 
-#: .\templates\timesheets\new_bulk.html:240
+#: .\templates\timesheets\new_bulk.html:242
 msgid "Wpisy robocze"
 msgstr "Entwurfseinträge"
 

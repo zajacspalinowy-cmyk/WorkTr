@@ -1,7 +1,7 @@
 {% load i18n %}
 <div id="project-{{ project.id }}"
      class="project-card {% if moved %}card-moved{% endif %}"
-     data-detail-url="/projects/{{ project.id }}/"
+     data-detail-url="{% url 'projects:detail' project.id %}"
      data-pid="{{ project.id }}"
      data-can-drag="{% if perms.projects.change_project %}1{% else %}0{% endif %}"
      {% if perms.projects.change_project %}draggable="true"{% endif %}
@@ -16,7 +16,6 @@
        this.classList.remove('dragging');
        document.querySelectorAll('.kanban-list').forEach(z => z.classList.remove('drop-hover'));
      ">
-
 
   <div class="card-header">
     <div class="card-number">{{ project.number }}</div>
@@ -79,7 +78,7 @@
       <button type="button"
               class="btn-archive"
               onclick="
-                if(!confirm('Czy na pewno zarchiwizować projekt {{ project.number }}?')) return;
+                if(!confirm('{% trans "Czy na pewno zarchiwizować projekt" %} {{ project.number }}?')) return;
                 const csrf = document.cookie.match(/csrftoken=([^;]+)/)?.[1];
                 const fd = new FormData();
                 fetch('{% url 'kanban:archive_project' project.id %}', {
@@ -108,7 +107,7 @@
         <svg class="ico" aria-hidden="true" width="14" height="14" viewBox="0 0 24 24">
           <use href="#i-folder"/>
         </svg>
-        <span>{% trans "Archiwizuj"%}</span>
+        <span>{% trans "Archiwizuj" %}</span>
       </button>
     {% endif %}
 
@@ -128,6 +127,46 @@
   </div>
   {% endif %}
 </div>
+
+<script>
+// Kliknięcie na kartę przenosi do szczegółów projektu
+(function() {
+  document.addEventListener('click', function(e) {
+    const card = e.target.closest('.project-card');
+    if (!card) return;
+
+    // Ignoruj kliknięcia w elementy interaktywne (footer, przyciski, selecty)
+    if (e.target.closest('.card-footer, .status-select, .btn-archive, button, a, select')) {
+      return;
+    }
+
+    // Ignoruj jeśli trwa przeciąganie
+    if (window.draggingId) return;
+
+    // Przejdź do szczegółów projektu
+    const url = card.getAttribute('data-detail-url');
+    if (url) {
+      window.location.href = url;
+    }
+  });
+
+  // Zmień kursor na pointer przy hover nad card-body
+  document.addEventListener('mouseover', function(e) {
+    const cardBody = e.target.closest('.card-body');
+    if (cardBody && !window.draggingId) {
+      cardBody.style.cursor = 'pointer';
+    }
+  });
+
+  // Przywróć domyślny kursor
+  document.addEventListener('mouseout', function(e) {
+    const cardBody = e.target.closest('.card-body');
+    if (cardBody) {
+      cardBody.style.cursor = '';
+    }
+  });
+})();
+</script>
 
 <style>
 .btn-archive {
@@ -184,5 +223,14 @@
 .card-assigned {
   color: var(--color-text);
   font-weight: 500;
+}
+
+/* Wizualne wskazanie że karta jest klikalna */
+.card-body {
+  transition: background-color 0.15s ease;
+}
+
+.project-card:not(.dragging) .card-body:hover {
+  background: var(--color-bg-secondary);
 }
 </style>

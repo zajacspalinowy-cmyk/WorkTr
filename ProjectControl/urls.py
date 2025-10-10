@@ -19,11 +19,12 @@ from django.urls import path,include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('projects.urls')),
+    path('',  include('kanban.urls')),
+    path('projects/', include('projects.urls')),
     path('accounts/', include(('accounts.urls', 'accounts'), namespace='accounts')),
     path('timesheets/', include('timesheets.urls')),
     path('costs/', include('costs.urls')),
-    path('kanban/', include('kanban.urls')),
+    #path('kanban/', include('kanban.urls')),
     path('dashboard/', include('dashboard.urls')),
     path('exports/', include('exports.urls')),   # już masz
     path('i18n/', include('django.conf.urls.i18n')),

@@ -101,6 +101,7 @@
                   <span>{% trans "Liczba godzin"%}</span>
                   <span class="field-required">*</span>
                 </label>
+                {% trans "np. 8.0" as hours_placeholder %}
                 <input type="number"
                        id="hours-day"
                        name="hours"
@@ -108,7 +109,7 @@
                        step="0.25"
                        min="0"
                        max="24"
-                       placeholder="np. 8.0">
+                       placeholder="{{ hours_placeholder }}">
                 <p class="field-help">Wartość od 0 do 24 godzin</p>
               </div>
 
@@ -119,12 +120,13 @@
                   </svg>
                   <span>{% trans "Notatka"%}</span>
                 </label>
+                {% trans "Opcjonalny opis pracy" as note_placeholder %}
                 <input type="text"
                        id="note-day"
                        name="note"
                        class="form-input"
                        maxlength="500"
-                       placeholder="Opcjonalny opis pracy">
+                       placeholder="{{ note_placeholder }}">
               </div>
             </div>
 
@@ -160,40 +162,38 @@
                 </div>
               </div>
 
-              <div class="month-actions">
-                <button type="button"
-                        class="btn btn-secondary"
-                        id="btn-load-month"
-                        hx-get="{% url 'timesheets:month_grid' %}"
-                        hx-target="#month-grid"
-                        hx-include="[name='year'], [name='month']"
-                        hx-swap="innerHTML">
-                  <svg class="ico" aria-hidden="true">
-                    <use href="#i-clock"/>
-                  </svg>
-                  <span>{% trans "Załaduj kalendarz"%}</span>
-                </button>
+             <div class="month-actions">
+  <button type="button"
+          class="btn btn-secondary"
+          id="btn-load-month"
+          hx-get="{% url 'timesheets:month_grid' %}"
+          hx-target="#month-grid"
+          hx-include="[name='year'], [name='month']"
+          hx-swap="innerHTML">
+    <svg class="ico" aria-hidden="true">
+      <use href="#i-clock"/>
+    </svg>
+    <span>{% trans "Załaduj kalendarz" %}</span>
+  </button>
 
-                <button type="button"
-                        class="btn btn-secondary"
-                        id="btn-toggle-month"
-                        style="display:none;">
-                  <svg class="ico" aria-hidden="true">
-                    <use href="#i-chevron"/>
-                  </svg>
-                  <span>{% trans "Ukryj dni"%}</span>
-                </button>
+  <button type="button"
+          class="btn btn-secondary"
+          id="btn-toggle-month">
+    <svg class="ico" aria-hidden="true">
+      <use href="#i-chevron"/>
+    </svg>
+    <span class="toggle-text">Ukryj dni</span>
+  </button>
 
-                <button type="button"
-                        class="btn btn-secondary"
-                        id="btn-clear-month"
-                        style="display:none;">
-                  <svg class="ico" aria-hidden="true">
-                    <use href="#i-alert"/>
-                  </svg>
-                  <span>{% trans "Wyczyść"%}</span>
-                </button>
-              </div>
+  <button type="button"
+          class="btn btn-secondary"
+          id="btn-clear-month">
+    <svg class="ico" aria-hidden="true">
+      <use href="#i-alert"/>
+    </svg>
+    <span>{% trans "Wyczyść" %}</span>
+  </button>
+</div>
 
               <div id="month-grid" class="month-grid-container"></div>
 
@@ -262,7 +262,6 @@
     </div>
   </div>
 </div>
-
 <script>
 // Przełączanie trybu Dzień/Miesiąc
 document.addEventListener('change', function (e) {
@@ -274,35 +273,56 @@ document.addEventListener('change', function (e) {
 });
 
 // Helpery siatki miesiąca
-function monthGridEl(){ return document.getElementById('month-grid'); }
+function monthGridEl(){
+  return document.getElementById('month-grid');
+}
+
 function anyMonthValues(){
   const grid = monthGridEl();
   if(!grid) return false;
   const inputs = grid.querySelectorAll('input[name^="hours_"]');
-  for(const i of inputs){ if(i.value && i.value.trim() !== '') return true; }
+  for(const i of inputs){
+    if(i.value && i.value.trim() !== '') return true;
+  }
   return false;
 }
+
 function syncMonthButtons(){
   const grid = monthGridEl();
   const btnToggle = document.getElementById('btn-toggle-month');
-  const btnClear  = document.getElementById('btn-clear-month');
+  const btnClear = document.getElementById('btn-clear-month');
+
+  if (!grid) return;
+
   const hasContent = !!grid.innerHTML.trim();
-  if (!hasContent){
+  const daysList = grid.querySelector('#days-list');
+
+  if (!hasContent || !daysList) {
     btnToggle.style.display = 'none';
-    btnClear.style.display  = 'none';
+    btnClear.style.display = 'none';
     return;
   }
+
   btnToggle.style.display = '';
-  btnClear.style.display  = '';
-  const hidden = grid.style.display === 'none';
-  btnToggle.querySelector('span').textContent = hidden ? 'Pokaż dni' : 'Ukryj dni';
+  btnClear.style.display = '';
+
+  const isHidden = daysList.style.display === 'none';
+  const toggleText = btnToggle.querySelector('.toggle-text');
+  if (toggleText) {
+    toggleText.textContent = isHidden ? 'Pokaż dni' : 'Ukryj dni';
+  }
 }
 
 // Po wczytaniu siatki HTMX
 document.body.addEventListener('htmx:afterSwap', function(evt){
   if (evt.target && evt.target.id === 'month-grid'){
-    monthGridEl().style.display = '';
+    const grid = monthGridEl();
+    if (grid) {
+      const daysList = grid.querySelector('#days-list');
+      if (daysList) daysList.style.display = '';
+    }
     syncMonthButtons();
+    console.log('✅ Month grid loaded');
   }
 });
 
@@ -310,23 +330,34 @@ document.body.addEventListener('htmx:afterSwap', function(evt){
 document.getElementById('btn-toggle-month').addEventListener('click', function(){
   const grid = monthGridEl();
   if(!grid) return;
-  const hidden = grid.style.display === 'none';
-  grid.style.display = hidden ? '' : 'none';
+
+  const daysList = grid.querySelector('#days-list');
+  if (!daysList) return;
+
+  const isHidden = daysList.style.display === 'none';
+  daysList.style.display = isHidden ? '' : 'none';
+
   syncMonthButtons();
+  console.log('Toggle:', isHidden ? 'Pokazano' : 'Ukryto');
 });
 
 // Wyczyść
 document.getElementById('btn-clear-month').addEventListener('click', function(){
   const grid = monthGridEl();
   if(!grid) return;
+
   if (anyMonthValues()){
-    const ok = window.confirm('W siatce są wpisane godziny.\nCzy na pewno wyczyścić i zamknąć widok dni?');
+    const ok = window.confirm('W siatce są wpisane godziny.\nCzy na pewno wyczyścić?');
     if(!ok) return;
   }
+
   grid.innerHTML = '';
-  grid.style.display = 'none';
   syncMonthButtons();
+  console.log('✅ Grid cleared');
 });
+
+// Inicjalizacja - ukryj przyciski na starcie
+syncMonthButtons();
 </script>
 
 <style>
@@ -597,4 +628,139 @@ document.getElementById('btn-clear-month').addEventListener('click', function(){
   color: var(--color-text);
 }
 </style>
+
+
+<script>
+// Przełączanie trybu Dzień/Miesiąc
+document.addEventListener('change', function (e) {
+  if (e.target && e.target.name === 'mode') {
+    const showMonth = e.target.value === 'MONTH';
+    document.getElementById('mode-month').style.display = showMonth ? '' : 'none';
+    document.getElementById('mode-day').style.display = showMonth ? 'none' : '';
+  }
+});
+
+// ========== DEBUG SECTION ==========
+console.log('🎯 Script loaded!');
+console.log('HTMX loaded?', typeof htmx !== 'undefined' ? '✅ YES' : '❌ NO');
+
+// Check if button exists
+const btnLoad = document.getElementById('btn-load-month');
+console.log('Button exists?', btnLoad ? '✅ YES' : '❌ NO');
+if (btnLoad) {
+  console.log('Button HTMX attributes:');
+  console.log('  hx-get:', btnLoad.getAttribute('hx-get'));
+  console.log('  hx-target:', btnLoad.getAttribute('hx-target'));
+  console.log('  hx-include:', btnLoad.getAttribute('hx-include'));
+  console.log('  hx-swap:', btnLoad.getAttribute('hx-swap'));
+}
+
+// Manual click listener for debugging
+if (btnLoad) {
+  btnLoad.addEventListener('click', function(e) {
+    console.log('🔵 Button clicked manually!');
+    const year = document.getElementById('year');
+    const month = document.getElementById('month');
+    console.log('Year field:', year ? year.value : 'NOT FOUND');
+    console.log('Month field:', month ? month.value : 'NOT FOUND');
+  });
+}
+
+// HTMX event listeners
+document.body.addEventListener('htmx:configRequest', function(evt) {
+  console.log('🔧 HTMX configRequest:', evt.detail);
+});
+
+document.body.addEventListener('htmx:beforeRequest', function(evt) {
+  console.log('🔵 HTMX beforeRequest');
+  console.log('  URL:', evt.detail.pathInfo.requestPath);
+  console.log('  Parameters:', evt.detail.requestConfig.parameters);
+});
+
+document.body.addEventListener('htmx:afterRequest', function(evt) {
+  console.log('✅ HTMX afterRequest');
+  console.log('  Status:', evt.detail.xhr.status);
+  console.log('  Response length:', evt.detail.xhr.responseText.length);
+  console.log('  First 200 chars:', evt.detail.xhr.responseText.substring(0, 200));
+});
+
+document.body.addEventListener('htmx:responseError', function(evt) {
+  console.error('❌ HTMX responseError');
+  console.error('  Status:', evt.detail.xhr.status);
+  console.error('  Status Text:', evt.detail.xhr.statusText);
+  console.error('  URL:', evt.detail.pathInfo.requestPath);
+  alert('Błąd HTMX!\nStatus: ' + evt.detail.xhr.status + '\nURL: ' + evt.detail.pathInfo.requestPath);
+});
+
+document.body.addEventListener('htmx:sendError', function(evt) {
+  console.error('❌ HTMX sendError (network error)');
+  console.error('  Details:', evt.detail);
+  alert('Błąd sieci! Request nie mógł być wysłany.');
+});
+
+document.body.addEventListener('htmx:timeout', function(evt) {
+  console.error('❌ HTMX timeout');
+  alert('Timeout! Request trwał zbyt długo.');
+});
+
+// ========== ORIGINAL FUNCTIONS ==========
+function monthGridEl(){ return document.getElementById('month-grid'); }
+function anyMonthValues(){
+  const grid = monthGridEl();
+  if(!grid) return false;
+  const inputs = grid.querySelectorAll('input[name^="hours_"]');
+  for(const i of inputs){ if(i.value && i.value.trim() !== '') return true; }
+  return false;
+}
+function syncMonthButtons(){
+  const grid = monthGridEl();
+  const btnToggle = document.getElementById('btn-toggle-month');
+  const btnClear  = document.getElementById('btn-clear-month');
+  const hasContent = !!grid.innerHTML.trim();
+  if (!hasContent){
+    btnToggle.style.display = 'none';
+    btnClear.style.display  = 'none';
+    return;
+  }
+  btnToggle.style.display = '';
+  btnClear.style.display  = '';
+  const hidden = grid.style.display === 'none';
+  btnToggle.querySelector('span').textContent = hidden ? 'Pokaż dni' : 'Ukryj dni';
+}
+
+// Po wczytaniu siatki HTMX
+document.body.addEventListener('htmx:afterSwap', function(evt){
+  console.log('🔄 HTMX afterSwap:', evt.target.id);
+  if (evt.target && evt.target.id === 'month-grid'){
+    monthGridEl().style.display = '';
+    syncMonthButtons();
+    console.log('✅ Month grid loaded and displayed');
+  }
+});
+
+// Pokaż/Ukryj
+document.getElementById('btn-toggle-month').addEventListener('click', function(){
+  const grid = monthGridEl();
+  if(!grid) return;
+  const hidden = grid.style.display === 'none';
+  grid.style.display = hidden ? '' : 'none';
+  syncMonthButtons();
+});
+
+// Wyczyść
+document.getElementById('btn-clear-month').addEventListener('click', function(){
+  const grid = monthGridEl();
+  if(!grid) return;
+  if (anyMonthValues()){
+    const ok = window.confirm('W siatce są wpisane godziny.\nCzy na pewno wyczyścić i zamknąć widok dni?');
+    if(!ok) return;
+  }
+  grid.innerHTML = '';
+  grid.style.display = 'none';
+  syncMonthButtons();
+});
+
+console.log('✅ All scripts initialized');
+</script>
+
 {% endblock %}
